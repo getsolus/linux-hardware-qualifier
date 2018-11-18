@@ -22,17 +22,18 @@ int main() {
     if(!lkddb) {
         fprintf(stderr, "Failed to open 'data/lkddb.list'. Exiting.\n");
     }
-    LKDDB_USB_ENTRY *entry;
+    LKDDB_USB_ENTRY entry;
+    LKDDB_USB_LIST *list = lhq_usb_list_new();
     while(!feof(lkddb) ){
-        entry = lhq_usb_entry_new();
-        if( lhq_usb_entry_parse(entry, lkddb) ){
-            lhq_usb_entry_print(entry, stderr);
+        if( lhq_usb_entry_parse(&entry, lkddb) ){
+            lhq_usb_list_append(list, &entry);
         } else {
             while(!feof(lkddb) && getc(lkddb) != '\n');
         }
-        lhq_usb_entry_free(entry);
     }
-    //lhq_usb_entry_free(entry);
+    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
+    lhq_usb_list_print(list,stderr);
+    lhq_usb_list_free(list);
     fclose(lkddb);
     return 0;
 }

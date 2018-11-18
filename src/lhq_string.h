@@ -20,31 +20,6 @@
 #include <stdlib.h>
 
 /* Wrapper for strings (safety) */
-typedef struct {
-    char    *contents;
-    size_t  length;
-} LHQ_STRING;
-
-/* Create a new LHQ_STRING
-
-   @param contents - pointer to the actual string contents
-   @param length   - length of the string (excluding \0 terminator)
-
-   @retruens pointer to ther new LHQ_STRING
-*/
-LHQ_STRING* lhq_string_new(char * contents, size_t length) {
-    LHQ_STRING *result = (LHQ_STRING*)calloc(1,sizeof(LHQ_STRING));
-    result->contents = contents;
-    result->length = length;
-    return result;
-}
-
-/* Destroy an LHQ_STRING */
-void lhq_string_free(LHQ_STRING *string) {
-    if(string != NULL) {
-        free(string->contents);
-    }
-    free(string);
-}
+typedef char LHQ_STRING[100];
 
 #endif

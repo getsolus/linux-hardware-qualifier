@@ -20,4 +20,4 @@ clean:
 
 test:
 	valgrind --leak-check=full --show-leak-kinds=all ./BUILDDIR/src/linux-hardware-qualifier
-	./BUILDDIR/src/linux-hardware-qualifier
+	/usr/bin/time ./BUILDDIR/src/linux-hardware-qualifier

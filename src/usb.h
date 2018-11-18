@@ -39,8 +39,8 @@ typedef struct {
     char  bcdDeviceLo[5];
     char  bcdDeviceHi[5];
 
-    LHQ_STRING *configOpts;
-    LHQ_STRING *filename;
+    LHQ_STRING configOpts;
+    LHQ_STRING filename;
 } LKDDB_USB_ENTRY;
 
 /* Create a new LKDDB_USB_ENTRY
@@ -52,8 +52,6 @@ typedef struct {
 */
 LKDDB_USB_ENTRY* lhq_usb_entry_new() {
     LKDDB_USB_ENTRY *result = (LKDDB_USB_ENTRY*)calloc(1,sizeof(LKDDB_USB_ENTRY));
-    result->configOpts = lhq_string_new((char*)calloc(100,sizeof(char)), 100);
-    result->filename   = lhq_string_new((char*)calloc(100,sizeof(char)), 100);
     return result;
 }
 
@@ -63,7 +61,7 @@ int lhq_usb_entry_parse(LKDDB_USB_ENTRY *entry, FILE * file) {
                   entry->bDeviceClass,    entry->bDeviceSubClass,    entry->bDeviceProtocol,
                   entry->bInterfaceClass, entry->bInterfaceSubClass, entry->bInterfaceProtocol,
                   entry->bcdDeviceLo,     entry->bcdDeviceHi,
-                  entry->configOpts->contents, entry->filename->contents
+                  entry->configOpts, entry->filename
     ) == 12;
 }
 
@@ -73,16 +71,50 @@ void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
     fprintf(out, "\tDevice: %s:%s:%s\n", entry->bDeviceClass, entry->bDeviceSubClass, entry->bDeviceProtocol);
     fprintf(out, "\tInterface: %s:%s:%s\n", entry->bInterfaceClass, entry->bInterfaceSubClass, entry->bInterfaceProtocol);
     fprintf(out, "\tBCD: %s:%s\n", entry->bcdDeviceLo, entry->bcdDeviceHi);
-    fprintf(out, "\tConfig Options: %s\n", entry->configOpts->contents);
-    fprintf(out, "\tSource: %s\n", entry->filename->contents);
+    fprintf(out, "\tConfig Options: %s\n", entry->configOpts);
+    fprintf(out, "\tSource: %s\n", entry->filename);
 }
 
 /* Destroy an LHQ_STRING */
 void lhq_usb_entry_free(LKDDB_USB_ENTRY *entry) {
-    lhq_string_free(entry->configOpts);
-    lhq_string_free(entry->filename);
     free(entry);
 }
 
+#define LKDDB_USB_LIST_START 1000
+#define LKDDB_USB_LIST_INCREMENT 1000
+
+typedef struct {
+    LKDDB_USB_ENTRY *data;
+    unsigned int length;
+    unsigned int capacity;
+} LKDDB_USB_LIST;
+
+LKDDB_USB_LIST* lhq_usb_list_new() {
+    LKDDB_USB_LIST *result = (LKDDB_USB_LIST*)calloc(1,sizeof(LKDDB_USB_LIST));
+    result->data     = (LKDDB_USB_ENTRY*)calloc(LKDDB_USB_LIST_START,sizeof(LKDDB_USB_ENTRY));
+    result->length   = 0;
+    result->capacity = LKDDB_USB_LIST_START;
+    return result;
+}
+
+void lhq_usb_list_append(LKDDB_USB_LIST* list, LKDDB_USB_ENTRY *entry) {
+    if(list->length == list->capacity) {
+        list->capacity += LKDDB_USB_LIST_INCREMENT;
+        list->data = realloc(list->data, list->capacity*sizeof(LKDDB_USB_ENTRY) );
+    }
+    list->data[list->length] = *entry;
+    list->length++;
+}
+
+void lhq_usb_list_print(LKDDB_USB_LIST *list, FILE *out) {
+    for(unsigned int i = 0; i < list->length; i++ ){
+        lhq_usb_entry_print(&list->data[i], out);
+    }
+}
+
+void lhq_usb_list_free(LKDDB_USB_LIST* list) {
+    free(list->data);
+    free(list);
+}
 
 #endif
