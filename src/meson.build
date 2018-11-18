@@ -1,5 +1,7 @@
 sources = [
-    'main.c'
+    'main.c',
+    'lhq_string.h',
+    'usb.h'
 ]
 
 depends = []

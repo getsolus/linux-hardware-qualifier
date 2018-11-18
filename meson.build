@@ -27,11 +27,12 @@ am_cflags = [
     '-Wconversion',
     '-Wunused-variable',
     '-Wunreachable-code',
-    '-W',
+    '-W'
 ]
 
 # Add our main flags
 add_global_arguments(am_cflags, language: 'c')
+add_global_arguments('-Db_sanitize=address', language : 'c')
 
 # Get configuration bits together
 path_prefix = get_option('prefix')

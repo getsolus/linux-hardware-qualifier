@@ -14,6 +14,25 @@
  * limitations under the License.
  */
 
+#include <stdio.h>
+#include "usb.h"
+
 int main() {
+    FILE *lkddb = fopen("data/lkddb.list", "r");
+    if(!lkddb) {
+        fprintf(stderr, "Failed to open 'data/lkddb.list'. Exiting.\n");
+    }
+    LKDDB_USB_ENTRY *entry;
+    while(!feof(lkddb) ){
+        entry = lhq_usb_entry_new();
+        if( lhq_usb_entry_parse(entry, lkddb) == 0 ){
+            lhq_usb_entry_print(entry, stderr);
+        } else {
+            while(!feof(lkddb) && getc(lkddb) != '\n');
+        }
+        lhq_usb_entry_free(entry);
+    }
+    //lhq_usb_entry_free(entry);
+    fclose(lkddb);
     return 0;
 }
