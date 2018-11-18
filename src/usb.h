@@ -21,22 +21,23 @@
 #include "lhq_string.h"
 
 /* USB Device Format string for fscanf */
-const char * LKDDB_USB_FORMAT = "usb %s %s %s %s %s %s %s %s %s %s : %[^:] : %s\n";
+const char * LKDDB_USB_FORMAT = "usb %s %s %s %s %s %s %s %s %s %s : %[^:\n] : %s\n";
+//const char * LKDDB_USB_FORMAT = "usb %s %s";
 
 /* Representation of a LKDDB USB Entry */
 typedef struct {
     char  idVendor[5];
     char  idProduct[5];
 
-    char  bDeviceClass[2];
-    char  bDeviceSubClass[2];
-    char  bDeviceProtocol[2];
-    char  bInterfaceClass[2];
-    char  bInterfaceSubClass[2];
-    char  bInterfaceProtocol[2];
+    char  bDeviceClass[3];
+    char  bDeviceSubClass[3];
+    char  bDeviceProtocol[3];
+    char  bInterfaceClass[3];
+    char  bInterfaceSubClass[3];
+    char  bInterfaceProtocol[3];
 
-    char  bcdDeviceLo[4];
-    char  bcdDeviceHi[4];
+    char  bcdDeviceLo[5];
+    char  bcdDeviceHi[5];
 
     LHQ_STRING *configOpts;
     LHQ_STRING *filename;
@@ -57,21 +58,23 @@ LKDDB_USB_ENTRY* lhq_usb_entry_new() {
 }
 
 int lhq_usb_entry_parse(LKDDB_USB_ENTRY *entry, FILE * file) {
-    char buff[100];
-    if( fscanf(file,  "%s",  buff) != 1 ) return -1;
-    if( strlen(buff) != 3 ) return -1;
-    if( strncmp(buff, "usb", (size_t)3)  != 0 ) return -1;
-    if( fscanf(file,  "%s",  buff) != 1 ) return -1;
-    fprintf(stderr, "First: %s\n", buff);
-    strncpy(entry->idVendor, buff, 4);
-    if( fscanf(file, "%s", buff)   != 1 ) return -1;
-    strncpy(entry->idProduct, buff, 4);
-    return 0;
+    return fscanf(file, LKDDB_USB_FORMAT,
+                  entry->idVendor,        entry->idProduct,
+                  entry->bDeviceClass,    entry->bDeviceSubClass,    entry->bDeviceProtocol,
+                  entry->bInterfaceClass, entry->bInterfaceSubClass, entry->bInterfaceProtocol,
+                  entry->bcdDeviceLo,     entry->bcdDeviceHi,
+                  entry->configOpts->contents, entry->filename->contents
+    ) == 12;
 }
 
 void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
     fprintf(out, "USB Entry:\n");
     fprintf(out, "\tIDs: %s:%s\n", entry->idVendor, entry->idProduct);
+    fprintf(out, "\tDevice: %s:%s:%s\n", entry->bDeviceClass, entry->bDeviceSubClass, entry->bDeviceProtocol);
+    fprintf(out, "\tInterface: %s:%s:%s\n", entry->bInterfaceClass, entry->bInterfaceSubClass, entry->bInterfaceProtocol);
+    fprintf(out, "\tBCD: %s:%s\n", entry->bcdDeviceLo, entry->bcdDeviceHi);
+    fprintf(out, "\tConfig Options: %s\n", entry->configOpts->contents);
+    fprintf(out, "\tSource: %s\n", entry->filename->contents);
 }
 
 /* Destroy an LHQ_STRING */

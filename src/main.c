@@ -25,7 +25,7 @@ int main() {
     LKDDB_USB_ENTRY *entry;
     while(!feof(lkddb) ){
         entry = lhq_usb_entry_new();
-        if( lhq_usb_entry_parse(entry, lkddb) == 0 ){
+        if( lhq_usb_entry_parse(entry, lkddb) ){
             lhq_usb_entry_print(entry, stderr);
         } else {
             while(!feof(lkddb) && getc(lkddb) != '\n');
