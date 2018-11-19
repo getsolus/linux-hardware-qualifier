@@ -7,15 +7,12 @@ These represent the bulk of the devices that most people will have attached to
 their systems. Therefore, the majority of my focus is directed here.
 
 - [ ] acpi
-  - [ ] lkddb ids
   - [x] lkddb list
   - [ ] sysfs
 - [ ] ieee1394
-  - [ ] lkddb ids
   - [ ] lkddb list
   - [ ] sysfs
 - [ ] hid
-  - [ ] lkddb ids
   - [ ] lkddb list
   - [ ] sysfs
 - [ ] pci
