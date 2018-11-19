@@ -21,3 +21,11 @@ clean:
 test:
 	valgrind --leak-check=full --show-leak-kinds=all ./BUILDDIR/src/linux-hardware-qualifier
 	/usr/bin/time ./BUILDDIR/src/linux-hardware-qualifier
+download:
+	install -d data
+	if [[ ! -a data/ids.list ]]; then \
+	    (cd data && wget https://cateee.net/sources/lkddb/ids.list); \
+	fi
+	if [[ ! -a data/lkddb.list ]]; then \
+	    (cd data && wget https://cateee.net/sources/lkddb/lkddb.list); \
+	fi
