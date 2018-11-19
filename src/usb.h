@@ -23,7 +23,6 @@
 
 /* USB Device Format string for fscanf */
 const char * LKDDB_USB_FORMAT = "usb %s %s %s %s %s %s %s %s %s %s : %[^:\n] : %s\n";
-//const char * LKDDB_USB_FORMAT = "usb %s %s";
 
 /* Representation of a LKDDB USB Entry */
 typedef struct {
@@ -49,7 +48,7 @@ typedef struct {
    @param contents - pointer to the actual string contents
    @param length   - length of the string (excluding \0 terminator)
 
-   @retruens pointer to ther new LHQ_STRING
+   @returns pointer to ther new LHQ_STRING
 */
 LKDDB_USB_ENTRY* lhq_usb_entry_new() {
     LKDDB_USB_ENTRY *result = (LKDDB_USB_ENTRY*)calloc(1,sizeof(LKDDB_USB_ENTRY));

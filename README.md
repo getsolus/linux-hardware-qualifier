@@ -19,7 +19,8 @@ their systems. Therefore, the majority of my focus is directed here.
   - [ ] lkddb list
   - [ ] sysfs
 - [ ] pci
-  - [ ] lkddb ids
+  - [x] lkddb ids
+  - [x] lkddb class ids
   - [x] lkddb list
   - [ ] sysfs
 - [ ] usb
