@@ -16,9 +16,11 @@
 
 #include <stdio.h>
 #include "acpi.h"
+#include "pci.h"
 #include "usb.h"
 
 void lhq_acpi(FILE * lkddb) {
+    rewind(lkddb);
     LKDDB_ACPI_ENTRY entry;
     LKDDB_LIST *list = lhq_acpi_list_new();
     while(!feof(lkddb) ){
@@ -33,7 +35,24 @@ void lhq_acpi(FILE * lkddb) {
     lhq_acpi_list_free(list);
 }
 
+void lhq_pci(FILE * lkddb) {
+    rewind(lkddb);
+    LKDDB_PCI_ENTRY entry;
+    LKDDB_LIST *list = lhq_pci_list_new();
+    while(!feof(lkddb) ){
+        if( lhq_pci_entry_parse(&entry, lkddb) ){
+            lhq_pci_list_append(list, &entry);
+        } else {
+            while(!feof(lkddb) && getc(lkddb) != '\n');
+        }
+    }
+    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
+    //lhq_pci_list_print(list,stderr);
+    lhq_pci_list_free(list);
+}
+
 void lhq_usb(FILE * lkddb) {
+    rewind(lkddb);
     LKDDB_USB_ENTRY entry;
     LKDDB_LIST *list = lhq_usb_list_new();
     while(!feof(lkddb) ){
@@ -54,7 +73,7 @@ int main() {
         fprintf(stderr, "Failed to open 'data/lkddb.list'. Exiting.\n");
     }
     lhq_acpi(lkddb);
-    rewind(lkddb);
+    lhq_pci(lkddb);
     lhq_usb(lkddb);
     fclose(lkddb);
     return 0;
