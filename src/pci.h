@@ -17,6 +17,7 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_PCI_H__
 #define __LINUX_HARDWARE_QUALIFIER_PCI_H__
 
+#include <stdio.h>
 #include <string.h>
 #include "lhq_string.h"
 #include "lhq_list.h"
@@ -72,5 +73,21 @@ void lhq_pci_entry_free(LKDDB_PCI_ENTRY *entry) {
 }
 
 LKDDB_LIST_DECLARE(pci,LKDDB_PCI_ENTRY)
+
+void lhq_pci(FILE * lkddb) {
+    rewind(lkddb);
+    LKDDB_PCI_ENTRY entry;
+    LKDDB_LIST *list = lhq_pci_list_new();
+    while(!feof(lkddb) ){
+        if( lhq_pci_entry_parse(&entry, lkddb) ){
+            lhq_pci_list_append(list, &entry);
+        } else {
+            while(!feof(lkddb) && getc(lkddb) != '\n');
+        }
+    }
+    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
+    //lhq_pci_list_print(list,stderr);
+    lhq_pci_list_free(list);
+}
 
 #endif

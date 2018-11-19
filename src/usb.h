@@ -17,6 +17,7 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_USB_H__
 #define __LINUX_HARDWARE_QUALIFIER_USB_H__
 
+#include <stdio.h>
 #include <string.h>
 #include "lhq_string.h"
 #include "lhq_list.h"
@@ -76,5 +77,21 @@ void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
 }
 
 LKDDB_LIST_DECLARE(usb,LKDDB_USB_ENTRY)
+
+void lhq_usb(FILE * lkddb) {
+    rewind(lkddb);
+    LKDDB_USB_ENTRY entry;
+    LKDDB_LIST *list = lhq_usb_list_new();
+    while(!feof(lkddb) ){
+        if( lhq_usb_entry_parse(&entry, lkddb) ){
+            lhq_usb_list_append(list, &entry);
+        } else {
+            while(!feof(lkddb) && getc(lkddb) != '\n');
+        }
+    }
+    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
+    //lhq_usb_list_print(list,stderr);
+    lhq_usb_list_free(list);
+}
 
 #endif
