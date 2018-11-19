@@ -1,6 +1,7 @@
 sources = [
     'main.c',
     'lhq_string.h',
+    'acpi.h',
     'usb.h'
 ]
 
