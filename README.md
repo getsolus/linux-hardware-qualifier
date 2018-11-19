@@ -24,7 +24,7 @@ their systems. Therefore, the majority of my focus is directed here.
   - [ ] sysfs
 - [ ] usb
   - [x] lkddb ids
-  - [ ] lkddb class ids
+  - [x] lkddb class ids
   - [x] lkddb list
   - [ ] sysfs
 
