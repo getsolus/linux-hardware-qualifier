@@ -60,22 +60,6 @@ void lhq_acpi_entry_free(LKDDB_ACPI_ENTRY *entry) {
     free(entry);
 }
 
-LKDDB_LIST* lhq_acpi_list_new() {
-    return lhq_list_new(sizeof(LKDDB_ACPI_ENTRY));
-}
-
-void lhq_acpi_list_append(LKDDB_LIST* list, LKDDB_ACPI_ENTRY *entry) {
-    lhq_list_append(list, (void*)entry);
-}
-
-void lhq_acpi_list_print(LKDDB_LIST *list, FILE *out) {
-    for(unsigned int i = 0; i < list->length; i++ ){
-        lhq_acpi_entry_print(&((LKDDB_ACPI_ENTRY*)list->data)[i], out);
-    }
-}
-
-void lhq_acpi_list_free(LKDDB_LIST* list) {
-    lhq_list_free(list);
-}
+LKDDB_LIST_DECLARE(acpi,LKDDB_ACPI_ENTRY)
 
 #endif

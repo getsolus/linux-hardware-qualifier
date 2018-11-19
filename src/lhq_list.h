@@ -22,7 +22,7 @@
 #include <inttypes.h>
 
 #define LKDDB_LIST_START 1000
-#define LKDDB_LIST_INCREMENT 1000
+#define LKDDB_LIST_INCREMENT 250
 
 typedef struct {
     void *data;
@@ -53,5 +53,25 @@ void lhq_list_free(LKDDB_LIST* list) {
     free(list->data);
     free(list);
 }
+
+#define LKDDB_LIST_DECLARE(type,entryType)                               \
+                                                                         \
+LKDDB_LIST* lhq_ ## type ## _list_new() {                                \
+    return lhq_list_new(sizeof(entryType));                              \
+}                                                                        \
+                                                                         \
+void lhq_ ## type ## _list_append(LKDDB_LIST* list, entryType *entry) {  \
+    lhq_list_append(list, (void*)entry);                                 \
+}                                                                        \
+                                                                         \
+void lhq_ ## type ## _list_print(LKDDB_LIST *list, FILE *out) {          \
+    for(unsigned int i = 0; i < list->length; i++ ){                     \
+        lhq_ ## type ## _entry_print(&((entryType*)list->data)[i], out); \
+    }                                                                    \
+}                                                                        \
+                                                                         \
+void lhq_ ## type ## _list_free(LKDDB_LIST* list) {                      \
+    lhq_list_free(list);                                                 \
+}                                                                        \
 
 #endif

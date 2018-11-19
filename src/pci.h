@@ -71,22 +71,6 @@ void lhq_pci_entry_free(LKDDB_PCI_ENTRY *entry) {
     free(entry);
 }
 
-LKDDB_LIST* lhq_pci_list_new() {
-    return lhq_list_new(sizeof(LKDDB_PCI_ENTRY));
-}
-
-void lhq_pci_list_append(LKDDB_LIST* list, LKDDB_PCI_ENTRY *entry) {
-    lhq_list_append(list, (void*)entry);
-}
-
-void lhq_pci_list_print(LKDDB_LIST *list, FILE *out) {
-    for(unsigned int i = 0; i < list->length; i++ ){
-        lhq_pci_entry_print(&((LKDDB_PCI_ENTRY*)list->data)[i], out);
-    }
-}
-
-void lhq_pci_list_free(LKDDB_LIST* list) {
-    lhq_list_free(list);
-}
+LKDDB_LIST_DECLARE(pci,LKDDB_PCI_ENTRY)
 
 #endif

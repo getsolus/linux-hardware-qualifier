@@ -76,26 +76,6 @@ void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
     fprintf(out, "\tSource: %s\n", entry->filename);
 }
 
-void lhq_usb_entry_free(LKDDB_USB_ENTRY *entry) {
-    free(entry);
-}
-
-LKDDB_LIST* lhq_usb_list_new() {
-    return lhq_list_new(sizeof(LKDDB_USB_ENTRY));
-}
-
-void lhq_usb_list_append(LKDDB_LIST* list, LKDDB_USB_ENTRY *entry) {
-    lhq_list_append(list, (void*)entry);
-}
-
-void lhq_usb_list_print(LKDDB_LIST *list, FILE *out) {
-    for(unsigned int i = 0; i < list->length; i++ ){
-        lhq_usb_entry_print(&((LKDDB_USB_ENTRY*)list->data)[i], out);
-    }
-}
-
-void lhq_usb_list_free(LKDDB_LIST* list) {
-    lhq_list_free(list);
-}
+LKDDB_LIST_DECLARE(usb,LKDDB_USB_ENTRY)
 
 #endif
