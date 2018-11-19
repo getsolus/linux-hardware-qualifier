@@ -21,8 +21,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 
-#define LKDDB_LIST_START 1000
-#define LKDDB_LIST_INCREMENT 1000
+#define LKDDB_LIST_START 64
 
 typedef struct {
     void *data;
@@ -42,7 +41,7 @@ LKDDB_LIST* lhq_list_new(size_t elementSize) {
 
 void lhq_list_append(LKDDB_LIST* list, void *entry) {
     if(list->length == list->capacity) {
-        list->capacity += LKDDB_LIST_INCREMENT;
+        list->capacity <<= 1;
         list->data = realloc(list->data, list->capacity*list->elementSize );
     }
     memcpy(((uint8_t*)list->data) + (list->length * list->elementSize), entry, list->elementSize);
