@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include "lhq_string.h"
+#include "lhq_list.h"
 
 /* USB Device Format string for fscanf */
 const char * LKDDB_USB_FORMAT = "usb %s %s %s %s %s %s %s %s %s %s : %[^:\n] : %s\n";
@@ -75,46 +76,26 @@ void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
     fprintf(out, "\tSource: %s\n", entry->filename);
 }
 
-/* Destroy an LHQ_STRING */
 void lhq_usb_entry_free(LKDDB_USB_ENTRY *entry) {
     free(entry);
 }
 
-#define LKDDB_USB_LIST_START 1000
-#define LKDDB_USB_LIST_INCREMENT 1000
-
-typedef struct {
-    LKDDB_USB_ENTRY *data;
-    unsigned int length;
-    unsigned int capacity;
-} LKDDB_USB_LIST;
-
-LKDDB_USB_LIST* lhq_usb_list_new() {
-    LKDDB_USB_LIST *result = (LKDDB_USB_LIST*)calloc(1,sizeof(LKDDB_USB_LIST));
-    result->data     = (LKDDB_USB_ENTRY*)calloc(LKDDB_USB_LIST_START,sizeof(LKDDB_USB_ENTRY));
-    result->length   = 0;
-    result->capacity = LKDDB_USB_LIST_START;
-    return result;
+LKDDB_LIST* lhq_usb_list_new() {
+    return lhq_list_new(sizeof(LKDDB_USB_ENTRY));
 }
 
-void lhq_usb_list_append(LKDDB_USB_LIST* list, LKDDB_USB_ENTRY *entry) {
-    if(list->length == list->capacity) {
-        list->capacity += LKDDB_USB_LIST_INCREMENT;
-        list->data = realloc(list->data, list->capacity*sizeof(LKDDB_USB_ENTRY) );
-    }
-    list->data[list->length] = *entry;
-    list->length++;
+void lhq_usb_list_append(LKDDB_LIST* list, LKDDB_USB_ENTRY *entry) {
+    lhq_list_append(list, (void*)entry);
 }
 
-void lhq_usb_list_print(LKDDB_USB_LIST *list, FILE *out) {
+void lhq_usb_list_print(LKDDB_LIST *list, FILE *out) {
     for(unsigned int i = 0; i < list->length; i++ ){
-        lhq_usb_entry_print(&list->data[i], out);
+        lhq_usb_entry_print(&((LKDDB_USB_ENTRY*)list->data)[i], out);
     }
 }
 
-void lhq_usb_list_free(LKDDB_USB_LIST* list) {
-    free(list->data);
-    free(list);
+void lhq_usb_list_free(LKDDB_LIST* list) {
+    lhq_list_free(list);
 }
 
 #endif

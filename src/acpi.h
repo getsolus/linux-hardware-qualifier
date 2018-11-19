@@ -18,10 +18,11 @@
 #define __LINUX_HARDWARE_QUALIFIER_ACPI_H__
 
 #include <string.h>
+#include "lhq_list.h"
 #include "lhq_string.h"
 
 /* ACPI Device Format string for fscanf */
-const char * LKDDB_ACPI_FORMAT = "acpi %[^:\n] : %[^:\n] : %s\n";
+const char * LKDDB_ACPI_FORMAT = "acpi %s : %[^:\n] : %s\n";
 
 /* Representation of a LKDDB ACPI Entry */
 typedef struct {
@@ -59,41 +60,22 @@ void lhq_acpi_entry_free(LKDDB_ACPI_ENTRY *entry) {
     free(entry);
 }
 
-#define LKDDB_ACPI_LIST_START 1000
-#define LKDDB_ACPI_LIST_INCREMENT 1000
-
-typedef struct {
-    LKDDB_ACPI_ENTRY *data;
-    unsigned int length;
-    unsigned int capacity;
-} LKDDB_ACPI_LIST;
-
-LKDDB_ACPI_LIST* lhq_acpi_list_new() {
-    LKDDB_ACPI_LIST *result = (LKDDB_ACPI_LIST*)calloc(1,sizeof(LKDDB_ACPI_LIST));
-    result->data     = (LKDDB_ACPI_ENTRY*)calloc(LKDDB_ACPI_LIST_START,sizeof(LKDDB_ACPI_ENTRY));
-    result->length   = 0;
-    result->capacity = LKDDB_ACPI_LIST_START;
-    return result;
+LKDDB_LIST* lhq_acpi_list_new() {
+    return lhq_list_new(sizeof(LKDDB_ACPI_ENTRY));
 }
 
-void lhq_acpi_list_append(LKDDB_ACPI_LIST* list, LKDDB_ACPI_ENTRY *entry) {
-    if(list->length == list->capacity) {
-        list->capacity += LKDDB_ACPI_LIST_INCREMENT;
-        list->data = realloc(list->data, list->capacity*sizeof(LKDDB_ACPI_ENTRY) );
-    }
-    list->data[list->length] = *entry;
-    list->length++;
+void lhq_acpi_list_append(LKDDB_LIST* list, LKDDB_ACPI_ENTRY *entry) {
+    lhq_list_append(list, (void*)entry);
 }
 
-void lhq_acpi_list_print(LKDDB_ACPI_LIST *list, FILE *out) {
+void lhq_acpi_list_print(LKDDB_LIST *list, FILE *out) {
     for(unsigned int i = 0; i < list->length; i++ ){
-        lhq_acpi_entry_print(&list->data[i], out);
+        lhq_acpi_entry_print(&((LKDDB_ACPI_ENTRY*)list->data)[i], out);
     }
 }
 
-void lhq_acpi_list_free(LKDDB_ACPI_LIST* list) {
-    free(list->data);
-    free(list);
+void lhq_acpi_list_free(LKDDB_LIST* list) {
+    lhq_list_free(list);
 }
 
 #endif
