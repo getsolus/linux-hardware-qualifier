@@ -18,6 +18,7 @@
 #include "acpi.h"
 #include "pci.h"
 #include "usb.h"
+#include "usb_ids.h"
 
 void lhq_acpi(FILE * lkddb) {
     rewind(lkddb);
@@ -67,14 +68,37 @@ void lhq_usb(FILE * lkddb) {
     lhq_usb_list_free(list);
 }
 
+void lhq_usb_ids(FILE * lkddb_ids) {
+    rewind(lkddb_ids);
+    LKDDB_USB_ID entry;
+    LKDDB_LIST *list = lhq_usb_id_list_new();
+    while(!feof(lkddb_ids) ){
+        if( lhq_usb_id_entry_parse(&entry, lkddb_ids) ){
+            lhq_usb_id_list_append(list, &entry);
+        } else {
+            while(!feof(lkddb_ids) && getc(lkddb_ids) != '\n');
+        }
+    }
+    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
+    //lhq_usb_id_list_print(list,stderr);
+    lhq_usb_id_list_free(list);
+}
+
 int main() {
     FILE *lkddb = fopen("data/lkddb.list", "r");
     if(!lkddb) {
         fprintf(stderr, "Failed to open 'data/lkddb.list'. Exiting.\n");
     }
+    FILE *lkddb_ids = fopen("data/ids.list", "r");
+    if(!lkddb_ids) {
+        fprintf(stderr, "Failed to open 'data/ids.list'. Exiting.\n");
+    }
     lhq_acpi(lkddb);
     lhq_pci(lkddb);
     lhq_usb(lkddb);
+
+    lhq_usb_ids(lkddb_ids);
     fclose(lkddb);
+    fclose(lkddb_ids);
     return 0;
 }

@@ -20,6 +20,6 @@
 #include <stdlib.h>
 
 /* Wrapper for strings (safety) */
-typedef char LHQ_STRING[128];
+typedef char LHQ_STRING[256];
 
 #endif

@@ -22,7 +22,7 @@
 #include <inttypes.h>
 
 #define LKDDB_LIST_START 1000
-#define LKDDB_LIST_INCREMENT 250
+#define LKDDB_LIST_INCREMENT 1000
 
 typedef struct {
     void *data;
