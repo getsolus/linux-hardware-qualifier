@@ -18,11 +18,11 @@ their systems. Therefore, the majority of my focus is directed here.
   - [ ] lkddb ids
   - [ ] lkddb list
   - [ ] sysfs
-- [x] pci
+- [ ] pci
   - [ ] lkddb ids
   - [x] lkddb list
   - [ ] sysfs
-- [x] usb
+- [ ] usb
   - [ ] lkddb ids
   - [x] lkddb list
   - [ ] sysfs
