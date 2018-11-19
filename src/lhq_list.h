@@ -48,6 +48,11 @@ void lhq_list_append(LKDDB_LIST* list, void *entry) {
     list->length++;
 }
 
+void lhq_list_compact(LKDDB_LIST* list) {
+    list->data = realloc(list->data, list->length*list->elementSize );
+    list->capacity = list->length;
+}
+
 void lhq_list_free(LKDDB_LIST* list) {
     free(list->data);
     free(list);

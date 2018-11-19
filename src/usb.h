@@ -89,6 +89,7 @@ void lhq_usb(FILE * lkddb) {
             while(!feof(lkddb) && getc(lkddb) != '\n');
         }
     }
+    lhq_list_compact(list);
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     //lhq_usb_list_print(list,stderr);
     lhq_usb_list_free(list);
