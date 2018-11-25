@@ -19,8 +19,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "lhq_string.h"
-#include "lhq_list.h"
+#include "index.h"
+#include "lhq_types.h"
 
 /* USB ID Format string for fscanf */
 const char * LKDDB_USB_ID_FORMAT = "usb_ids %s %s %[^\n]\n";
@@ -73,17 +73,17 @@ void lhq_usb_id_entry_print(LKDDB_USB_ID *entry, FILE *out) {
 
 LKDDB_LIST_DECLARE(usb_id,LKDDB_USB_ID)
 
-void lhq_usb_ids(char ** lkddb_ids) {
+void lhq_usb_ids(LHQ_INDEX *index) {
     LKDDB_USB_ID entry;
-    LKDDB_LIST *list = lhq_usb_id_list_new();
-    *lkddb_ids = strstr(*lkddb_ids, "\nusb_ids");
-    while( lhq_usb_id_entry_parse(&entry, lkddb_ids) ) {
+    LKDDB_LIST *list = index->lists[LHQ_ID_USB];
+    index->cursor = strstr(index->cursor, "\nusb_ids");
+    while( lhq_usb_id_entry_parse(&entry, &(index->cursor)) ) {
         lhq_usb_id_list_append(list, &entry);
     }
+    lhq_usb_id_list_append(list, &entry);
     lhq_list_compact(list);
     //fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     //lhq_usb_id_list_print(list,stderr);
-    lhq_usb_id_list_free(list);
 }
 
 #endif

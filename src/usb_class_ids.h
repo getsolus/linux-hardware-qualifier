@@ -19,8 +19,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "lhq_string.h"
-#include "lhq_list.h"
+#include "index.h"
+#include "lhq_types.h"
 
 /* USB Class ID Format string for fscanf */
 const char * LKDDB_USB_CLASS_ID_FORMAT = "usb_class_ids %s %s %s %[^\n]\n";
@@ -77,17 +77,17 @@ void lhq_usb_class_id_entry_print(LKDDB_USB_CLASS_ID *entry, FILE *out) {
 
 LKDDB_LIST_DECLARE(usb_class_id,LKDDB_USB_CLASS_ID)
 
-void lhq_usb_class_ids(char ** lkddb_ids) {
+void lhq_usb_class_ids(LHQ_INDEX* index) {
     LKDDB_USB_CLASS_ID entry;
-    LKDDB_LIST *list = lhq_usb_class_id_list_new();
-    *lkddb_ids = strstr(*lkddb_ids, "\nusb_class_ids");
-    while( lhq_usb_class_id_entry_parse(&entry, lkddb_ids) ){
+    LKDDB_LIST *list = index->lists[LHQ_ID_USB_CLASS];
+    index->cursor = strstr(index->cursor, "\nusb_class_ids");
+    while( lhq_usb_class_id_entry_parse(&entry, &(index->cursor)) ){
         lhq_usb_class_id_list_append(list, &entry);
     }
+    lhq_usb_class_id_list_append(list, &entry);
     lhq_list_compact(list);
     //fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     //lhq_usb_class_id_list_print(list,stderr);
-    lhq_usb_class_id_list_free(list);
 }
 
 #endif

@@ -23,7 +23,7 @@
 
 #define LHQ_ID_PCI_CLASS 0
 #define LHQ_ID_PCI       1
-#define LHQ_ID USB_CLASS 2
-#define LKQ_IS_USB       3
+#define LHQ_ID_USB_CLASS 2
+#define LHQ_ID_USB       3
 
 #endif

@@ -19,8 +19,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "lhq_string.h"
-#include "lhq_list.h"
+#include "index.h"
+#include "lhq_types.h"
 
 /* PCI ID Format string for fscanf */
 const char * LKDDB_PCI_ID_FORMAT = "pci_ids %s %s %s %s %[^\n]\n";
@@ -83,17 +83,17 @@ void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
 
 LKDDB_LIST_DECLARE(pci_id,LKDDB_PCI_ID)
 
-void lhq_pci_ids(char ** lkddb_ids) {
+void lhq_pci_ids(LHQ_INDEX *index) {
     LKDDB_PCI_ID entry;
-    LKDDB_LIST *list = lhq_pci_id_list_new();
-    *lkddb_ids = strstr(*lkddb_ids, "\npci_ids");
-    while( lhq_pci_id_entry_parse(&entry, lkddb_ids) ){
+    LKDDB_LIST *list = index->lists[LHQ_ID_PCI];
+    index->cursor = strstr(index->cursor, "\npci_ids");
+    while( lhq_pci_id_entry_parse(&entry, &(index->cursor)) ){
         lhq_pci_id_list_append(list, &entry);
     }
+    lhq_pci_id_list_append(list, &entry);
     lhq_list_compact(list);
     //fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     //lhq_pci_id_list_print(list,stderr);
-    lhq_pci_id_list_free(list);
 }
 
 
