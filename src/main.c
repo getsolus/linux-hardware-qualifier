@@ -23,6 +23,7 @@
 #include "usb_class_ids.h"
 #include "usb_ids.h"
 #include "index.h"
+#include "config.h"
 
 LHQ_INDEX * lhq_build_types_index(FILE *lkddb) {
     LHQ_INDEX *typesIndex = lhq_index_new(3, lkddb);
@@ -46,9 +47,9 @@ LHQ_INDEX * lhq_build_ids_index(FILE *ids) {
 }
 
 int main() {
-    FILE *lkddb = fopen("data/lkddb.list", "r");
+    FILE *lkddb = fopen(DATADIR"/"PACKAGE_NAME"/lkddb.list", "r");
     if(lkddb == NULL) {
-        fprintf(stderr, "Failed to open '%s'. Exiting.\n", "data/lkddb.list");
+        fprintf(stderr, "Failed to open '%s'. Exiting.\n", DATADIR"/"PACKAGE_NAME"/lkddb.list");
         return -1;
     }
     FILE *ids = fopen("data/ids.list", "r");

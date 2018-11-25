@@ -1,5 +1,7 @@
 MESON_OPTS := --buildtype debug -Db_sanitize=none -Db_lundef=false
 CC := clang
+PREFIX ?= /usr
+DATADIR ?= $(PREFIX)/share/linux-hardware-qualifier
 
 all: build
 
@@ -12,15 +14,17 @@ BUILDDIR:
 reconfigure:
 	meson $(MESON_OPTS) --reconfigure BUILDDIR
 
-install:
+install: download
 	ninja -C BUILDDIR install
+	install -Dm00644 data/lkddb.list $(DESTDIR)$(DATADIR)/lkddb.list
+	install -Dm00644 data/ids.list $(DESTDIR)$(DATADIR)/ids.list
 
 clean:
 	rm -rf BUILDDIR || exit 0
 
 test:
-	valgrind --leak-check=full --show-leak-kinds=all ./BUILDDIR/src/linux-hardware-qualifier
-	/usr/bin/time /bin/sh -c "for i in $(shell seq 100); do ./BUILDDIR/src/linux-hardware-qualifier; done"
+	valgrind --leak-check=full --show-leak-kinds=all linux-hardware-qualifier
+	/usr/bin/time /bin/sh -c "for i in $(shell seq 100); do linux-hardware-qualifier; done"
 download:
 	install -d data
 	if [[ ! -a data/counts ]]; then \
