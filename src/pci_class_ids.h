@@ -42,26 +42,27 @@ LKDDB_PCI_CLASS_ID* lhq_pci_class_id_new() {
     LKDDB_PCI_CLASS_ID *result = (LKDDB_PCI_CLASS_ID*)calloc(1,sizeof(LKDDB_PCI_CLASS_ID));
     return result;
 }
-char * lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char * file) {
-    file = strchr(file, ' ') + 1;
-    entry->classMask = file;
+
+int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char ** file) {
+    *file = strchr(*file, ' ') + 1;
+    entry->classMask = *file;
     entry->classMask[2] = entry->classMask[3];
     entry->classMask[3] = entry->classMask[4];
     entry->classMask[4] = entry->classMask[6];
     entry->classMask[5] = entry->classMask[7];
     entry->classMask[7] = '\0';
-    file += 8;
-    file = strchr(file, ' ') + 1;
-    entry->name         = file;
-    file = strchr(file, '\n');
-    if( file != NULL ){
-        file++;
-        file[-1] = '\0';
-        if( strncmp(file, "pci_class_ids", 13) != 0 ){
-            return NULL;
+    *file += 8;
+    *file = strchr(*file, ' ') + 1;
+    entry->name         = *file;
+    *file = strchr(*file, '\n');
+    if( *file != NULL ){
+        (*file)++;
+        (*file)[-1] = '\0';
+        if( strncmp(*file, "pci_class_ids", 13) != 0 ){
+            return 0;
         }
     }
-    return file;
+    return 1;
 }
 
 void lhq_pci_class_id_entry_print(LKDDB_PCI_CLASS_ID *entry, FILE *out) {
@@ -72,15 +73,11 @@ void lhq_pci_class_id_entry_print(LKDDB_PCI_CLASS_ID *entry, FILE *out) {
 
 LKDDB_LIST_DECLARE(pci_class_id,LKDDB_PCI_CLASS_ID)
 
-void lhq_pci_class_ids(const char * lkddb_ids) {
+void lhq_pci_class_ids(char ** lkddb_ids) {
     LKDDB_PCI_CLASS_ID entry;
     LKDDB_LIST *list = lhq_pci_class_id_list_new();
-    char * ptr = lkddb_ids;
-    ptr = strstr(ptr, "\npci_class_ids");
-    *ptr = '\0';
-    ptr++;
-    while(ptr != NULL){
-        ptr = lhq_pci_class_id_entry_parse(&entry, ptr);
+    *lkddb_ids = strstr(*lkddb_ids, "\npci_class_ids");
+    while( lhq_pci_class_id_entry_parse(&entry, lkddb_ids) ) {
         lhq_pci_class_id_list_append(list, &entry);
     }
     lhq_list_compact(list);

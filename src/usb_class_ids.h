@@ -46,27 +46,27 @@ LKDDB_USB_CLASS_ID* lhq_usb_class_id_new() {
     return result;
 }
 
-char * lhq_usb_class_id_entry_parse(LKDDB_USB_CLASS_ID *entry, char * file) {
-    file = strchr(file, ' ') + 1;
-    entry->bInterfaceClass    = file;
-    file = strchr(file, ' ') + 1;
-    file[-1] = '\0';
-    entry->bInterfaceSubClass = file;
-    file = strchr(file, ' ') + 1;
-    file[-1] = '\0';
-    entry->bInterfaceProtocol = file;
-    file = strchr(file, ' ') + 1;
-    file[-1] = '\0';
-    entry->name = file;
-    file = strchr(file, '\n');
-    if( file != NULL ){
-        file++;
-        file[-1] = '\0';
-        if( strncmp(file, "usb_class_ids", 13) != 0 ){
-            return NULL;
+int lhq_usb_class_id_entry_parse(LKDDB_USB_CLASS_ID *entry, char ** file) {
+    *file = strchr(*file, ' ') + 1;
+    entry->bInterfaceClass    = *file;
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->bInterfaceSubClass = *file;
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->bInterfaceProtocol = *file;
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->name = *file;
+    *file = strchr(*file, '\n');
+    if( *file != NULL ){
+        (*file)++;
+        (*file)[-1] = '\0';
+        if( strncmp(*file, "usb_class_ids", 13) != 0 ){
+            return 0;
         }
     }
-    return file;
+    return 1;
 }
 
 void lhq_usb_class_id_entry_print(LKDDB_USB_CLASS_ID *entry, FILE *out) {
@@ -77,15 +77,11 @@ void lhq_usb_class_id_entry_print(LKDDB_USB_CLASS_ID *entry, FILE *out) {
 
 LKDDB_LIST_DECLARE(usb_class_id,LKDDB_USB_CLASS_ID)
 
-void lhq_usb_class_ids(const char * lkddb_ids) {
+void lhq_usb_class_ids(char ** lkddb_ids) {
     LKDDB_USB_CLASS_ID entry;
     LKDDB_LIST *list = lhq_usb_class_id_list_new();
-    char * ptr = lkddb_ids;
-    ptr = strstr(ptr, "\nusb_class_ids");
-    *ptr = '\0';
-    ptr++;
-    while(ptr != NULL){
-        ptr = lhq_usb_class_id_entry_parse(&entry, ptr);
+    *lkddb_ids = strstr(*lkddb_ids, "\nusb_class_ids");
+    while( lhq_usb_class_id_entry_parse(&entry, lkddb_ids) ){
         lhq_usb_class_id_list_append(list, &entry);
     }
     lhq_list_compact(list);

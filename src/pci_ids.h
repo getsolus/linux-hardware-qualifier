@@ -48,30 +48,30 @@ LKDDB_PCI_ID* lhq_pci_id_new() {
     return result;
 }
 
-char * lhq_pci_id_entry_parse(LKDDB_PCI_ID *entry, char * file) {
-    file = strchr(file, ' ') + 1;
-    entry->vendor           = file;
-    file = strchr(file, ' ') + 1;
-    file[-1] = '\0';
-    entry->device          = file;
-    file = strchr(file, ' ') + 1;
-    file[-1] = '\0';
-    entry->subVendor       = file;
-    file = strchr(file, ' ') + 1;
-    file[-1] = '\0';
-    entry->subDevice    = file;
-    file = strchr(file, ' ') + 1;
-    file[-1] = '\0';
-    entry->name         = file;
-    file = strchr(file, '\n');
-    if( file != NULL ){
-        file++;
-        file[-1] = '\0';
-        if( strncmp(file, "pci_ids", 7) != 0 ){
-            return NULL;
+int lhq_pci_id_entry_parse(LKDDB_PCI_ID *entry, char ** file) {
+    *file = strchr(*file, ' ') + 1;
+    entry->vendor           = *file;
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->device          = *file;
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->subVendor       = *file;
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->subDevice    = *file;
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->name         = *file;
+    *file = strchr(*file, '\n');
+    if( *file != NULL ){
+        (*file)++;
+        (*file)[-1] = '\0';
+        if( strncmp(*file, "pci_ids", 7) != 0 ){
+            return 0;
         }
     }
-    return file;
+    return 1;
 }
 
 void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
@@ -83,15 +83,11 @@ void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
 
 LKDDB_LIST_DECLARE(pci_id,LKDDB_PCI_ID)
 
-void lhq_pci_ids(const char * lkddb_ids) {
+void lhq_pci_ids(char ** lkddb_ids) {
     LKDDB_PCI_ID entry;
     LKDDB_LIST *list = lhq_pci_id_list_new();
-    char * ptr = lkddb_ids;
-    ptr = strstr(ptr, "\npci_ids");
-    *ptr = '\0';
-    ptr++;
-    while(ptr != NULL){
-        ptr = lhq_pci_id_entry_parse(&entry, ptr);
+    *lkddb_ids = strstr(*lkddb_ids, "\npci_ids");
+    while( lhq_pci_id_entry_parse(&entry, lkddb_ids) ){
         lhq_pci_id_list_append(list, &entry);
     }
     lhq_list_compact(list);
