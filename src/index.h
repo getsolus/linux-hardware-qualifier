@@ -30,6 +30,7 @@ LKDDB_LIST_DECLARE(index,uint8_t*)
 
 typedef struct {
     uint8_t *raw;
+    char *cursor;
     size_t rawLength;
     LKDDB_LIST **lists;
     unsigned int length;
@@ -46,6 +47,7 @@ LHQ_INDEX* lhq_index_new(unsigned int length, char * filepath) {
     rewind(f);
     LHQ_INDEX *index = (LHQ_INDEX*)calloc(1,sizeof(LHQ_INDEX));
     index->raw = (uint8_t*)calloc(fLength+1, sizeof(uint8_t));
+    index->cursor = (char*)index->raw;
     index->raw[fLength] = '\0';
     if( index->raw == NULL ) {
         fprintf(stderr, "Failed to alloc space to read '%s'. Exiting.\n", filepath);
@@ -67,21 +69,11 @@ LHQ_INDEX* lhq_index_new(unsigned int length, char * filepath) {
     return index;
 }
 
-void lhq_index_populate(LHQ_INDEX* index, int listID, char *prefix, unsigned long pLength) {
-    char *curr = (char*)index->raw;
-    if( strncmp(curr,prefix, pLength) == 0 ) {
-        printf("Found '%s' at index '%d'\n", prefix, 0);
-    }
-    for( unsigned int i = 1; i < index->rawLength; i++) {
-        if( *(curr-1) == '\n') {
-            if( strncmp(curr,prefix, pLength) == 0) {
-                printf("Found '%s' at index '%d'\n", prefix, i+1);
-            }
-        }
-        curr++;
+void lhq_index_summary(LHQ_INDEX* index) {
+    for( unsigned int i = 0; i < index->length; i++) {
+        fprintf(stderr, "List[%d]: %d %d\n", i, index->lists[i]->length, index->lists[i]->capacity);
     }
 }
-
 void lhq_index_free(LHQ_INDEX* index) {
     for(unsigned int i = 0; i < index->length; i++) {
         lhq_index_list_free(index->lists[i]);

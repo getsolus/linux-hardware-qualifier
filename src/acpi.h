@@ -19,9 +19,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "lhq_list.h"
-#include "lhq_string.h"
-
+#include "index.h"
+#include "lhq_types.h"
 /* ACPI Device Format string for fscanf */
 const char * LKDDB_ACPI_FORMAT = "acpi %s : %[^:\n] : %s\n";
 
@@ -80,17 +79,17 @@ void lhq_acpi_entry_free(LKDDB_ACPI_ENTRY *entry) {
 
 LKDDB_LIST_DECLARE(acpi,LKDDB_ACPI_ENTRY)
 
-void lhq_acpi(char ** lkddb) {
+void lhq_acpi(LHQ_INDEX *index) {
     LKDDB_ACPI_ENTRY entry;
-    LKDDB_LIST *list = lhq_acpi_list_new();
-    *lkddb = strstr(*lkddb, "acpi");
-    while(lhq_acpi_entry_parse(&entry, lkddb) ) {
+    LKDDB_LIST *list = index->lists[LHQ_TYPE_ACPI];
+    //index->cursor = strstr(index->cursor, "acpi");
+    while(lhq_acpi_entry_parse(&entry, &(index->cursor)) ) {
         lhq_acpi_list_append(list, &entry);
     }
+    lhq_acpi_list_append(list, &entry);
     lhq_list_compact(list);
-    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
+    //fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     //lhq_acpi_list_print(list,stderr);
-    lhq_acpi_list_free(list);
 }
 
 #endif

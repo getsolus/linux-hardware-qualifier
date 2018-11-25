@@ -29,46 +29,24 @@ int main() {
     if( typesIndex == NULL ) {
         return -1;
     }
-    LHQ_INDEX *idsIndex = lhq_index_new(3, "data/ids.list");
+    LHQ_INDEX *idsIndex = lhq_index_new(4, "data/ids.list");
     if( idsIndex == NULL ) {
         lhq_index_free(typesIndex);
         return -1;
     }
-    char * ptr = (char*)typesIndex->raw;
     char * ptrID = (char*)idsIndex->raw;
-    lhq_acpi(&ptr);
-    lhq_pci(&ptr);
+    lhq_acpi(typesIndex);
+    lhq_pci(typesIndex);
     lhq_pci_class_ids(&ptrID);
     lhq_pci_ids(&ptrID);
-    lhq_usb(&ptr);
+    lhq_usb(typesIndex);
     lhq_usb_class_ids(&ptrID);
     lhq_usb_ids(&ptrID);
-    //lhq_index_populate(typesIndex, 0, "acpi", 4);
-    //lhq_index_populate(typesIndex, 0, "pci", 3);
-    //lhq_index_populate(typesIndex, 0, "usb", 3);
-    //lhq_index_list_print(typesIndex->lists[0],stderr);
+
+    //lhq_index_summary(typesIndex);
+    lhq_index_summary(idsIndex);
 
     lhq_index_free(typesIndex);
     lhq_index_free(idsIndex);
-    /*
-    FILE *lkddb = fopen("data/lkddb.list", "r");
-    if(!lkddb) {
-        fprintf(stderr, "Failed to open 'data/lkddb.list'. Exiting.\n");
-    }
-    FILE *lkddb_ids = fopen("data/ids.list", "r");
-    if(!lkddb_ids) {
-        fprintf(stderr, "Failed to open 'data/ids.list'. Exiting.\n");
-    }
-    lhq_acpi(lkddb);
-    lhq_pci(lkddb);
-    lhq_usb(lkddb);
-
-    lhq_pci_class_ids(lkddb_ids);
-    lhq_pci_ids(lkddb_ids);
-    lhq_usb_class_ids(lkddb_ids);
-    lhq_usb_ids(lkddb_ids);
-    fclose(lkddb);
-    fclose(lkddb_ids);
-    */
     return 0;
 }

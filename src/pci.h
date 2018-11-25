@@ -19,8 +19,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "lhq_string.h"
-#include "lhq_list.h"
+#include "index.h"
+#include "lhq_types.h"
 
 /* PCI Device Format string for fscanf */
 const char * LKDDB_PCI_FORMAT = "pci %s %s %s %s %s : %[^:\n] : %s\n";
@@ -98,17 +98,17 @@ void lhq_pci_entry_free(LKDDB_PCI_ENTRY *entry) {
 
 LKDDB_LIST_DECLARE(pci,LKDDB_PCI_ENTRY)
 
-void lhq_pci(char ** lkddb) {
+void lhq_pci(LHQ_INDEX *index) {
     LKDDB_PCI_ENTRY entry;
-    LKDDB_LIST *list = lhq_pci_list_new();
-    *lkddb = strstr(*lkddb, "\npci");
-    while( lhq_pci_entry_parse(&entry, lkddb) ){
+    LKDDB_LIST *list = index->lists[LHQ_TYPE_PCI];
+    index->cursor = strstr(index->cursor, "\npci");
+    while( lhq_pci_entry_parse(&entry, &(index->cursor)) ){
         lhq_pci_list_append(list, &entry);
     }
+    lhq_pci_list_append(list, &entry);
     lhq_list_compact(list);
-    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
+    //fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     //lhq_pci_list_print(list,stderr);
-    lhq_pci_list_free(list);
 }
 
 #endif
