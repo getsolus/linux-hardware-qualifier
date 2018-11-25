@@ -24,6 +24,27 @@
 #include "usb_ids.h"
 #include "index.h"
 
+LHQ_INDEX * lhq_build_types_index(FILE *lkddb) {
+    LHQ_INDEX *typesIndex = lhq_index_new(3, lkddb);
+
+    lhq_acpi(typesIndex);
+    lhq_pci(typesIndex);
+    lhq_usb(typesIndex);
+    //lhq_index_summary(typesIndex);
+    return typesIndex;
+}
+
+LHQ_INDEX * lhq_build_ids_index(FILE *ids) {
+    LHQ_INDEX *idsIndex = lhq_index_new(4, ids);
+
+    lhq_pci_class_ids(idsIndex);
+    lhq_pci_ids(idsIndex);
+    lhq_usb_class_ids(idsIndex);
+    lhq_usb_ids(idsIndex);
+    //lhq_index_summary(idsIndex);
+    return idsIndex;
+}
+
 int main() {
     FILE *lkddb = fopen("data/lkddb.list", "r");
     if(lkddb == NULL) {
@@ -35,22 +56,10 @@ int main() {
         fprintf(stderr, "Failed to open '%s'. Exiting.\n", "data/ids.list");
         return -1;
     }
-    LHQ_INDEX *typesIndex = lhq_index_new(3, lkddb);
-    LHQ_INDEX *idsIndex = lhq_index_new(4, ids);
+    LHQ_INDEX *typesIndex = lhq_build_types_index(lkddb);
+    LHQ_INDEX *idsIndex = lhq_build_ids_index(ids);
     fclose(lkddb);
     fclose(ids);
-
-    lhq_acpi(typesIndex);
-    lhq_pci(typesIndex);
-    lhq_usb(typesIndex);
-
-    lhq_pci_class_ids(idsIndex);
-    lhq_pci_ids(idsIndex);
-    lhq_usb_class_ids(idsIndex);
-    lhq_usb_ids(idsIndex);
-
-    //lhq_index_summary(typesIndex);
-    //lhq_index_summary(idsIndex);
 
     lhq_index_free(typesIndex);
     lhq_index_free(idsIndex);
