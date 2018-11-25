@@ -23,6 +23,9 @@ test:
 	/usr/bin/time ./BUILDDIR/src/linux-hardware-qualifier
 download:
 	install -d data
+	if [[ ! -a data/counts ]]; then \
+	    (cd data && wget https://cateee.net/sources/lkddb/counts); \
+	fi
 	if [[ ! -a data/ids.list ]]; then \
 	    (cd data && wget https://cateee.net/sources/lkddb/ids.list); \
 	fi

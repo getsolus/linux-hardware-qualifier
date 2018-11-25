@@ -27,21 +27,21 @@ const char * LKDDB_USB_FORMAT = "usb %s %s %s %s %s %s %s %s %s %s : %[^:\n] : %
 
 /* Representation of a LKDDB USB Entry */
 typedef struct {
-    char  idVendor[5];
-    char  idProduct[5];
+    char  *idVendor;
+    char  *idProduct;
 
-    char  bDeviceClass[3];
-    char  bDeviceSubClass[3];
-    char  bDeviceProtocol[3];
-    char  bInterfaceClass[3];
-    char  bInterfaceSubClass[3];
-    char  bInterfaceProtocol[3];
+    char  *bDeviceClass;
+    char  *bDeviceSubClass;
+    char  *bDeviceProtocol;
+    char  *bInterfaceClass;
+    char  *bInterfaceSubClass;
+    char  *bInterfaceProtocol;
 
-    char  bcdDeviceLo[5];
-    char  bcdDeviceHi[5];
+    char  *bcdDeviceLo;
+    char  *bcdDeviceHi;
 
-    LHQ_STRING configOpts;
-    LHQ_STRING filename;
+    char  *configOpts;
+    char  *filename;
 } LKDDB_USB_ENTRY;
 
 /* Create a new LKDDB_USB_ENTRY
@@ -56,14 +56,48 @@ LKDDB_USB_ENTRY* lhq_usb_entry_new() {
     return result;
 }
 
-int lhq_usb_entry_parse(LKDDB_USB_ENTRY *entry, FILE * file) {
-    return fscanf(file, LKDDB_USB_FORMAT,
-                  entry->idVendor,        entry->idProduct,
-                  entry->bDeviceClass,    entry->bDeviceSubClass,    entry->bDeviceProtocol,
-                  entry->bInterfaceClass, entry->bInterfaceSubClass, entry->bInterfaceProtocol,
-                  entry->bcdDeviceLo,     entry->bcdDeviceHi,
-                  entry->configOpts, entry->filename
-    ) == 12;
+char * lhq_usb_entry_parse(LKDDB_USB_ENTRY *entry, char * file) {
+    file = strchr(file, ' ') + 1;
+    entry->idVendor           = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->idProduct          = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->bDeviceClass       = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->bDeviceSubClass    = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->bDeviceProtocol    = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->bInterfaceClass    = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->bInterfaceSubClass = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->bInterfaceProtocol = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->bcdDeviceLo        = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->bcdDeviceHi        = file;
+    file = strchr(file, ':') + 2;
+    file[-3] = '\0';
+    entry->configOpts         = file;
+    file = strchr(file, ':') + 2;
+    file[-3] = '\0';
+    entry->filename           = file;
+    if( strchr(file, '\n') != NULL ){
+        file = strchr(file, '\n') + 1;
+        file[-1] = '\0';
+    }
+    file = strstr(file, "usb");
+    return file;
 }
 
 void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
@@ -78,16 +112,18 @@ void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
 
 LKDDB_LIST_DECLARE(usb,LKDDB_USB_ENTRY)
 
-void lhq_usb(FILE * lkddb) {
-    rewind(lkddb);
+void lhq_usb(const char * lkddb) {
     LKDDB_USB_ENTRY entry;
     LKDDB_LIST *list = lhq_usb_list_new();
-    while(!feof(lkddb) ){
-        if( lhq_usb_entry_parse(&entry, lkddb) ){
-            lhq_usb_list_append(list, &entry);
-        } else {
-            while(!feof(lkddb) && getc(lkddb) != '\n');
-        }
+    char * ptr = lkddb;
+    ptr = strstr(ptr, "\nusb");
+    *ptr = '\0';
+    ptr++;
+    while(ptr != NULL){
+        //printf("curr: 0x%016x\n", ptr);
+        //printf("last: 0x%016x\n", lkddb+length);
+        ptr = lhq_usb_entry_parse(&entry, ptr);
+        lhq_usb_list_append(list, &entry);
     }
     lhq_list_compact(list);
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);

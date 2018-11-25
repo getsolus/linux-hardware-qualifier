@@ -27,13 +27,13 @@ const char * LKDDB_PCI_ID_FORMAT = "pci_ids %s %s %s %s %[^\n]\n";
 
 /* Representation of a LKDDB PCI ID */
 typedef struct {
-    char  vendor[5];
-    char  device[5];
+    char  *vendor;
+    char  *device;
 
-    char  subVendor[5];
-    char  subDevice[5];
+    char  *subVendor;
+    char  *subDevice;
 
-    LHQ_STRING name;
+    char  *name;
 } LKDDB_PCI_ID;
 
 /* Create a new LKDDB_PCI_ID
@@ -48,12 +48,30 @@ LKDDB_PCI_ID* lhq_pci_id_new() {
     return result;
 }
 
-int lhq_pci_id_entry_parse(LKDDB_PCI_ID *entry, FILE * file) {
-    return fscanf(file, LKDDB_PCI_ID_FORMAT,
-                  entry->vendor,     entry->device,
-                  entry->subVendor,  entry->subDevice,
-                  entry->name
-    ) == 5;
+char * lhq_pci_id_entry_parse(LKDDB_PCI_ID *entry, char * file) {
+    file = strchr(file, ' ') + 1;
+    entry->vendor           = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->device          = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->subVendor       = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->subDevice    = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->name         = file;
+    file = strchr(file, '\n');
+    if( file != NULL ){
+        file++;
+        file[-1] = '\0';
+        if( strncmp(file, "pci_ids", 7) != 0 ){
+            return NULL;
+        }
+    }
+    return file;
 }
 
 void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
@@ -65,21 +83,22 @@ void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
 
 LKDDB_LIST_DECLARE(pci_id,LKDDB_PCI_ID)
 
-void lhq_pci_ids(FILE * lkddb_ids) {
-    rewind(lkddb_ids);
+void lhq_pci_ids(const char * lkddb_ids) {
     LKDDB_PCI_ID entry;
     LKDDB_LIST *list = lhq_pci_id_list_new();
-    while(!feof(lkddb_ids) ){
-        if( lhq_pci_id_entry_parse(&entry, lkddb_ids) ){
-            lhq_pci_id_list_append(list, &entry);
-        } else {
-            while(!feof(lkddb_ids) && getc(lkddb_ids) != '\n');
-        }
+    char * ptr = lkddb_ids;
+    ptr = strstr(ptr, "\npci_ids");
+    *ptr = '\0';
+    ptr++;
+    while(ptr != NULL){
+        ptr = lhq_pci_id_entry_parse(&entry, ptr);
+        lhq_pci_id_list_append(list, &entry);
     }
     lhq_list_compact(list);
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     //lhq_pci_id_list_print(list,stderr);
     lhq_pci_id_list_free(list);
 }
+
 
 #endif

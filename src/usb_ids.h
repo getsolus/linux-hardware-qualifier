@@ -27,10 +27,10 @@ const char * LKDDB_USB_ID_FORMAT = "usb_ids %s %s %[^\n]\n";
 
 /* Representation of a LKDDB USB ID */
 typedef struct {
-    char  idVendor[5];
-    char  idProduct[5];
+    char *idVendor;
+    char *idProduct;
 
-    LHQ_STRING name;
+    char *name;
 } LKDDB_USB_ID;
 
 /* Create a new LKDDB_USB_ID
@@ -45,8 +45,24 @@ LKDDB_USB_ID* lhq_usb_id_new() {
     return result;
 }
 
-int lhq_usb_id_entry_parse(LKDDB_USB_ID *entry, FILE * file) {
-    return fscanf(file, LKDDB_USB_ID_FORMAT, entry->idVendor, entry->idProduct, entry->name ) == 3;
+char * lhq_usb_id_entry_parse(LKDDB_USB_ID *entry, char * file) {
+    file = strchr(file, ' ') + 1;
+    entry->idVendor = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->idProduct = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->name = file;
+    file = strchr(file, '\n');
+    if( file != NULL ){
+        file++;
+        file[-1] = '\0';
+        if( strncmp(file, "usb_ids", 7) != 0 ){
+            return NULL;
+        }
+    }
+    return file;
 }
 
 void lhq_usb_id_entry_print(LKDDB_USB_ID *entry, FILE *out) {
@@ -57,16 +73,16 @@ void lhq_usb_id_entry_print(LKDDB_USB_ID *entry, FILE *out) {
 
 LKDDB_LIST_DECLARE(usb_id,LKDDB_USB_ID)
 
-void lhq_usb_ids(FILE * lkddb_ids) {
-    rewind(lkddb_ids);
+void lhq_usb_ids(const char * lkddb_ids) {
     LKDDB_USB_ID entry;
     LKDDB_LIST *list = lhq_usb_id_list_new();
-    while(!feof(lkddb_ids) ){
-        if( lhq_usb_id_entry_parse(&entry, lkddb_ids) ){
-            lhq_usb_id_list_append(list, &entry);
-        } else {
-            while(!feof(lkddb_ids) && getc(lkddb_ids) != '\n');
-        }
+    char * ptr = lkddb_ids;
+    ptr = strstr(ptr, "\nusb_ids");
+    *ptr = '\0';
+    ptr++;
+    while(ptr != NULL){
+        ptr = lhq_usb_id_entry_parse(&entry, ptr);
+        lhq_usb_id_list_append(list, &entry);
     }
     lhq_list_compact(list);
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);

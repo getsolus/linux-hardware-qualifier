@@ -27,16 +27,16 @@ const char * LKDDB_PCI_FORMAT = "pci %s %s %s %s %s : %[^:\n] : %s\n";
 
 /* Representation of a LKDDB PCI Entry */
 typedef struct {
-    char  vendor[5];
-    char  device[5];
+    char  *vendor;
+    char  *device;
 
-    char  subVendor[5];
-    char  subDevice[5];
+    char  *subVendor;
+    char  *subDevice;
 
-    char  classMask[7];
+    char  *classMask;
 
-    LHQ_STRING configOpts;
-    LHQ_STRING filename;
+    char *configOpts;
+    char *filename;
 } LKDDB_PCI_ENTRY;
 
 /* Create a new LKDDB_PCI_ENTRY
@@ -51,14 +51,37 @@ LKDDB_PCI_ENTRY* lhq_pci_entry_new() {
     return result;
 }
 
-int lhq_pci_entry_parse(LKDDB_PCI_ENTRY *entry, FILE * file) {
-    return fscanf(file, LKDDB_PCI_FORMAT,
-                  entry->vendor,     entry->device,
-                  entry->subVendor,  entry->subDevice, entry->classMask,
-                  entry->configOpts, entry->filename
-    ) == 7;
+char * lhq_pci_entry_parse(LKDDB_PCI_ENTRY *entry, char * file) {
+    file = strchr(file, ' ') + 1;
+    entry->vendor           = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->device          = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->subVendor       = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->subDevice    = file;
+    file = strchr(file, ' ') + 1;
+    file[-1] = '\0';
+    entry->classMask    = file;
+    file = strchr(file, ':') + 2;
+    file[-3] = '\0';
+    entry->configOpts         = file;
+    file = strchr(file, ':') + 2;
+    file[-3] = '\0';
+    entry->filename           = file;
+    file = strstr(file, "\n");
+    if( file != NULL ){
+        file++;
+        file[-1] = '\0';
+        if( strncmp(file, "pci", 3) != 0 ){
+            return NULL;
+        }
+    }
+    return file;
 }
-
 void lhq_pci_entry_print(LKDDB_PCI_ENTRY *entry, FILE *out) {
     fprintf(out, "PCI Entry:\n");
     fprintf(out, "\tVendor: %s:%s\n", entry->vendor, entry->subVendor);
@@ -74,16 +97,16 @@ void lhq_pci_entry_free(LKDDB_PCI_ENTRY *entry) {
 
 LKDDB_LIST_DECLARE(pci,LKDDB_PCI_ENTRY)
 
-void lhq_pci(FILE * lkddb) {
-    rewind(lkddb);
+void lhq_pci(const char * lkddb) {
     LKDDB_PCI_ENTRY entry;
     LKDDB_LIST *list = lhq_pci_list_new();
-    while(!feof(lkddb) ){
-        if( lhq_pci_entry_parse(&entry, lkddb) ){
-            lhq_pci_list_append(list, &entry);
-        } else {
-            while(!feof(lkddb) && getc(lkddb) != '\n');
-        }
+    char * ptr = lkddb;
+    ptr = strstr(ptr, "\npci");
+    *ptr = '\0';
+    ptr++;
+    while(ptr != NULL){
+        ptr = lhq_pci_entry_parse(&entry, ptr);
+        lhq_pci_list_append(list, &entry);
     }
     lhq_list_compact(list);
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);

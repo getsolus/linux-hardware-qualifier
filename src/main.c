@@ -22,8 +22,33 @@
 #include "usb.h"
 #include "usb_class_ids.h"
 #include "usb_ids.h"
+#include "index.h"
 
 int main() {
+    LHQ_INDEX *typesIndex = lhq_index_new(3, "data/lkddb.list");
+    if( typesIndex == NULL ) {
+        return -1;
+    }
+    LHQ_INDEX *idsIndex = lhq_index_new(3, "data/ids.list");
+    if( idsIndex == NULL ) {
+        lhq_index_free(typesIndex);
+        return -1;
+    }
+    lhq_usb((char*)typesIndex->raw);
+    lhq_usb_ids((char*)idsIndex->raw);
+    lhq_usb_class_ids((char*)idsIndex->raw);
+    lhq_pci((char*)typesIndex->raw);
+    lhq_pci_ids((char*)idsIndex->raw);
+    lhq_pci_class_ids((char*)idsIndex->raw);
+    lhq_acpi((char*)typesIndex->raw);
+    //lhq_index_populate(typesIndex, 0, "acpi", 4);
+    //lhq_index_populate(typesIndex, 0, "pci", 3);
+    //lhq_index_populate(typesIndex, 0, "usb", 3);
+    //lhq_index_list_print(typesIndex->lists[0],stderr);
+
+    lhq_index_free(typesIndex);
+    lhq_index_free(idsIndex);
+    /*
     FILE *lkddb = fopen("data/lkddb.list", "r");
     if(!lkddb) {
         fprintf(stderr, "Failed to open 'data/lkddb.list'. Exiting.\n");
@@ -42,5 +67,6 @@ int main() {
     lhq_usb_ids(lkddb_ids);
     fclose(lkddb);
     fclose(lkddb_ids);
+    */
     return 0;
 }
