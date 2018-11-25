@@ -20,7 +20,7 @@ clean:
 
 test:
 	valgrind --leak-check=full --show-leak-kinds=all ./BUILDDIR/src/linux-hardware-qualifier
-	/usr/bin/time ./BUILDDIR/src/linux-hardware-qualifier
+	/usr/bin/time /bin/sh -c "for i in $(shell seq 100); do ./BUILDDIR/src/linux-hardware-qualifier; done"
 download:
 	install -d data
 	if [[ ! -a data/counts ]]; then \
