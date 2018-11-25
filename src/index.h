@@ -36,12 +36,7 @@ typedef struct {
     unsigned int length;
 } LHQ_INDEX;
 
-LHQ_INDEX* lhq_index_new(unsigned int length, char * filepath) {
-    FILE *f = fopen(filepath, "r");
-    if(f == NULL) {
-        fprintf(stderr, "Failed to open '%s'. Exiting.\n", filepath);
-        return NULL;
-    }
+LHQ_INDEX* lhq_index_new(unsigned int length, FILE *f) {
     fseek(f, 0, SEEK_END);
     size_t fLength = (size_t)ftell(f);
     rewind(f);
@@ -50,17 +45,16 @@ LHQ_INDEX* lhq_index_new(unsigned int length, char * filepath) {
     index->cursor = (char*)index->raw;
     index->raw[fLength] = '\0';
     if( index->raw == NULL ) {
-        fprintf(stderr, "Failed to alloc space to read '%s'. Exiting.\n", filepath);
+        fprintf(stderr, "Failed to alloc space to read file. Exiting.\n");
         return NULL;
     }
     index->rawLength = fLength;
     if( fread(index->raw, sizeof(uint8_t), fLength, f) != fLength ) {
         free(index->raw);
         free(index);
-        fprintf(stderr, "Failed to read all of '%s'. Exiting.\n", filepath);
+        fprintf(stderr, "Failed to read all of file. Exiting.\n");
         return NULL;
     }
-    fclose(f);
     index->lists = (LKDDB_LIST**)calloc(length, sizeof(LKDDB_LIST*));
     index->length = length;
     for(unsigned int i = 0; i < index->length; i++) {

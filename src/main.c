@@ -25,20 +25,27 @@
 #include "index.h"
 
 int main() {
-    LHQ_INDEX *typesIndex = lhq_index_new(3, "data/lkddb.list");
-    if( typesIndex == NULL ) {
+    FILE *lkddb = fopen("data/lkddb.list", "r");
+    if(lkddb == NULL) {
+        fprintf(stderr, "Failed to open '%s'. Exiting.\n", "data/lkddb.list");
         return -1;
     }
-    LHQ_INDEX *idsIndex = lhq_index_new(4, "data/ids.list");
-    if( idsIndex == NULL ) {
-        lhq_index_free(typesIndex);
+    FILE *ids = fopen("data/ids.list", "r");
+    if(ids == NULL) {
+        fprintf(stderr, "Failed to open '%s'. Exiting.\n", "data/ids.list");
         return -1;
     }
+    LHQ_INDEX *typesIndex = lhq_index_new(3, lkddb);
+    LHQ_INDEX *idsIndex = lhq_index_new(4, ids);
+    fclose(lkddb);
+    fclose(ids);
+
     lhq_acpi(typesIndex);
     lhq_pci(typesIndex);
+    lhq_usb(typesIndex);
+
     lhq_pci_class_ids(idsIndex);
     lhq_pci_ids(idsIndex);
-    lhq_usb(typesIndex);
     lhq_usb_class_ids(idsIndex);
     lhq_usb_ids(idsIndex);
 
