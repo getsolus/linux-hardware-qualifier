@@ -51,37 +51,38 @@ LKDDB_PCI_ENTRY* lhq_pci_entry_new() {
     return result;
 }
 
-char * lhq_pci_entry_parse(LKDDB_PCI_ENTRY *entry, char * file) {
-    file = strchr(file, ' ') + 1;
-    entry->vendor           = file;
-    file = strchr(file, ' ') + 1;
-    file[-1] = '\0';
-    entry->device          = file;
-    file = strchr(file, ' ') + 1;
-    file[-1] = '\0';
-    entry->subVendor       = file;
-    file = strchr(file, ' ') + 1;
-    file[-1] = '\0';
-    entry->subDevice    = file;
-    file = strchr(file, ' ') + 1;
-    file[-1] = '\0';
-    entry->classMask    = file;
-    file = strchr(file, ':') + 2;
-    file[-3] = '\0';
-    entry->configOpts         = file;
-    file = strchr(file, ':') + 2;
-    file[-3] = '\0';
-    entry->filename           = file;
-    file = strstr(file, "\n");
-    if( file != NULL ){
-        file++;
-        file[-1] = '\0';
-        if( strncmp(file, "pci", 3) != 0 ){
-            return NULL;
+int lhq_pci_entry_parse(LKDDB_PCI_ENTRY *entry, char ** file) {
+    *file = strchr(*file, ' ') + 1;
+    entry->vendor           = *file;
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->device          = *file;
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->subVendor       = *file;
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->subDevice    = *file;
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->classMask    = *file;
+    *file = strchr(*file, ':') + 2;
+    (*file)[-3] = '\0';
+    entry->configOpts         = *file;
+    *file = strchr(*file, ':') + 2;
+    (*file)[-3] = '\0';
+    entry->filename           = *file;
+    *file = strstr(*file, "\n");
+    if( *file != NULL ){
+        (*file)++;
+        (*file)[-1] = '\0';
+        if( strncmp(*file, "pci", 3) != 0 ){
+            return 0;
         }
     }
-    return file;
+    return 1;
 }
+
 void lhq_pci_entry_print(LKDDB_PCI_ENTRY *entry, FILE *out) {
     fprintf(out, "PCI Entry:\n");
     fprintf(out, "\tVendor: %s:%s\n", entry->vendor, entry->subVendor);
@@ -97,15 +98,11 @@ void lhq_pci_entry_free(LKDDB_PCI_ENTRY *entry) {
 
 LKDDB_LIST_DECLARE(pci,LKDDB_PCI_ENTRY)
 
-void lhq_pci(const char * lkddb) {
+void lhq_pci(char ** lkddb) {
     LKDDB_PCI_ENTRY entry;
     LKDDB_LIST *list = lhq_pci_list_new();
-    char * ptr = lkddb;
-    ptr = strstr(ptr, "\npci");
-    *ptr = '\0';
-    ptr++;
-    while(ptr != NULL){
-        ptr = lhq_pci_entry_parse(&entry, ptr);
+    *lkddb = strstr(*lkddb, "\npci");
+    while( lhq_pci_entry_parse(&entry, lkddb) ){
         lhq_pci_list_append(list, &entry);
     }
     lhq_list_compact(list);

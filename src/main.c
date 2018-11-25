@@ -34,13 +34,14 @@ int main() {
         lhq_index_free(typesIndex);
         return -1;
     }
-    lhq_usb((char*)typesIndex->raw);
+    char * ptr = (char*)typesIndex->raw;
+    lhq_acpi(&ptr);
+    lhq_pci(&ptr);
+    lhq_usb(&ptr);
     lhq_usb_ids((char*)idsIndex->raw);
     lhq_usb_class_ids((char*)idsIndex->raw);
-    lhq_pci((char*)typesIndex->raw);
     lhq_pci_ids((char*)idsIndex->raw);
     lhq_pci_class_ids((char*)idsIndex->raw);
-    lhq_acpi((char*)typesIndex->raw);
     //lhq_index_populate(typesIndex, 0, "acpi", 4);
     //lhq_index_populate(typesIndex, 0, "pci", 3);
     //lhq_index_populate(typesIndex, 0, "usb", 3);

@@ -45,25 +45,25 @@ LKDDB_ACPI_ENTRY* lhq_acpi_entry_new() {
     return result;
 }
 
-char * lhq_acpi_entry_parse(LKDDB_ACPI_ENTRY *entry, char * file) {
-    file = strchr(file, '"') + 1;
-    entry->id = file;
-    file = strchr(file, '"') + 1;
-    file[-1] = '\0';
-    file = strchr(file, ':') + 2;
-    entry->configOpts         = file;
-    file = strchr(file, ':') + 2;
-    file[-3] = '\0';
-    entry->filename           = file;
-    file = strstr(file, "\n");
-    if( file != NULL ){
-        file++;
-        file[-1] = '\0';
-        if( strncmp(file, "acpi", 4) != 0 ){
-            return NULL;
+int lhq_acpi_entry_parse(LKDDB_ACPI_ENTRY *entry, char ** file) {
+    *file = strchr(*file, '"') + 1;
+    entry->id = *file;
+    *file = strchr(*file, '"') + 1;
+    (*file)[-1] = '\0';
+    *file = strchr(*file, ':') + 2;
+    entry->configOpts         = *file;
+    *file = strchr(*file, ':') + 2;
+    (*file)[-3] = '\0';
+    entry->filename           = *file;
+    *file = strstr(*file, "\n");
+    if( (*file) != NULL ){
+        (*file)++;
+        (*file)[-1] = '\0';
+        if( strncmp(*file, "acpi", 4) != 0 ){
+            return 0;
         }
     }
-    return file;
+    return 1;
 }
 
 void lhq_acpi_entry_print(LKDDB_ACPI_ENTRY *entry, FILE *out) {
@@ -80,13 +80,11 @@ void lhq_acpi_entry_free(LKDDB_ACPI_ENTRY *entry) {
 
 LKDDB_LIST_DECLARE(acpi,LKDDB_ACPI_ENTRY)
 
-void lhq_acpi(const char * lkddb) {
+void lhq_acpi(char ** lkddb) {
     LKDDB_ACPI_ENTRY entry;
     LKDDB_LIST *list = lhq_acpi_list_new();
-    char * ptr = lkddb;
-    ptr = strstr(ptr, "acpi");
-    while(ptr != NULL){
-        ptr = lhq_acpi_entry_parse(&entry, ptr);
+    *lkddb = strstr(*lkddb, "acpi");
+    while(lhq_acpi_entry_parse(&entry, lkddb) ) {
         lhq_acpi_list_append(list, &entry);
     }
     lhq_list_compact(list);
