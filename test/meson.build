@@ -7,8 +7,8 @@ path_mandir = join_paths(path_prefix, get_option('mandir'))
 # build config.h
 cdata = configuration_data()
 cdata.set_quoted('PACKAGE_VERSION', meson.project_version())
-cdata.set_quoted('PACKAGE_NAME', meson.project_name())
-cdata.set_quoted('DATADIR', path_datadir)
+cdata.set_quoted('PACKAGE_NAME', '')
+cdata.set_quoted('DATADIR', 'data')
 cdata.set_quoted('SYSCONFDIR', path_sysconfdir)
 
 config_h = configure_file(
@@ -16,12 +16,10 @@ config_h = configure_file(
      output: 'config.h',
 )
 
-depends = []
+load_sources = [
+    'load.c',
+]
 
-executable(
-    'linux-hardware-qualifier',
-    'main.c',
-    include_directories: incdir,
-    dependencies: depends,
-    install: true
-)
+e = executable('test-load', sources: load_sources, include_directories: incdir)
+test('Load LKDDB', e, workdir : meson.source_root())
+benchmark('Bench Load LKDDB', e, args: '100', workdir : meson.source_root())

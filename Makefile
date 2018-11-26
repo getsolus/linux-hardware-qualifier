@@ -21,10 +21,17 @@ install: download
 
 clean:
 	rm -rf BUILDDIR || exit 0
+	rm -rf data || exit 0
 
-test:
-	valgrind --leak-check=full --show-leak-kinds=all linux-hardware-qualifier
-	/usr/bin/time /bin/sh -c "for i in $(shell seq 100); do linux-hardware-qualifier; done"
+check:
+	meson test -C BUILDDIR -q
+
+valgrind:
+	meson test -C BUILDDIR --wrap=valgrind -v
+
+bench:
+	meson test -C BUILDDIR --benchmark
+
 download:
 	install -d data
 	if [[ ! -a data/counts ]]; then \

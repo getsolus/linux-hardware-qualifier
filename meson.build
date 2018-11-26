@@ -41,7 +41,9 @@ path_sysconfdir = join_paths(path_prefix, get_option('sysconfdir'))
 path_mandir = join_paths(path_prefix, get_option('mandir'))
 
 # Build the project
+incdir = include_directories('include')
 subdir('src')
+subdir('test')
 
 report = [
     '    Build configuration:',
