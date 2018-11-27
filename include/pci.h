@@ -49,6 +49,27 @@ LKDDB_PCI_ENTRY* lhq_pci_entry_new() {
     return result;
 }
 
+/* Check if entry is the same as other, copy pointers from other if so
+
+   @param entry - the entry to copy to
+   @param other - the entry to compare against and copy from
+   @returns 0 if equal otherwise < 0 or > 0
+*/
+int lhq_pci_compare_and_copy(LKDDB_PCI_ENTRY *entry, LKDDB_PCI_ENTRY *other) {
+    /* don't try to compare if entry has already been filled */
+    if( (entry->configOpts != NULL) && (entry->filename != NULL) ) {
+        return 0;
+    }
+    int compare = lhq_pci_id_compare_and_copy(&(entry->id),&(other->id));
+    if( compare != 0) return compare;
+    compare = lhq_pci_class_id_compare_and_copy(&(entry->class),&(other->class));
+    if( compare == 0 ){
+        entry->configOpts = other->configOpts;
+        entry->filename   = other->filename;
+    }
+    return compare;
+}
+
 /* Parse the next available PCI Entry
 
    @param entry - the entry to parse into

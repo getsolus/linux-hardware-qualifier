@@ -43,6 +43,25 @@ LKDDB_PCI_CLASS_ID* lhq_pci_class_id_new() {
     return result;
 }
 
+/* Check if entry is the same as other, copy pointers from other if so
+
+   @param entry - the entry to copy to
+   @param other - the entry to compare against and copy from
+   @returns 0 if equal otherwise < 0 or > 0
+*/
+int lhq_pci_class_id_compare_and_copy(LKDDB_PCI_CLASS_ID *entry, LKDDB_PCI_CLASS_ID *other) {
+    /* don't try to compare if entry has already been filled */
+    if( entry->name != NULL ) {
+        return 0;
+    }
+    int compare = strcmp(entry->classMask, other->classMask);
+    if( compare == 0 ){
+        entry->name = other->name;
+    }
+    return compare;
+}
+
+
 /* Parse a PCI Class ID from a file
 
    @param entry - the entry to write into

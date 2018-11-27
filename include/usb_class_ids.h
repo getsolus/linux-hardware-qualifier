@@ -48,6 +48,29 @@ LKDDB_USB_CLASS_ID* lhq_usb_class_id_new() {
     return result;
 }
 
+/* Check if entry is the same as other, copy pointers from other if so
+
+   @param entry - the entry to copy to
+   @param other - the entry to compare against and copy from
+   @returns 0 if equal otherwise < 0 or > 0
+*/
+int lhq_usb_class_id_compare_and_copy(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS_ID *other) {
+    /* don't try to compare if entry has already been filled */
+    if( entry->name != NULL ) {
+        return 0;
+    }
+    int compare = strcmp(entry->bClass, other->bClass);
+    if( compare != 0 ) return compare;
+    compare = strcmp(entry->bSubClass, other->bSubClass);
+    if( compare != 0 ) return compare;
+    compare = strcmp(entry->bProtocol, other->bProtocol);
+    if( compare == 0 ){
+        entry->name = other->name;
+    }
+    return compare;
+}
+
+
 /* Parse the next available USB Class ID
 
    @param entry - the entry to parse into
