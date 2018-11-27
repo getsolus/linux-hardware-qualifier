@@ -19,7 +19,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "index.h"
 #include "lhq_types.h"
 
 /* Representation of a LKDDB ACPI Entry

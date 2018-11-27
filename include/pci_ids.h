@@ -19,7 +19,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "index.h"
 #include "lhq_types.h"
 
 /* Representation of a LKDDB PCI ID
@@ -104,27 +103,5 @@ void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
 
 /* declare list type */
 LKDDB_LIST_DECLARE(pci_id,LKDDB_PCI_ID)
-
-/* Parse all of the PCI IDs in the provided Index
-
-   @param index - the index to read from
-*/
-void lhq_pci_ids(LHQ_INDEX *index) {
-    LKDDB_PCI_ID entry;
-    LKDDB_LIST *list = index->lists[LHQ_ID_PCI];
-    index->cursor = strstr(index->cursor, "\npci_ids");
-    while( lhq_pci_id_entry_parse(&entry, &(index->cursor)) ){
-        lhq_list_append(list, (void*)&entry);
-    }
-    lhq_list_append(list, (void*)&entry);
-    lhq_list_compact(list);
-#ifdef LHQ_DEBUG
-#if LHQ_DEBUG > 0
-    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
-    lhq_pci_id_list_print(list,stderr);
-#endif
-#endif
-}
-
 
 #endif

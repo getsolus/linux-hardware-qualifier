@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 #include <stdio.h>
-#include "pci_class_ids.h"
-#include "pci_ids.h"
-#include "usb_class_ids.h"
-#include "usb_ids.h"
-#include "index.h"
+#include "ids_index.h"
 #include "types_index.h"
 #include "config.h"
 
@@ -33,16 +29,13 @@ LHQ_TYPES_INDEX * lhq_build_types_index(FILE *lkddb) {
     return index;
 }
 
-LHQ_INDEX * lhq_build_ids_index(FILE *ids) {
-    LHQ_INDEX *idsIndex = lhq_index_new(4, ids);
+LHQ_IDS_INDEX * lhq_build_ids_index(FILE *ids) {
+    LHQ_IDS_INDEX *idsIndex = lhq_ids_index_new(ids);
 
-    lhq_pci_class_ids(idsIndex);
-    lhq_pci_ids(idsIndex);
-    lhq_usb_class_ids(idsIndex);
-    lhq_usb_ids(idsIndex);
+    lhq_ids_index_populate(idsIndex);
 #ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
-    lhq_index_summary(idsIndex);
+    lhq_ids_index_summary(idsIndex);
 #endif
 #endif
     return idsIndex;
@@ -68,12 +61,12 @@ int main(int argc, char **argv) {
             return -1;
         }
         LHQ_TYPES_INDEX *typesIndex = lhq_build_types_index(lkddb);
-        LHQ_INDEX *idsIndex = lhq_build_ids_index(ids);
+        LHQ_IDS_INDEX *idsIndex = lhq_build_ids_index(ids);
         fclose(lkddb);
         fclose(ids);
 
         lhq_types_index_free(typesIndex);
-        lhq_index_free(idsIndex);
+        lhq_ids_index_free(idsIndex);
     }
     return 0;
 }

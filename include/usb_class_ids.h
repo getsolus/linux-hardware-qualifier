@@ -19,7 +19,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "index.h"
 #include "lhq_types.h"
 
 /* Representation of a LKDDB USB Class ID
@@ -96,26 +95,5 @@ void lhq_usb_class_id_entry_print(LKDDB_USB_CLASS_ID *entry, FILE *out) {
 
 /* declare the USB Class ID list type */
 LKDDB_LIST_DECLARE(usb_class_id,LKDDB_USB_CLASS_ID)
-
-/* Parse all USB Class IDS from the Index
-
-   @param index - the index to populate
-*/
-void lhq_usb_class_ids(LHQ_INDEX* index) {
-    LKDDB_USB_CLASS_ID entry;
-    LKDDB_LIST *list = index->lists[LHQ_ID_USB_CLASS];
-    index->cursor = strstr(index->cursor, "\nusb_class_ids");
-    while( lhq_usb_class_id_entry_parse(&entry, &(index->cursor)) ){
-        lhq_list_append(list, (void*)&entry);
-    }
-    lhq_list_append(list, (void*)&entry);
-    lhq_list_compact(list);
-#ifdef LHQ_DEBUG
-#if LHQ_DEBUG > 0
-    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
-    lhq_usb_class_id_list_print(list,stderr);
-#endif
-#endif
-}
 
 #endif
