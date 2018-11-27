@@ -22,10 +22,11 @@
 #include "index.h"
 #include "lhq_types.h"
 
-/* PCI Class ID Format string for fscanf */
-const char * LKDDB_PCI_CLASS_ID_FORMAT = "pci_class_ids %s %s %s %[^\n]\n";
+/* Representation of a LKDDB PCI Class ID
 
-/* Representation of a LKDDB PCI Class ID */
+   @field classMask - the six character hexadecimal mask for a PCI Class
+   @field name      - the name of the PCI Class
+*/
 typedef struct {
     char *classMask;
     char *name;
@@ -36,14 +37,22 @@ typedef struct {
    @param contents - pointer to the actual string contents
    @param length   - length of the string (excluding \0 terminator)
 
-   @returns pointer to ther new LHQ_STRING
+   @returns pointer to ther new LKDDB_PCI_CLASS_ID
 */
 LKDDB_PCI_CLASS_ID* lhq_pci_class_id_new() {
     LKDDB_PCI_CLASS_ID *result = (LKDDB_PCI_CLASS_ID*)calloc(1,sizeof(LKDDB_PCI_CLASS_ID));
     return result;
 }
 
+/* Parse a PCI Class ID from a file
+
+   @param entry - the entry to write into
+   @param file  - the file to read from
+
+   @returns 0 if done, 1 if more to parse
+*/
 int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char ** file) {
+    /* classmask */
     *file = strchr(*file, ' ') + 1;
     entry->classMask = *file;
     entry->classMask[2] = entry->classMask[3];
@@ -52,9 +61,11 @@ int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char ** file) {
     entry->classMask[5] = entry->classMask[7];
     entry->classMask[7] = '\0';
     *file += 8;
+    /* name */
     *file = strchr(*file, ' ') + 1;
     entry->name         = *file;
     *file = strchr(*file, '\n');
+    /* check for more */
     if( *file != NULL ){
         (*file)++;
         (*file)[-1] = '\0';
@@ -65,25 +76,39 @@ int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char ** file) {
     return 1;
 }
 
+/* Print out a summary of a PCI Class ID
+
+    @param entry - the entry to print
+    @param out   - the file to print to
+*/
 void lhq_pci_class_id_entry_print(LKDDB_PCI_CLASS_ID *entry, FILE *out) {
     fprintf(out, "PCI Class ID:\n");
     fprintf(out, "\tMask: %s\n", entry->classMask);
     fprintf(out, "\tName: %s\n", entry->name);
 }
 
+/* declare list type */
 LKDDB_LIST_DECLARE(pci_class_id,LKDDB_PCI_CLASS_ID)
 
+/* Parse of the PCI Class IDs in the provided Index
+
+   @param index - the index to read from
+*/
 void lhq_pci_class_ids(LHQ_INDEX *index) {
     LKDDB_PCI_CLASS_ID entry;
     LKDDB_LIST *list = index->lists[LHQ_ID_PCI_CLASS];
     index->cursor = strstr(index->cursor, "\npci_class_ids");
     while( lhq_pci_class_id_entry_parse(&entry, &(index->cursor)) ) {
-        lhq_pci_class_id_list_append(list, &entry);
+        lhq_list_append(list, (void*)&entry);
     }
-    lhq_pci_class_id_list_append(list, &entry);
+    lhq_list_append(list, (void*)&entry);
     lhq_list_compact(list);
-    //fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
-    //lhq_pci_class_id_list_print(list,stderr);
+#ifdef LHQ_DEBUG
+#if LHQ_DEBUG > 0
+    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
+    lhq_pci_class_id_list_print(list,stderr);
+#endif
+#endif
 }
 
 #endif

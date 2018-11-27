@@ -22,12 +22,26 @@
 #include <string.h>
 #include "lhq_list.h"
 
+/* Print a summary of an index entry
+
+   @param entry - the entry to print
+   @param out   - the file to write to
+*/
 void lhq_index_entry_print(uint8_t **entry, FILE *out) {
     fprintf(out, "0x%016lx\n", (uint64_t)*entry);
 }
 
+/* declare the index list type */
 LKDDB_LIST_DECLARE(index,uint8_t*)
 
+/* Declare the LHQ_INDEX type
+
+   @field raw       - the contents of the file for this index
+   @field cursor    - pointer to the current location in raw
+   @field rawLength - the nubmer of bytes in raw
+   @field lists     - a list of lists for records in raw
+   @field length    - the number of lists in lists
+*/
 typedef struct {
     uint8_t *raw;
     char *cursor;
@@ -57,7 +71,7 @@ LHQ_INDEX* lhq_index_new(unsigned int length, FILE *f) {
     }
     index->lists = (LKDDB_LIST**)calloc(length, sizeof(LKDDB_LIST*));
     index->length = length;
-    for(unsigned int i = 0; i < index->length; i++) {
+    for( unsigned int i = 0; i < length; i++ ) {
         index->lists[i] = lhq_index_list_new();
     }
     return index;
@@ -68,11 +82,12 @@ void lhq_index_summary(LHQ_INDEX* index) {
         fprintf(stderr, "List[%d]: %d %d\n", i, index->lists[i]->length, index->lists[i]->capacity);
     }
 }
+
 void lhq_index_free(LHQ_INDEX* index) {
-    for(unsigned int i = 0; i < index->length; i++) {
-        lhq_index_list_free(index->lists[i]);
-    }
     free(index->raw);
+    for( unsigned int i = 0; i < index->length; i++ ) {
+        lhq_list_free(index->lists[i]);
+    }
     free(index->lists);
     free(index);
 }

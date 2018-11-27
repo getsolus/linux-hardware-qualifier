@@ -19,21 +19,19 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "index.h"
-#include "lhq_types.h"
+#include "pci_class_ids.h"
+#include "pci_ids.h"
 
-/* PCI Device Format string for fscanf */
-const char * LKDDB_PCI_FORMAT = "pci %s %s %s %s %s : %[^:\n] : %s\n";
+/* Representation of a LKDDB PCI Entry
 
-/* Representation of a LKDDB PCI Entry */
+   @field id         - the id of this PCI device
+   @field class      - the class of this PCI device
+   @field configOpts - the configuration options needed to enable this device
+   @field filename   - the source file where this device is declared
+*/
 typedef struct {
-    char  *vendor;
-    char  *device;
-
-    char  *subVendor;
-    char  *subDevice;
-
-    char  *classMask;
+    LKDDB_PCI_ID          id;
+    LKDDB_PCI_CLASS_ID class;
 
     char *configOpts;
     char *filename;
@@ -44,35 +42,46 @@ typedef struct {
    @param contents - pointer to the actual string contents
    @param length   - length of the string (excluding \0 terminator)
 
-   @retruns pointer to ther new LHQ_STRING
+   @retruns pointer to ther new LKDDB_PCI_ENTRY
 */
 LKDDB_PCI_ENTRY* lhq_pci_entry_new() {
     LKDDB_PCI_ENTRY *result = (LKDDB_PCI_ENTRY*)calloc(1,sizeof(LKDDB_PCI_ENTRY));
     return result;
 }
 
+/* Parse the next available PCI Entry
+
+   @param entry - the entry to parse into
+   @param file  - the file to parse from
+   @returns 0 if no more to read, 1 if more to read
+*/
 int lhq_pci_entry_parse(LKDDB_PCI_ENTRY *entry, char ** file) {
+    /* id */
     *file = strchr(*file, ' ') + 1;
-    entry->vendor           = *file;
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->device          = *file;
+    entry->id.vendor           = *file;
     *file = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
-    entry->subVendor       = *file;
+    entry->id.device          = *file;
     *file = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
-    entry->subDevice    = *file;
+    entry->id.subVendor       = *file;
     *file = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
-    entry->classMask    = *file;
+    entry->id.subDevice    = *file;
+    /* class */
+    *file = strchr(*file, ' ') + 1;
+    (*file)[-1] = '\0';
+    entry->class.classMask    = *file;
+    /* configOpts */
     *file = strchr(*file, ':') + 2;
     (*file)[-3] = '\0';
     entry->configOpts         = *file;
+    /* filename */
     *file = strchr(*file, ':') + 2;
     (*file)[-3] = '\0';
     entry->filename           = *file;
     *file = strstr(*file, "\n");
+    /* check for more */
     if( *file != NULL ){
         (*file)++;
         (*file)[-1] = '\0';
@@ -83,32 +92,28 @@ int lhq_pci_entry_parse(LKDDB_PCI_ENTRY *entry, char ** file) {
     return 1;
 }
 
+/* Print a summary of a PCI Entry
+
+   @param entry - the entry to print
+   @param out   - the file to write to
+*/
 void lhq_pci_entry_print(LKDDB_PCI_ENTRY *entry, FILE *out) {
     fprintf(out, "PCI Entry:\n");
-    fprintf(out, "\tVendor: %s:%s\n", entry->vendor, entry->subVendor);
-    fprintf(out, "\tDevice: %s:%s\n", entry->device, entry->subDevice);
-    fprintf(out, "\tClassMask: %s\n", entry->classMask);
+    lhq_pci_id_entry_print(&(entry->id),out);
+    lhq_pci_class_id_entry_print(&(entry->class),out);
     fprintf(out, "\tConfig Options: %s\n", entry->configOpts);
     fprintf(out, "\tSource: %s\n", entry->filename);
 }
 
+/* Destroy a PCI Entry
+
+   @param entry - the entry to destroy
+*/
 void lhq_pci_entry_free(LKDDB_PCI_ENTRY *entry) {
     free(entry);
 }
 
+/* declare pci list type */
 LKDDB_LIST_DECLARE(pci,LKDDB_PCI_ENTRY)
-
-void lhq_pci(LHQ_INDEX *index) {
-    LKDDB_PCI_ENTRY entry;
-    LKDDB_LIST *list = index->lists[LHQ_TYPE_PCI];
-    index->cursor = strstr(index->cursor, "\npci");
-    while( lhq_pci_entry_parse(&entry, &(index->cursor)) ){
-        lhq_pci_list_append(list, &entry);
-    }
-    lhq_pci_list_append(list, &entry);
-    lhq_list_compact(list);
-    //fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
-    //lhq_pci_list_print(list,stderr);
-}
 
 #endif

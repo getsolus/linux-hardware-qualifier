@@ -10,6 +10,7 @@ cdata.set_quoted('PACKAGE_VERSION', meson.project_version())
 cdata.set_quoted('PACKAGE_NAME', meson.project_name())
 cdata.set_quoted('DATADIR', path_datadir)
 cdata.set_quoted('SYSCONFDIR', path_sysconfdir)
+cdata.set('LHQ_DEBUG', '1')
 
 config_h = configure_file(
      configuration: cdata,

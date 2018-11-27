@@ -22,14 +22,17 @@
 #include "index.h"
 #include "lhq_types.h"
 
-/* USB Class ID Format string for fscanf */
-const char * LKDDB_USB_CLASS_ID_FORMAT = "usb_class_ids %s %s %s %[^\n]\n";
+/* Representation of a LKDDB USB Class ID
 
-/* Representation of a LKDDB USB Class ID */
+   @param bClass    - the 4 character hexadecimal USB Class ID
+   @param bSubClass - the 4 character hexadecimal USB Subclass ID
+   @param bProtocol - the 4 character hexadecimal USB Protocol ID
+   @param name      - the name of this class
+*/
 typedef struct {
-    char *bInterfaceClass;
-    char *bInterfaceSubClass;
-    char *bInterfaceProtocol;
+    char *bClass;
+    char *bSubClass;
+    char *bProtocol;
 
     char *name;
 } LKDDB_USB_CLASS_ID;
@@ -39,26 +42,37 @@ typedef struct {
    @param contents - pointer to the actual string contents
    @param length   - length of the string (excluding \0 terminator)
 
-   @retruens pointer to ther new LHQ_STRING
+   @retruens pointer to ther new LKDDB_USB_CLASS_ID
 */
 LKDDB_USB_CLASS_ID* lhq_usb_class_id_new() {
     LKDDB_USB_CLASS_ID *result = (LKDDB_USB_CLASS_ID*)calloc(1,sizeof(LKDDB_USB_CLASS_ID));
     return result;
 }
 
+/* Parse the next available USB Class ID
+
+   @param entry - the entry to parse into
+   @param file  - the file to read from
+   @returns 0 if no mroe to read, 1 if more
+*/
 int lhq_usb_class_id_entry_parse(LKDDB_USB_CLASS_ID *entry, char ** file) {
+    /* class */
     *file = strchr(*file, ' ') + 1;
-    entry->bInterfaceClass    = *file;
+    entry->bClass    = *file;
+    /* subclass */
     *file = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
-    entry->bInterfaceSubClass = *file;
+    entry->bSubClass = *file;
+    /* protocol */
     *file = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
-    entry->bInterfaceProtocol = *file;
+    entry->bProtocol = *file;
+    /* name */
     *file = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
     entry->name = *file;
     *file = strchr(*file, '\n');
+    /* check for more */
     if( *file != NULL ){
         (*file)++;
         (*file)[-1] = '\0';
@@ -69,25 +83,39 @@ int lhq_usb_class_id_entry_parse(LKDDB_USB_CLASS_ID *entry, char ** file) {
     return 1;
 }
 
+/* Print a summary of this USB Class ID
+
+   @param entry - the entry to print
+   @param out   - the file to write to
+*/
 void lhq_usb_class_id_entry_print(LKDDB_USB_CLASS_ID *entry, FILE *out) {
     fprintf(out, "USB Class ID:\n");
-    fprintf(out, "\tIDs: %s:%s:%s\n", entry->bInterfaceClass, entry->bInterfaceSubClass, entry->bInterfaceProtocol);
+    fprintf(out, "\tIDs: %s:%s:%s\n", entry->bClass, entry->bSubClass, entry->bProtocol);
     fprintf(out, "\tName: %s\n", entry->name);
 }
 
+/* declare the USB Class ID list type */
 LKDDB_LIST_DECLARE(usb_class_id,LKDDB_USB_CLASS_ID)
 
+/* Parse all USB Class IDS from the Index
+
+   @param index - the index to populate
+*/
 void lhq_usb_class_ids(LHQ_INDEX* index) {
     LKDDB_USB_CLASS_ID entry;
     LKDDB_LIST *list = index->lists[LHQ_ID_USB_CLASS];
     index->cursor = strstr(index->cursor, "\nusb_class_ids");
     while( lhq_usb_class_id_entry_parse(&entry, &(index->cursor)) ){
-        lhq_usb_class_id_list_append(list, &entry);
+        lhq_list_append(list, (void*)&entry);
     }
-    lhq_usb_class_id_list_append(list, &entry);
+    lhq_list_append(list, (void*)&entry);
     lhq_list_compact(list);
-    //fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
-    //lhq_usb_class_id_list_print(list,stderr);
+#ifdef LHQ_DEBUG
+#if LHQ_DEBUG > 0
+    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
+    lhq_usb_class_id_list_print(list,stderr);
+#endif
+#endif
 }
 
 #endif

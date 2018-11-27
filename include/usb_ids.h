@@ -22,13 +22,15 @@
 #include "index.h"
 #include "lhq_types.h"
 
-/* USB ID Format string for fscanf */
-const char * LKDDB_USB_ID_FORMAT = "usb_ids %s %s %[^\n]\n";
+/* Representation of a LKDDB USB ID
 
-/* Representation of a LKDDB USB ID */
+   @field vendor  - the 4 character hexadecimal USB Vendor ID
+   @field product - the 4 character hexadecimal USB Product ID
+   @field name    - the name of the device or vendor
+*/
 typedef struct {
-    char *idVendor;
-    char *idProduct;
+    char *vendor;
+    char *product;
 
     char *name;
 } LKDDB_USB_ID;
@@ -38,23 +40,33 @@ typedef struct {
    @param contents - pointer to the actual string contents
    @param length   - length of the string (excluding \0 terminator)
 
-   @retruens pointer to ther new LHQ_STRING
+   @retruens pointer to ther new LKDDB_USB_ID
 */
 LKDDB_USB_ID* lhq_usb_id_new() {
     LKDDB_USB_ID *result = (LKDDB_USB_ID*)calloc(1,sizeof(LKDDB_USB_ID));
     return result;
 }
 
+/* Parse a LKDDB_USB_ID from a file
+
+   @param entry - the entry to parse into
+   @param file  - the file to parse
+   @returns 0 if no more to parse, 1 if more
+*/
 int lhq_usb_id_entry_parse(LKDDB_USB_ID *entry, char ** file) {
+    /* vendor */
     *file = strchr(*file, ' ') + 1;
-    entry->idVendor = *file;
+    entry->vendor = *file;
+    /* product */
     *file = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
-    entry->idProduct = *file;
+    entry->product = *file;
+    /* name */
     *file = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
     entry->name = *file;
     *file = strchr(*file, '\n');
+    /* check for more */
     if( *file != NULL ){
         (*file)++;
         (*file)[-1] = '\0';
@@ -65,25 +77,39 @@ int lhq_usb_id_entry_parse(LKDDB_USB_ID *entry, char ** file) {
     return 1;
 }
 
+/* Print a sumary of a USB_ID to a file
+
+   @param entry - the entry to print
+   @param file  - the file to write to
+*/
 void lhq_usb_id_entry_print(LKDDB_USB_ID *entry, FILE *out) {
     fprintf(out, "USB ID:\n");
-    fprintf(out, "\tIDs: %s:%s\n", entry->idVendor, entry->idProduct);
+    fprintf(out, "\tIDs: %s:%s\n", entry->vendor, entry->product);
     fprintf(out, "\tName: %s\n", entry->name);
 }
 
+/* delclare USB ID list type */
 LKDDB_LIST_DECLARE(usb_id,LKDDB_USB_ID)
 
+/* Parse USB IDS from index
+
+   @param index - the index to parse
+*/
 void lhq_usb_ids(LHQ_INDEX *index) {
     LKDDB_USB_ID entry;
     LKDDB_LIST *list = index->lists[LHQ_ID_USB];
     index->cursor = strstr(index->cursor, "\nusb_ids");
     while( lhq_usb_id_entry_parse(&entry, &(index->cursor)) ) {
-        lhq_usb_id_list_append(list, &entry);
+        lhq_list_append(list, (void*)&entry);
     }
-    lhq_usb_id_list_append(list, &entry);
+    lhq_list_append(list, (void*)&entry);
     lhq_list_compact(list);
-    //fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
-    //lhq_usb_id_list_print(list,stderr);
+#ifdef LHQ_DEBUG
+#if LHQ_DEBUG > 0
+    fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
+    lhq_usb_id_list_print(list,stderr);
+#endif
+#endif
 }
 
 #endif

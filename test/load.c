@@ -13,26 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include <stdio.h>
-#include "acpi.h"
-#include "pci.h"
 #include "pci_class_ids.h"
 #include "pci_ids.h"
-#include "usb.h"
 #include "usb_class_ids.h"
 #include "usb_ids.h"
 #include "index.h"
+#include "types_index.h"
 #include "config.h"
 
-LHQ_INDEX * lhq_build_types_index(FILE *lkddb) {
-    LHQ_INDEX *typesIndex = lhq_index_new(3, lkddb);
-
-    lhq_acpi(typesIndex);
-    lhq_pci(typesIndex);
-    lhq_usb(typesIndex);
-    //lhq_index_summary(typesIndex);
-    return typesIndex;
+LHQ_TYPES_INDEX * lhq_build_types_index(FILE *lkddb) {
+    LHQ_TYPES_INDEX *index = lhq_types_index_new(lkddb);
+    lhq_types_index_populate(index);
+#ifdef LHQ_DEBUG
+#if LHQ_DEBUG > 0
+    lhq_types_index_summary(index);
+#endif
+#endif
+    return index;
 }
 
 LHQ_INDEX * lhq_build_ids_index(FILE *ids) {
@@ -42,7 +40,11 @@ LHQ_INDEX * lhq_build_ids_index(FILE *ids) {
     lhq_pci_ids(idsIndex);
     lhq_usb_class_ids(idsIndex);
     lhq_usb_ids(idsIndex);
-    //lhq_index_summary(idsIndex);
+#ifdef LHQ_DEBUG
+#if LHQ_DEBUG > 0
+    lhq_index_summary(idsIndex);
+#endif
+#endif
     return idsIndex;
 }
 
@@ -65,12 +67,12 @@ int main(int argc, char **argv) {
             fprintf(stderr, "Failed to open '%s'. Exiting.\n", "data/ids.list");
             return -1;
         }
-        LHQ_INDEX *typesIndex = lhq_build_types_index(lkddb);
+        LHQ_TYPES_INDEX *typesIndex = lhq_build_types_index(lkddb);
         LHQ_INDEX *idsIndex = lhq_build_ids_index(ids);
         fclose(lkddb);
         fclose(ids);
 
-        lhq_index_free(typesIndex);
+        lhq_types_index_free(typesIndex);
         lhq_index_free(idsIndex);
     }
     return 0;

@@ -17,13 +17,19 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_TYPES_H__
 #define __LINUX_HARDWARE_QUALIFIER_TYPES_H__
 
-#define LHQ_TYPE_ACPI 0
-#define LHQ_TYPE_PCI  1
-#define LHQ_TYPE_USB  2
+enum {
+    LHQ_TYPE_ACPI,
+    LHQ_TYPE_PCI,
+    LHQ_TYPE_USB,
+    LHQ_TYPE_COUNT
+};
 
-#define LHQ_ID_PCI_CLASS 0
-#define LHQ_ID_PCI       1
-#define LHQ_ID_USB_CLASS 2
-#define LHQ_ID_USB       3
+enum {
+    LHQ_ID_PCI_CLASS,
+    LHQ_ID_PCI,
+    LHQ_ID_USB_CLASS,
+    LHQ_ID_USB,
+    LHQ_ID_COUNT
+};
 
 #endif
