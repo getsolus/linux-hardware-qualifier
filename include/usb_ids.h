@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "lhq_types.h"
+#include "ids_index.h"
 
 /* Representation of a LKDDB USB ID
 
@@ -84,7 +85,7 @@ int lhq_usb_id_entry_parse(LKDDB_USB_ID *entry, char ** file) {
     *file = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
     entry->name = *file;
-    *file = strchr(*file, '\n');
+    *file = strstr(*file, "\n");
     /* check for more */
     if( *file != NULL ){
         (*file)++;

@@ -82,7 +82,7 @@ int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char ** file) {
     /* name */
     *file = strchr(*file, ' ') + 1;
     entry->name         = *file;
-    *file = strchr(*file, '\n');
+    *file = strstr(*file, "\n");
     /* check for more */
     if( *file != NULL ){
         (*file)++;

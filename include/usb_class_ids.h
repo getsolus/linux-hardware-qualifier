@@ -93,7 +93,7 @@ int lhq_usb_class_id_entry_parse(LKDDB_USB_CLASS_ID *entry, char ** file) {
     *file = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
     entry->name = *file;
-    *file = strchr(*file, '\n');
+    *file = strstr(*file, "\n");
     /* check for more */
     if( *file != NULL ){
         (*file)++;
