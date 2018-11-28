@@ -17,10 +17,10 @@ config_h = configure_file(
      output: 'config.h',
 )
 
-load_sources = [
-    'load.c',
-]
+e1 = executable('test-load', 'load.c', include_directories: incdir)
+test('Load LKDDB', e1, workdir : meson.source_root())
+benchmark('Bench Load LKDDB', e1, args: '100', workdir : meson.source_root())
 
-e = executable('test-load', sources: load_sources, include_directories: incdir)
-test('Load LKDDB', e, workdir : meson.source_root())
-benchmark('Bench Load LKDDB', e, args: '100', workdir : meson.source_root())
+e2 = executable('test-search', 'search.c', include_directories: incdir)
+test('Search LKDDB', e2, workdir : meson.source_root())
+benchmark('Bench Search LKDDB', e2, args: '100', workdir : meson.source_root())
