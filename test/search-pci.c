@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Failed to open '%s'. Exiting.\n", DATADIR "/" PACKAGE_NAME "/lkddb.list");
         return -1;
     }
-    FILE *ids = fopen("data/ids.list", "r");
+    FILE *ids = fopen(DATADIR "/" PACKAGE_NAME "/ids.list", "r");
     if(ids == NULL) {
         fprintf(stderr, "Failed to open '%s'. Exiting.\n", "data/ids.list");
         return -1;
