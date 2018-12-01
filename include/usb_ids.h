@@ -37,7 +37,7 @@ typedef struct {
 
 /* Create a new LKDDB_USB_ID
 
-   @returns pointer to ther new LKDDB_USB_ID
+   @returns pointer to the new LKDDB_USB_ID
 */
 LKDDB_USB_ID *lhq_usb_id_new() {
     LKDDB_USB_ID *result = (LKDDB_USB_ID *)calloc(1, sizeof(LKDDB_USB_ID));
@@ -104,7 +104,7 @@ int lhq_usb_id_entry_parse(LKDDB_USB_ID *entry, char **file) {
     return 1;
 }
 
-/* Print a sumary of a USB_ID to a file
+/* Print a summary of a USB_ID to a file
 
    @param entry - the entry to print
    @param file  - the file to write to

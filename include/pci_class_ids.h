@@ -33,7 +33,7 @@ typedef struct {
 
 /* Create a new LKDDB_PCI_CLASS_ID
 
-   @returns pointer to ther new LKDDB_PCI_CLASS_ID
+   @returns pointer to the new LKDDB_PCI_CLASS_ID
 */
 LKDDB_PCI_CLASS_ID *lhq_pci_class_id_new() {
     LKDDB_PCI_CLASS_ID *result = (LKDDB_PCI_CLASS_ID *)calloc(1, sizeof(LKDDB_PCI_CLASS_ID));

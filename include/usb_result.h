@@ -45,7 +45,7 @@ typedef struct {
 
 /* Create a new LHQ_USB_RESULT
 
-   @returns pointer to ther new LHQ_USB_RESULT
+   @returns pointer to the new LHQ_USB_RESULT
 */
 LHQ_USB_RESULT *lhq_usb_result_new() {
     LHQ_USB_RESULT *result = (LHQ_USB_RESULT *)calloc(1, sizeof(LHQ_USB_RESULT));

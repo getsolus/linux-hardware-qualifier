@@ -37,7 +37,7 @@ typedef struct {
 
 /* Create a new LKDDB_ACPI_ENTRY
 
-   @returns pointer to ther new LKDDB_ACPI_ENTRY
+   @returns pointer to the new LKDDB_ACPI_ENTRY
 */
 LKDDB_ACPI_ENTRY *lhq_acpi_entry_new() {
     LKDDB_ACPI_ENTRY *result = (LKDDB_ACPI_ENTRY *)calloc(1, sizeof(LKDDB_ACPI_ENTRY));

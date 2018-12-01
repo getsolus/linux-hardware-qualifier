@@ -47,7 +47,7 @@ typedef struct {
 
 /* Create a new LKDDB_USB_ENTRY
 
-   @returns pointer to ther new LKDDB_USB_ENTRY
+   @returns pointer to the new LKDDB_USB_ENTRY
 */
 LKDDB_USB_ENTRY *lhq_usb_entry_new() {
     LKDDB_USB_ENTRY *result = (LKDDB_USB_ENTRY *)calloc(1, sizeof(LKDDB_USB_ENTRY));

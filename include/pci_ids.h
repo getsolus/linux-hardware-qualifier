@@ -23,10 +23,10 @@
 
 /* Representation of a LKDDB PCI ID
 
-   @field vendor    - the 4 chracter hexadecimal ID of the device Vendor
-   @field device    - the 4 chracter hexadecimal ID of the device
-   @field subVendor - the 4 chracter hexadecimal ID of the subdevice Vendor
-   @field subDevice - the 4 chracter hexadecimal ID of the subdevice
+   @field vendor    - the 4 character hexadecimal ID of the device Vendor
+   @field device    - the 4 character hexadecimal ID of the device
+   @field subVendor - the 4 character hexadecimal ID of the subdevice Vendor
+   @field subDevice - the 4 character hexadecimal ID of the subdevice
    @field name      - the name of the device
 */
 typedef struct {
@@ -41,7 +41,7 @@ typedef struct {
 
 /* Create a new LKDDB_PCI_ID
 
-   @returns pointer to ther new LKDDB_PCI_ID
+   @returns pointer to the new LKDDB_PCI_ID
 */
 LKDDB_PCI_ID *lhq_pci_id_new() {
     LKDDB_PCI_ID *result = (LKDDB_PCI_ID *)calloc(1, sizeof(LKDDB_PCI_ID));

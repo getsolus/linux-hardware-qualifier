@@ -38,7 +38,7 @@ typedef struct {
 
 /* Create a new LKDDB_USB_CLASS_ID
 
-   @returns pointer to ther new LKDDB_USB_CLASS_ID
+   @returns pointer to the new LKDDB_USB_CLASS_ID
 */
 LKDDB_USB_CLASS_ID *lhq_usb_class_id_new() {
     LKDDB_USB_CLASS_ID *result = (LKDDB_USB_CLASS_ID *)calloc(1, sizeof(LKDDB_USB_CLASS_ID));
@@ -93,7 +93,7 @@ int lhq_usb_class_id_compare_and_copy(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS
 
    @param entry - the entry to parse into
    @param file  - the file to read from
-   @returns 0 if no mroe to read, 1 if more
+   @returns 0 if no more to read, 1 if more
 */
 int lhq_usb_class_id_entry_parse(LKDDB_USB_CLASS_ID *entry, char **file) {
     /* class */

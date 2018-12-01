@@ -39,7 +39,7 @@ typedef struct {
 
 /* Create a new LKDDB_PCI_ENTRY
 
-   @returns pointer to ther new LKDDB_PCI_ENTRY
+   @returns pointer to the new LKDDB_PCI_ENTRY
 */
 LKDDB_PCI_ENTRY *lhq_pci_entry_new() {
     LKDDB_PCI_ENTRY *result = (LKDDB_PCI_ENTRY *)calloc(1, sizeof(LKDDB_PCI_ENTRY));
