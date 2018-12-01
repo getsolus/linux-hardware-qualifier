@@ -16,8 +16,8 @@
 
 #include "config.h"
 
-#include "ids_index.h"
 #include "acpi_result.h"
+#include "ids_index.h"
 
 #include <stdio.h>
 
