@@ -40,6 +40,38 @@ LKDDB_PCI_CLASS_ID *lhq_pci_class_id_new() {
     return result;
 }
 
+/* Convert a full PCI Class ID to one suitable for finding just the PCI Class
+
+   @param entry - the full PCI Class ID
+   @param class - the extracted PCI Class
+*/
+void lhq_pci_class_id_class(LKDDB_PCI_CLASS_ID *entry, LKDDB_PCI_CLASS_ID *class) {
+    class->classMask    = (char *)calloc(7, sizeof(char));
+    class->classMask[0] = entry->classMask[0];
+    class->classMask[1] = entry->classMask[1];
+    class->classMask[2] = '.';
+    class->classMask[3] = '.';
+    class->classMask[4] = '.';
+    class->classMask[5] = '.';
+    class->classMask[6] = '\0';
+}
+
+/* Convert a full PCI Class ID to one suitable for finding just the PCI Subclass
+
+   @param entry    - the full PCI Class ID
+   @param subclass - the extracted PCI Subclass
+*/
+void lhq_pci_class_id_subclass(LKDDB_PCI_CLASS_ID *entry, LKDDB_PCI_CLASS_ID *subclass) {
+    subclass->classMask    = (char *)calloc(7, sizeof(char));
+    subclass->classMask[0] = entry->classMask[0];
+    subclass->classMask[1] = entry->classMask[1];
+    subclass->classMask[2] = entry->classMask[2];
+    subclass->classMask[3] = entry->classMask[3];
+    subclass->classMask[4] = '.';
+    subclass->classMask[5] = '.';
+    subclass->classMask[6] = '\0';
+}
+
 /* Check if entry is the same as other, copy pointers from other if so
 
    @param entry - the entry to copy to
@@ -47,12 +79,8 @@ LKDDB_PCI_CLASS_ID *lhq_pci_class_id_new() {
    @returns 0 if equal otherwise < 0 or > 0
 */
 int lhq_pci_class_id_compare_and_copy(LKDDB_PCI_CLASS_ID *entry, LKDDB_PCI_CLASS_ID *other) {
-    /* don't try to compare if entry has already been filled */
-    if(entry->name != NULL) {
-        return 0;
-    }
     int compare = strcmp(entry->classMask, other->classMask);
-    if(compare == 0) {
+    if((entry->name == NULL) && (compare == 0)) {
         entry->name = other->name;
     }
     return compare;
@@ -73,12 +101,12 @@ int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char **file) {
     entry->classMask[3] = entry->classMask[4];
     entry->classMask[4] = entry->classMask[6];
     entry->classMask[5] = entry->classMask[7];
-    entry->classMask[7] = '\0';
-    *file += 8;
+    entry->classMask[6] = '\0';
+    *file += 7;
     /* name */
     *file       = strchr(*file, ' ') + 1;
     entry->name = *file;
-    *file       = strstr(*file, "\n");
+    *file       = strchr(*file, '\n');
     /* check for more */
     if(*file != NULL) {
         (*file)++;

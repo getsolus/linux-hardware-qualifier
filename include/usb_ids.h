@@ -64,7 +64,7 @@ int lhq_usb_id_compare_and_copy(LKDDB_USB_ID *entry, LKDDB_USB_ID *other) {
     int compare = strcmp(entry->vendor, other->vendor);
     if(compare != 0) return compare;
     compare = strcmp(entry->product, other->product);
-    if((!entry->name) && (compare == 0)) {
+    if((entry->name == NULL) && (compare == 0)) {
         entry->name = other->name;
     }
     return compare;

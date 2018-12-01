@@ -21,6 +21,10 @@ e1 = executable('test-load', 'load.c', include_directories: incdir)
 test('Load LKDDB', e1, workdir : meson.source_root())
 benchmark('Bench Load LKDDB', e1, args: '1000', workdir : meson.source_root())
 
-e2 = executable('test-search', 'search.c', include_directories: incdir)
-test('Search LKDDB', e2, workdir : meson.source_root())
-benchmark('Bench Search LKDDB', e2, args: '1000', workdir : meson.source_root())
+e2 = executable('test-search-pci', 'search-pci.c', include_directories: incdir)
+test('Search LKDDB for PCI Device', e2, workdir : meson.source_root())
+benchmark('Bench Search LKDDB PCI', e2, args: '1000', workdir : meson.source_root())
+
+e3 = executable('test-search-usb', 'search-usb.c', include_directories: incdir)
+test('Search LKDDB for USB Device', e3, workdir : meson.source_root())
+benchmark('Bench Search LKDDB USB', e3, args: '1000', workdir : meson.source_root())

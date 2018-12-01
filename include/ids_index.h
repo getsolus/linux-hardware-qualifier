@@ -89,7 +89,7 @@ void lhq_ids_index_summary(LHQ_IDS_INDEX *index) {
 void lhq_pci_class_ids_parse(LHQ_IDS_INDEX *index) {
     LKDDB_PCI_CLASS_ID entry;
     LHQ_LIST *list = index->lists[LHQ_ID_PCI_CLASS];
-    index->cursor  = strstr(index->cursor, "\npci_class_ids");
+    index->cursor  = strstr(index->cursor, "pci_class_ids");
     while(lhq_pci_class_id_entry_parse(&entry, &(index->cursor))) {
         lhq_list_append(list, (void *)&entry);
     }
@@ -110,7 +110,7 @@ void lhq_pci_class_ids_parse(LHQ_IDS_INDEX *index) {
 void lhq_pci_ids_parse(LHQ_IDS_INDEX *index) {
     LKDDB_PCI_ID entry;
     LHQ_LIST *list = index->lists[LHQ_ID_PCI];
-    // index->cursor = strstr(index->cursor, "\npci_ids");
+    index->cursor  = strstr(index->cursor, "\npci_ids");
     while(lhq_pci_id_entry_parse(&entry, &(index->cursor))) {
         lhq_list_append(list, (void *)&entry);
     }
@@ -131,7 +131,7 @@ void lhq_pci_ids_parse(LHQ_IDS_INDEX *index) {
 void lhq_usb_class_ids_parse(LHQ_IDS_INDEX *index) {
     LKDDB_USB_CLASS_ID entry;
     LHQ_LIST *list = index->lists[LHQ_ID_USB_CLASS];
-    // index->cursor = strstr(index->cursor, "\nusb_class_ids");
+    index->cursor  = strstr(index->cursor, "\nusb_class_ids");
     while(lhq_usb_class_id_entry_parse(&entry, &(index->cursor))) {
         lhq_list_append(list, (void *)&entry);
     }
@@ -184,6 +184,50 @@ void lhq_ids_index_populate(LHQ_IDS_INDEX *index) {
    @param start - index to start from
    @returns index of the match or the length of the list if not found
 */
+unsigned int lhq_pci_id_search_and_copy(LHQ_IDS_INDEX *index, LKDDB_PCI_ID *entry, unsigned int start) {
+    LHQ_LIST *list    = index->lists[LHQ_ID_PCI];
+    LKDDB_PCI_ID *ids = (LKDDB_PCI_ID *)list->data;
+    unsigned int i    = start;
+    for(; i < list->length; i++) {
+        if(lhq_pci_id_compare_and_copy(entry, &ids[i]) == 0) {
+            break;
+        }
+    }
+    if(entry->name == NULL) {
+        entry->name = "";
+    }
+    return i;
+}
+
+/* Search for a matching entry, copy pointers from it if found
+
+   @param index - the index to search in
+   @param entry - the entry to copy to
+   @param start - index to start from
+   @returns index of the match or the length of the list if not found
+*/
+unsigned int lhq_pci_class_id_search_and_copy(LHQ_IDS_INDEX *index, LKDDB_PCI_CLASS_ID *entry, unsigned int start) {
+    LHQ_LIST *list          = index->lists[LHQ_ID_PCI_CLASS];
+    LKDDB_PCI_CLASS_ID *ids = (LKDDB_PCI_CLASS_ID *)list->data;
+    unsigned int i          = start;
+    for(; i < list->length; i++) {
+        if(lhq_pci_class_id_compare_and_copy(entry, &ids[i]) == 0) {
+            break;
+        }
+    }
+    if(entry->name == NULL) {
+        entry->name = "";
+    }
+    return i;
+}
+
+/* Search for a matching entry, copy pointers from it if found
+
+   @param index - the index to search in
+   @param entry - the entry to copy to
+   @param start - index to start from
+   @returns index of the match or the length of the list if not found
+*/
 unsigned int lhq_usb_id_search_and_copy(LHQ_IDS_INDEX *index, LKDDB_USB_ID *entry, unsigned int start) {
     LHQ_LIST *list    = index->lists[LHQ_ID_USB];
     LKDDB_USB_ID *ids = (LKDDB_USB_ID *)list->data;
@@ -193,7 +237,7 @@ unsigned int lhq_usb_id_search_and_copy(LHQ_IDS_INDEX *index, LKDDB_USB_ID *entr
             break;
         }
     }
-    if(!entry->name) {
+    if(entry->name == NULL) {
         entry->name = "";
     }
     return i;
@@ -215,7 +259,7 @@ unsigned int lhq_usb_class_id_search_and_copy(LHQ_IDS_INDEX *index, LKDDB_USB_CL
             break;
         }
     }
-    if(!entry->name) {
+    if(entry->name == NULL) {
         entry->name = "";
     }
     return i;

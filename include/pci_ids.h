@@ -48,28 +48,16 @@ LKDDB_PCI_ID *lhq_pci_id_new() {
     return result;
 }
 
-/* Check if entry is the same as other, copy pointers from other if so
+/* Convert a full PCI ID to one suitable for finding just the PCI Vendor
 
-   @param entry - the entry to copy to
-   @param other - the entry to compare against and copy from
-   @returns 0 if equal otherwise < 0 or > 0
+   @param entry  - the full PCI ID
+   @param vendor - the extracted PCI Vendor
 */
-int lhq_pci_id_compare_and_copy(LKDDB_PCI_ID *entry, LKDDB_PCI_ID *other) {
-    /* don't try to compare if entry has already been filled */
-    if(entry->name != NULL) {
-        return 0;
-    }
-    int compare = strcmp(entry->vendor, other->vendor);
-    if(compare != 0) return compare;
-    compare = strcmp(entry->device, other->device);
-    if(compare != 0) return compare;
-    compare = strcmp(entry->subVendor, other->subVendor);
-    if(compare != 0) return compare;
-    compare = strcmp(entry->subDevice, other->subDevice);
-    if(compare == 0) {
-        entry->name = other->name;
-    }
-    return compare;
+void lhq_pci_id_vendor(LKDDB_PCI_ID *entry, LKDDB_PCI_ID *vendor) {
+    vendor->vendor    = entry->vendor;
+    vendor->device    = "....";
+    vendor->subVendor = "....";
+    vendor->subDevice = "....";
 }
 
 /* Parse the next PCI ID from a file
@@ -117,9 +105,25 @@ int lhq_pci_id_entry_parse(LKDDB_PCI_ID *entry, char **file) {
 */
 void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
     fprintf(out, "PCI ID:\n");
-    fprintf(out, "\tVendor: %s:%s\n", entry->vendor, entry->subVendor);
-    fprintf(out, "\tDevice: %s:%s\n", entry->device, entry->subDevice);
+    fprintf(out, "\tVendor: %s\n", entry->vendor);
+    fprintf(out, "\tDevice: %s\n", entry->device);
     fprintf(out, "\tName: %s\n", entry->name);
+}
+
+/* Check if entry is the same as other, copy pointers from other if so
+
+   @param entry - the entry to copy to
+   @param other - the entry to compare against and copy from
+   @returns 0 if equal otherwise < 0 or > 0
+*/
+int lhq_pci_id_compare_and_copy(LKDDB_PCI_ID *entry, LKDDB_PCI_ID *other) {
+    int compare = strcmp(entry->vendor, other->vendor);
+    if(compare != 0) return compare;
+    compare = strcmp(entry->device, other->device);
+    if((entry->name == NULL) && (compare == 0)) {
+        entry->name = other->name;
+    }
+    return compare;
 }
 
 /* define the lhq_pci_id_list functions */
