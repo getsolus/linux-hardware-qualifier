@@ -39,10 +39,7 @@ typedef struct {
 
 /* Create a new LKDDB_PCI_ENTRY
 
-   @param contents - pointer to the actual string contents
-   @param length   - length of the string (excluding \0 terminator)
-
-   @retruns pointer to ther new LKDDB_PCI_ENTRY
+   @returns pointer to ther new LKDDB_PCI_ENTRY
 */
 LKDDB_PCI_ENTRY* lhq_pci_entry_new() {
     LKDDB_PCI_ENTRY *result = (LKDDB_PCI_ENTRY*)calloc(1,sizeof(LKDDB_PCI_ENTRY));
@@ -134,7 +131,7 @@ void lhq_pci_entry_free(LKDDB_PCI_ENTRY *entry) {
     free(entry);
 }
 
-/* declare pci list type */
-LKDDB_LIST_DECLARE(pci,LKDDB_PCI_ENTRY)
+/* define the lhq_pci_list functions */
+LHQ_LIST_DECLARE(pci,LKDDB_PCI_ENTRY)
 
 #endif

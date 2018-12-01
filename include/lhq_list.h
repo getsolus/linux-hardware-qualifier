@@ -22,7 +22,7 @@
 #include <inttypes.h>
 
 /* starting capacity of a list */
-#define LKDDB_LIST_START 128
+#define LHQ_LIST_START 128
 
 /* List type for this project
 
@@ -36,19 +36,19 @@ typedef struct {
     size_t elementSize;
     unsigned int length;
     unsigned int capacity;
-} LKDDB_LIST;
+} LHQ_LIST;
 
 /* Create a new list
 
    @param elementSize - the size of each eleement in the list
    @returns a pointer to the new list
 */
-LKDDB_LIST* lhq_list_new(size_t elementSize) {
-    LKDDB_LIST *list = (LKDDB_LIST*)calloc(1,sizeof(LKDDB_LIST));
-    list->data     = calloc(LKDDB_LIST_START,elementSize);
+LHQ_LIST* lhq_list_new(size_t elementSize) {
+    LHQ_LIST *list = (LHQ_LIST*)calloc(1,sizeof(LHQ_LIST));
+    list->data     = calloc(LHQ_LIST_START,elementSize);
     list->elementSize = elementSize;
     list->length   = 0;
-    list->capacity = LKDDB_LIST_START;
+    list->capacity = LHQ_LIST_START;
     return list;
 }
 
@@ -57,7 +57,7 @@ LKDDB_LIST* lhq_list_new(size_t elementSize) {
    @param list  - the list to append to
    @param entry - the item to add
 */
-void lhq_list_append(LKDDB_LIST* list, void *entry) {
+void lhq_list_append(LHQ_LIST* list, void *entry) {
     if(list->length == list->capacity) {
         list->capacity <<= 1;
         list->data = realloc(list->data, list->capacity*list->elementSize );
@@ -70,7 +70,7 @@ void lhq_list_append(LKDDB_LIST* list, void *entry) {
 
    @param list - the list to shrink
 */
-void lhq_list_compact(LKDDB_LIST* list) {
+void lhq_list_compact(LHQ_LIST* list) {
     list->data = realloc(list->data, list->length*list->elementSize );
     list->capacity = list->length;
 }
@@ -79,19 +79,19 @@ void lhq_list_compact(LKDDB_LIST* list) {
 
    @param list - the list to free
 */
-void lhq_list_free(LKDDB_LIST* list) {
+void lhq_list_free(LHQ_LIST* list) {
     free(list->data);
     free(list);
 }
 
 /* Macro to declare convenience functions for lists of different types */
-#define LKDDB_LIST_DECLARE(type,entryType)                               \
+#define LHQ_LIST_DECLARE(type,entryType)                                 \
                                                                          \
-LKDDB_LIST* lhq_ ## type ## _list_new() {                                \
+LHQ_LIST* lhq_ ## type ## _list_new() {                                  \
     return lhq_list_new(sizeof(entryType));                              \
 }                                                                        \
                                                                          \
-void lhq_ ## type ## _list_print(LKDDB_LIST *list, FILE *out) {          \
+void lhq_ ## type ## _list_print(LHQ_LIST *list, FILE *out) {            \
     for(unsigned int i = 0; i < list->length; i++ ){                     \
         lhq_ ## type ## _entry_print(&((entryType*)list->data)[i], out); \
     }                                                                    \

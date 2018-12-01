@@ -47,9 +47,6 @@ typedef struct {
 
 /* Create a new LKDDB_USB_ENTRY
 
-   @param contents - pointer to the actual string contents
-   @param length   - length of the string (excluding \0 terminator)
-
    @returns pointer to ther new LKDDB_USB_ENTRY
 */
 LKDDB_USB_ENTRY* lhq_usb_entry_new() {
@@ -155,7 +152,7 @@ void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
     fprintf(out, "\tSource: %s\n", entry->filename);
 }
 
-/* declare the USB list type */
-LKDDB_LIST_DECLARE(usb,LKDDB_USB_ENTRY)
+/* define the lhq_usb_list functions */
+LHQ_LIST_DECLARE(usb,LKDDB_USB_ENTRY)
 
 #endif

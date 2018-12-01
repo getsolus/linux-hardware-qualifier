@@ -38,14 +38,33 @@ typedef struct {
 
 /* Create a new LKDDB_USB_CLASS_ID
 
-   @param contents - pointer to the actual string contents
-   @param length   - length of the string (excluding \0 terminator)
-
-   @retruens pointer to ther new LKDDB_USB_CLASS_ID
+   @returns pointer to ther new LKDDB_USB_CLASS_ID
 */
 LKDDB_USB_CLASS_ID* lhq_usb_class_id_new() {
     LKDDB_USB_CLASS_ID *result = (LKDDB_USB_CLASS_ID*)calloc(1,sizeof(LKDDB_USB_CLASS_ID));
     return result;
+}
+
+/* Convert a full USB Class ID to one suitable for finding just the USB Class
+
+   @param entry - the full USB Class ID
+   @param class - the extracted USB Class
+*/
+void lhq_usb_class_id_class(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS_ID *class){
+    class->bClass = entry->bClass;
+    class->bSubClass = "..";
+    class->bProtocol = "..";
+}
+
+/* Convert a full USB Class ID to one suitable for finding just the USB Subclass
+
+   @param entry    - the full USB Class ID
+   @param subclass - the extracted USB Subclass
+*/
+void lhq_usb_class_id_subclass(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS_ID *subclass){
+    subclass->bClass = entry->bClass;
+    subclass->bSubClass = entry->bSubClass;
+    subclass->bProtocol = "..";
 }
 
 /* Check if entry is the same as other, copy pointers from other if so
@@ -116,7 +135,7 @@ void lhq_usb_class_id_entry_print(LKDDB_USB_CLASS_ID *entry, FILE *out) {
     fprintf(out, "\tName: %s\n", entry->name);
 }
 
-/* declare the USB Class ID list type */
-LKDDB_LIST_DECLARE(usb_class_id,LKDDB_USB_CLASS_ID)
+/* define the lhq_class_id_list functions */
+LHQ_LIST_DECLARE(usb_class_id,LKDDB_USB_CLASS_ID)
 
 #endif

@@ -37,7 +37,7 @@ typedef struct {
     uint8_t *raw;
     char *cursor;
     size_t rawLength;
-    LKDDB_LIST *lists[LHQ_TYPE_COUNT];
+    LHQ_LIST *lists[LHQ_TYPE_COUNT];
 } LHQ_TYPES_INDEX;
 
 /* Create a Types Index from a file
@@ -86,7 +86,7 @@ void lhq_types_index_summary(LHQ_TYPES_INDEX* index) {
 */
 void lhq_types_parse_acpi(LHQ_TYPES_INDEX *index) {
     LKDDB_ACPI_ENTRY entry;
-    LKDDB_LIST *list = index->lists[LHQ_TYPE_ACPI];
+    LHQ_LIST *list = index->lists[LHQ_TYPE_ACPI];
     /* go to start of this section */
     index->cursor = strstr(index->cursor, "acpi");
     /* read entries */
@@ -112,7 +112,7 @@ void lhq_types_parse_acpi(LHQ_TYPES_INDEX *index) {
 */
 void lhq_types_parse_pci(LHQ_TYPES_INDEX *index) {
     LKDDB_PCI_ENTRY entry;
-    LKDDB_LIST *list = index->lists[LHQ_TYPE_PCI];
+    LHQ_LIST *list = index->lists[LHQ_TYPE_PCI];
     index->cursor = strstr(index->cursor, "\npci");
     while( lhq_pci_entry_parse(&entry, &(index->cursor)) ){
         lhq_list_append(list, (void*)&entry);
@@ -133,7 +133,7 @@ void lhq_types_parse_pci(LHQ_TYPES_INDEX *index) {
 */
 void lhq_types_parse_usb(LHQ_TYPES_INDEX *index) {
     LKDDB_USB_ENTRY entry;
-    LKDDB_LIST *list = index->lists[LHQ_TYPE_USB];
+    LHQ_LIST *list = index->lists[LHQ_TYPE_USB];
     index->cursor = strstr(index->cursor, "\nusb");
     while( lhq_usb_entry_parse(&entry, &(index->cursor)) ){
         lhq_list_append(list, (void*)&entry);
@@ -157,6 +157,26 @@ void lhq_types_index_populate(LHQ_TYPES_INDEX* index){
     lhq_types_parse_pci(index);
     lhq_types_parse_usb(index);
 }
+
+/* Search for a matching entry, copy pointers from it if found
+
+   @param index - the index to search in
+   @param entry - the entry to copy to
+   @param start - index to start from
+   @returns index of the match or the length of the list if not found
+*/
+unsigned int lhq_usb_search_and_copy(LHQ_TYPES_INDEX *index, LKDDB_USB_ENTRY *entry, unsigned int start) {
+    LHQ_LIST *list = index->lists[LHQ_TYPE_USB];
+    LKDDB_USB_ENTRY *entries = (LKDDB_USB_ENTRY*)list->data;
+    unsigned int i = start;
+    for( ; i < list->length; i++ ){
+        if( lhq_usb_compare_and_copy(entry,&entries[i]) == 0 ) {
+           break;
+        }
+    }
+    return i;
+}
+
 
 /* Destroy an index
 

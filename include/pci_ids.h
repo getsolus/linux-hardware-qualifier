@@ -41,9 +41,6 @@ typedef struct {
 
 /* Create a new LKDDB_PCI_ID
 
-   @param contents - pointer to the actual string contents
-   @param length   - length of the string (excluding \0 terminator)
-
    @returns pointer to ther new LKDDB_PCI_ID
 */
 LKDDB_PCI_ID* lhq_pci_id_new() {
@@ -126,7 +123,7 @@ void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
     fprintf(out, "\tName: %s\n", entry->name);
 }
 
-/* declare list type */
-LKDDB_LIST_DECLARE(pci_id,LKDDB_PCI_ID)
+/* define the lhq_pci_id_list functions */
+LHQ_LIST_DECLARE(pci_id,LKDDB_PCI_ID)
 
 #endif

@@ -116,6 +116,6 @@ void lhq_acpi_entry_free(LKDDB_ACPI_ENTRY *entry) {
 }
 
 /* define the lhq_acpi_list functions */
-LKDDB_LIST_DECLARE(acpi,LKDDB_ACPI_ENTRY)
+LHQ_LIST_DECLARE(acpi,LKDDB_ACPI_ENTRY)
 
 #endif

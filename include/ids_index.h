@@ -38,7 +38,7 @@ typedef struct {
     uint8_t *raw;
     char *cursor;
     size_t rawLength;
-    LKDDB_LIST *lists[LHQ_ID_COUNT];
+    LHQ_LIST *lists[LHQ_ID_COUNT];
 } LHQ_IDS_INDEX;
 
 /* Create a IDs Index from a file
@@ -88,7 +88,7 @@ void lhq_ids_index_summary(LHQ_IDS_INDEX* index) {
 */
 void lhq_pci_class_ids_parse(LHQ_IDS_INDEX *index) {
     LKDDB_PCI_CLASS_ID entry;
-    LKDDB_LIST *list = index->lists[LHQ_ID_PCI_CLASS];
+    LHQ_LIST *list = index->lists[LHQ_ID_PCI_CLASS];
     index->cursor = strstr(index->cursor, "\npci_class_ids");
     while( lhq_pci_class_id_entry_parse(&entry, &(index->cursor)) ) {
         lhq_list_append(list, (void*)&entry);
@@ -109,7 +109,7 @@ void lhq_pci_class_ids_parse(LHQ_IDS_INDEX *index) {
 */
 void lhq_pci_ids_parse(LHQ_IDS_INDEX *index) {
     LKDDB_PCI_ID entry;
-    LKDDB_LIST *list = index->lists[LHQ_ID_PCI];
+    LHQ_LIST *list = index->lists[LHQ_ID_PCI];
     //index->cursor = strstr(index->cursor, "\npci_ids");
     while( lhq_pci_id_entry_parse(&entry, &(index->cursor)) ){
         lhq_list_append(list, (void*)&entry);
@@ -130,7 +130,7 @@ void lhq_pci_ids_parse(LHQ_IDS_INDEX *index) {
 */
 void lhq_usb_class_ids_parse(LHQ_IDS_INDEX* index) {
     LKDDB_USB_CLASS_ID entry;
-    LKDDB_LIST *list = index->lists[LHQ_ID_USB_CLASS];
+    LHQ_LIST *list = index->lists[LHQ_ID_USB_CLASS];
     //index->cursor = strstr(index->cursor, "\nusb_class_ids");
     while( lhq_usb_class_id_entry_parse(&entry, &(index->cursor)) ){
         lhq_list_append(list, (void*)&entry);
@@ -151,7 +151,7 @@ void lhq_usb_class_ids_parse(LHQ_IDS_INDEX* index) {
 */
 void lhq_usb_ids_parse(LHQ_IDS_INDEX *index) {
     LKDDB_USB_ID entry;
-    LKDDB_LIST *list = index->lists[LHQ_ID_USB];
+    LHQ_LIST *list = index->lists[LHQ_ID_USB];
     //index->cursor = strstr(index->cursor, "\nusb_ids");
     while( lhq_usb_id_entry_parse(&entry, &(index->cursor)) ) {
         lhq_list_append(list, (void*)&entry);
@@ -185,7 +185,7 @@ void lhq_ids_index_populate(LHQ_IDS_INDEX* index){
    @returns index of the match or the length of the list if not found
 */
 unsigned int lhq_usb_id_search_and_copy(LHQ_IDS_INDEX *index, LKDDB_USB_ID *entry, unsigned int start) {
-    LKDDB_LIST *list = index->lists[LHQ_ID_USB];
+    LHQ_LIST *list = index->lists[LHQ_ID_USB];
     LKDDB_USB_ID *ids = (LKDDB_USB_ID*)list->data;
     unsigned int i = start;
     for( ; i < list->length; i++ ){
@@ -204,7 +204,7 @@ unsigned int lhq_usb_id_search_and_copy(LHQ_IDS_INDEX *index, LKDDB_USB_ID *entr
    @returns index of the match or the length of the list if not found
 */
 unsigned int lhq_usb_class_id_search_and_copy(LHQ_IDS_INDEX *index, LKDDB_USB_CLASS_ID *entry, unsigned int start) {
-    LKDDB_LIST *list = index->lists[LHQ_ID_USB_CLASS];
+    LHQ_LIST *list = index->lists[LHQ_ID_USB_CLASS];
     LKDDB_USB_CLASS_ID *ids = (LKDDB_USB_CLASS_ID*)list->data;
     unsigned int i = start;
     for( ; i < list->length; i++ ){
