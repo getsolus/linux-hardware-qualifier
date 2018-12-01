@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
+#include "acpi_result.h"
 #include "config.h"
 #include "ids_index.h"
-#include "pci_result.h"
 #include "types_index.h"
 #include <stdio.h>
 
@@ -43,24 +43,14 @@ LHQ_IDS_INDEX *lhq_build_ids_index(FILE *ids) {
     return idsIndex;
 }
 
-void lhq_search_pci(LHQ_IDS_INDEX *ids, LHQ_TYPES_INDEX *types) {
-    LHQ_PCI_RESULT result = {
+void lhq_search_acpi(LHQ_TYPES_INDEX *types) {
+    LHQ_ACPI_RESULT result = {
         .entry = {
-            .id = {
-                .vendor = "1002",
-                .device = "6863",
-                .subVendor = "....",
-                .subDevice = "....",
-            },
-            .class = {
-                .classMask = "030000",
-            },
+            .id = "80860F28",
         },
     };
-    lhq_pci_result_search(&result, ids, types);
-    lhq_pci_result_entry_print(&result, stdout);
-    free(result.class.classMask);
-    free(result.subclass.classMask);
+    lhq_acpi_result_search(&result, types);
+    lhq_acpi_result_entry_print(&result, stdout);
 }
 
 int main(int argc, char **argv) {
@@ -87,7 +77,7 @@ int main(int argc, char **argv) {
     fclose(ids);
 
     for(; time > 0; time--) {
-        lhq_search_pci(idsIndex, typesIndex);
+        lhq_search_acpi(typesIndex);
     }
 
     lhq_types_index_free(typesIndex);

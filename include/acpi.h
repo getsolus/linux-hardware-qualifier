@@ -51,10 +51,6 @@ LKDDB_ACPI_ENTRY *lhq_acpi_entry_new() {
    @returns 0 if equal otherwise < 0 or > 0
 */
 int lhq_acpi_compare_and_copy(LKDDB_ACPI_ENTRY *entry, LKDDB_ACPI_ENTRY *other) {
-    /* don't try to compare if entry has already been filled */
-    if((entry->configOpts != NULL) && (entry->filename != NULL)) {
-        return 0;
-    }
     int compare = strcmp(entry->id, other->id);
     if(compare == 0) {
         entry->configOpts = other->configOpts;

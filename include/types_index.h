@@ -165,6 +165,25 @@ void lhq_types_index_populate(LHQ_TYPES_INDEX *index) {
    @param start - index to start from
    @returns index of the match or the length of the list if not found
 */
+unsigned int lhq_acpi_search_and_copy(LHQ_TYPES_INDEX *index, LKDDB_ACPI_ENTRY *entry, unsigned int start) {
+    LHQ_LIST *list            = index->lists[LHQ_TYPE_ACPI];
+    LKDDB_ACPI_ENTRY *entries = (LKDDB_ACPI_ENTRY *)list->data;
+    unsigned int i            = start;
+    for(; i < list->length; i++) {
+        if(lhq_acpi_compare_and_copy(entry, &entries[i]) == 0) {
+            break;
+        }
+    }
+    return i;
+}
+
+/* Search for a matching entry, copy pointers from it if found
+
+   @param index - the index to search in
+   @param entry - the entry to copy to
+   @param start - index to start from
+   @returns index of the match or the length of the list if not found
+*/
 unsigned int lhq_pci_search_and_copy(LHQ_TYPES_INDEX *index, LKDDB_PCI_ENTRY *entry, unsigned int start) {
     LHQ_LIST *list           = index->lists[LHQ_TYPE_PCI];
     LKDDB_PCI_ENTRY *entries = (LKDDB_PCI_ENTRY *)list->data;
