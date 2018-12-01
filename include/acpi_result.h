@@ -17,11 +17,9 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_ACPI_RESULT_H__
 #define __LINUX_HARDWARE_QUALIFIER_ACPI_RESULT_H__
 
-#include "acpi.h"
-#include "lhq_types.h"
 #include "types_index.h"
+
 #include <stdio.h>
-#include <string.h>
 
 /* Representation of a LHQ ACPI Search Result
 

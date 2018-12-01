@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-#include "acpi_result.h"
 #include "config.h"
+
+#include "acpi_result.h"
 #include "ids_index.h"
-#include "types_index.h"
+
 #include <stdio.h>
 
 LHQ_TYPES_INDEX *lhq_build_types_index(FILE *lkddb) {

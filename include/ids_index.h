@@ -19,10 +19,12 @@
 
 #include "lhq_list.h"
 #include "lhq_types.h"
+
 #include "pci_class_ids.h"
 #include "pci_ids.h"
 #include "usb_class_ids.h"
 #include "usb_ids.h"
+
 #include <inttypes.h>
 #include <stdio.h>
 #include <string.h>

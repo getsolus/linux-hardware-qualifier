@@ -17,7 +17,8 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_PCI_IDS_H__
 #define __LINUX_HARDWARE_QUALIFIER_PCI_IDS_H__
 
-#include "lhq_types.h"
+#include "lhq_list.h"
+
 #include <stdio.h>
 #include <string.h>
 

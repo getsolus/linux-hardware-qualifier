@@ -23,6 +23,7 @@ BreakBeforeTernaryOperators: 'false'
 BreakConstructorInitializersBeforeComma: 'false'
 ColumnLimit: '120'
 Cpp11BracedListStyle: 'true'
+IncludeBlocks: Preserve
 IndentCaseLabels: 'false'
 IndentWidth: '4'
 IndentWrappedFunctionNames: 'false'

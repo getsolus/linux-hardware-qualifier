@@ -17,14 +17,12 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_PCI_RESULT_H__
 #define __LINUX_HARDWARE_QUALIFIER_PCI_RESULT_H__
 
-#include "ids_index.h"
 #include "lhq_types.h"
-#include "pci.h"
-#include "pci_class_ids.h"
-#include "pci_ids.h"
+
+#include "ids_index.h"
 #include "types_index.h"
+
 #include <stdio.h>
-#include <string.h>
 
 /* Representation of a LHQ PCI Search Result
 

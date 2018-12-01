@@ -17,11 +17,13 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_TYPES_INDEX_H__
 #define __LINUX_HARDWARE_QUALIFIER_TYPES_INDEX_H__
 
-#include "acpi.h"
 #include "lhq_list.h"
 #include "lhq_types.h"
+
+#include "acpi.h"
 #include "pci.h"
 #include "usb.h"
+
 #include <inttypes.h>
 #include <stdio.h>
 #include <string.h>

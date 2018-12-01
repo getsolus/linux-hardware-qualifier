@@ -17,8 +17,11 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_PCI_H__
 #define __LINUX_HARDWARE_QUALIFIER_PCI_H__
 
+#include "lhq_list.h"
+
 #include "pci_class_ids.h"
 #include "pci_ids.h"
+
 #include <stdio.h>
 #include <string.h>
 

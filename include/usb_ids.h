@@ -17,8 +17,8 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_USB_IDS_H__
 #define __LINUX_HARDWARE_QUALIFIER_USB_IDS_H__
 
-#include "ids_index.h"
-#include "lhq_types.h"
+#include "lhq_list.h"
+
 #include <stdio.h>
 #include <string.h>
 

@@ -17,14 +17,12 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_USB_RESULT_H__
 #define __LINUX_HARDWARE_QUALIFIER_USB_RESULT_H__
 
-#include "ids_index.h"
 #include "lhq_types.h"
+
+#include "ids_index.h"
 #include "types_index.h"
-#include "usb.h"
-#include "usb_class_ids.h"
-#include "usb_ids.h"
+
 #include <stdio.h>
-#include <string.h>
 
 /* Representation of a LHQ USB Search Result
 
