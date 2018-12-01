@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#include <stdio.h>
 #include "config.h"
 #include "ids_index.h"
 #include "types_index.h"
 #include "usb_result.h"
+#include <stdio.h>
 
-LHQ_TYPES_INDEX * lhq_build_types_index(FILE *lkddb) {
+LHQ_TYPES_INDEX *lhq_build_types_index(FILE *lkddb) {
     LHQ_TYPES_INDEX *index = lhq_types_index_new(lkddb);
     lhq_types_index_populate(index);
 #ifdef LHQ_DEBUG
@@ -31,7 +31,7 @@ LHQ_TYPES_INDEX * lhq_build_types_index(FILE *lkddb) {
     return index;
 }
 
-LHQ_IDS_INDEX * lhq_build_ids_index(FILE *ids) {
+LHQ_IDS_INDEX *lhq_build_ids_index(FILE *ids) {
     LHQ_IDS_INDEX *idsIndex = lhq_ids_index_new(ids);
 
     lhq_ids_index_populate(idsIndex);
@@ -47,28 +47,28 @@ void lhq_search_usb(LHQ_IDS_INDEX *ids, LHQ_TYPES_INDEX *types) {
     LHQ_USB_RESULT result = {
         .entry = {
             .id = {
-                .vendor  = "8087",
-                .product = "0a2a"
+                .vendor = "8087",
+                .product = "0a2a",
             },
             .class = {
-                .bClass    = "e0",
+                .bClass = "e0",
                 .bSubClass = "01",
-                .bProtocol = "01"
+                .bProtocol = "01",
             },
             .interfaceClass = {
-                .bClass    = "e0",
+                .bClass = "e0",
                 .bSubClass = "01",
-                .bProtocol = "01"
-            }
-        }
+                .bProtocol = "01",
+            },
+        },
     };
     lhq_usb_result_search(&result, ids, types);
 }
 
 int main() {
-    FILE *lkddb = fopen(DATADIR"/"PACKAGE_NAME"/lkddb.list", "r");
+    FILE *lkddb = fopen(DATADIR "/" PACKAGE_NAME "/lkddb.list", "r");
     if(lkddb == NULL) {
-        fprintf(stderr, "Failed to open '%s'. Exiting.\n", DATADIR"/"PACKAGE_NAME"/lkddb.list");
+        fprintf(stderr, "Failed to open '%s'. Exiting.\n", DATADIR "/" PACKAGE_NAME "/lkddb.list");
         return -1;
     }
     FILE *ids = fopen("data/ids.list", "r");
@@ -77,7 +77,7 @@ int main() {
         return -1;
     }
     LHQ_TYPES_INDEX *typesIndex = lhq_build_types_index(lkddb);
-    LHQ_IDS_INDEX *idsIndex = lhq_build_ids_index(ids);
+    LHQ_IDS_INDEX *idsIndex     = lhq_build_ids_index(ids);
     fclose(lkddb);
     fclose(ids);
 

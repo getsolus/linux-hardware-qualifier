@@ -17,9 +17,9 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_USB_CLASS_IDS_H__
 #define __LINUX_HARDWARE_QUALIFIER_USB_CLASS_IDS_H__
 
+#include "lhq_types.h"
 #include <stdio.h>
 #include <string.h>
-#include "lhq_types.h"
 
 /* Representation of a LKDDB USB Class ID
 
@@ -40,8 +40,8 @@ typedef struct {
 
    @returns pointer to ther new LKDDB_USB_CLASS_ID
 */
-LKDDB_USB_CLASS_ID* lhq_usb_class_id_new() {
-    LKDDB_USB_CLASS_ID *result = (LKDDB_USB_CLASS_ID*)calloc(1,sizeof(LKDDB_USB_CLASS_ID));
+LKDDB_USB_CLASS_ID *lhq_usb_class_id_new() {
+    LKDDB_USB_CLASS_ID *result = (LKDDB_USB_CLASS_ID *)calloc(1, sizeof(LKDDB_USB_CLASS_ID));
     return result;
 }
 
@@ -50,8 +50,8 @@ LKDDB_USB_CLASS_ID* lhq_usb_class_id_new() {
    @param entry - the full USB Class ID
    @param class - the extracted USB Class
 */
-void lhq_usb_class_id_class(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS_ID *class){
-    class->bClass = entry->bClass;
+void lhq_usb_class_id_class(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS_ID *class) {
+    class->bClass    = entry->bClass;
     class->bSubClass = "..";
     class->bProtocol = "..";
 }
@@ -61,8 +61,8 @@ void lhq_usb_class_id_class(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS_ID *class
    @param entry    - the full USB Class ID
    @param subclass - the extracted USB Subclass
 */
-void lhq_usb_class_id_subclass(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS_ID *subclass){
-    subclass->bClass = entry->bClass;
+void lhq_usb_class_id_subclass(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS_ID *subclass) {
+    subclass->bClass    = entry->bClass;
     subclass->bSubClass = entry->bSubClass;
     subclass->bProtocol = "..";
 }
@@ -75,20 +75,19 @@ void lhq_usb_class_id_subclass(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS_ID *su
 */
 int lhq_usb_class_id_compare_and_copy(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS_ID *other) {
     /* don't try to compare if entry has already been filled */
-    if( entry->name != NULL ) {
+    if(entry->name != NULL) {
         return 0;
     }
     int compare = strcmp(entry->bClass, other->bClass);
-    if( compare != 0 ) return compare;
+    if(compare != 0) return compare;
     compare = strcmp(entry->bSubClass, other->bSubClass);
-    if( compare != 0 ) return compare;
+    if(compare != 0) return compare;
     compare = strcmp(entry->bProtocol, other->bProtocol);
-    if( compare == 0 ){
+    if(compare == 0) {
         entry->name = other->name;
     }
     return compare;
 }
-
 
 /* Parse the next available USB Class ID
 
@@ -96,28 +95,28 @@ int lhq_usb_class_id_compare_and_copy(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS
    @param file  - the file to read from
    @returns 0 if no mroe to read, 1 if more
 */
-int lhq_usb_class_id_entry_parse(LKDDB_USB_CLASS_ID *entry, char ** file) {
+int lhq_usb_class_id_entry_parse(LKDDB_USB_CLASS_ID *entry, char **file) {
     /* class */
-    *file = strchr(*file, ' ') + 1;
-    entry->bClass    = *file;
+    *file         = strchr(*file, ' ') + 1;
+    entry->bClass = *file;
     /* subclass */
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
+    *file            = strchr(*file, ' ') + 1;
+    (*file)[-1]      = '\0';
     entry->bSubClass = *file;
     /* protocol */
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
+    *file            = strchr(*file, ' ') + 1;
+    (*file)[-1]      = '\0';
     entry->bProtocol = *file;
     /* name */
-    *file = strchr(*file, ' ') + 1;
+    *file       = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
     entry->name = *file;
-    *file = strstr(*file, "\n");
+    *file       = strstr(*file, "\n");
     /* check for more */
-    if( *file != NULL ){
+    if(*file != NULL) {
         (*file)++;
         (*file)[-1] = '\0';
-        if( strncmp(*file, "usb_class_ids", 13) != 0 ){
+        if(strncmp(*file, "usb_class_ids", 13) != 0) {
             return 0;
         }
     }
@@ -136,6 +135,6 @@ void lhq_usb_class_id_entry_print(LKDDB_USB_CLASS_ID *entry, FILE *out) {
 }
 
 /* define the lhq_class_id_list functions */
-LHQ_LIST_DECLARE(usb_class_id,LKDDB_USB_CLASS_ID)
+LHQ_LIST_DECLARE(usb_class_id, LKDDB_USB_CLASS_ID)
 
 #endif

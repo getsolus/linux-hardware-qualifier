@@ -17,9 +17,9 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_PCI_IDS_H__
 #define __LINUX_HARDWARE_QUALIFIER_PCI_IDS_H__
 
+#include "lhq_types.h"
 #include <stdio.h>
 #include <string.h>
-#include "lhq_types.h"
 
 /* Representation of a LKDDB PCI ID
 
@@ -30,21 +30,21 @@
    @field name      - the name of the device
 */
 typedef struct {
-    char  *vendor;
-    char  *device;
+    char *vendor;
+    char *device;
 
-    char  *subVendor;
-    char  *subDevice;
+    char *subVendor;
+    char *subDevice;
 
-    char  *name;
+    char *name;
 } LKDDB_PCI_ID;
 
 /* Create a new LKDDB_PCI_ID
 
    @returns pointer to ther new LKDDB_PCI_ID
 */
-LKDDB_PCI_ID* lhq_pci_id_new() {
-    LKDDB_PCI_ID *result = (LKDDB_PCI_ID*)calloc(1,sizeof(LKDDB_PCI_ID));
+LKDDB_PCI_ID *lhq_pci_id_new() {
+    LKDDB_PCI_ID *result = (LKDDB_PCI_ID *)calloc(1, sizeof(LKDDB_PCI_ID));
     return result;
 }
 
@@ -56,22 +56,21 @@ LKDDB_PCI_ID* lhq_pci_id_new() {
 */
 int lhq_pci_id_compare_and_copy(LKDDB_PCI_ID *entry, LKDDB_PCI_ID *other) {
     /* don't try to compare if entry has already been filled */
-    if( entry->name != NULL ) {
+    if(entry->name != NULL) {
         return 0;
     }
     int compare = strcmp(entry->vendor, other->vendor);
-    if( compare != 0 ) return compare;
+    if(compare != 0) return compare;
     compare = strcmp(entry->device, other->device);
-    if( compare != 0 ) return compare;
+    if(compare != 0) return compare;
     compare = strcmp(entry->subVendor, other->subVendor);
-    if( compare != 0 ) return compare;
+    if(compare != 0) return compare;
     compare = strcmp(entry->subDevice, other->subDevice);
-    if( compare == 0 ){
+    if(compare == 0) {
         entry->name = other->name;
     }
     return compare;
 }
-
 
 /* Parse the next PCI ID from a file
 
@@ -79,32 +78,32 @@ int lhq_pci_id_compare_and_copy(LKDDB_PCI_ID *entry, LKDDB_PCI_ID *other) {
    @param file  - the file to parse
    @returns 0 if no more to parse, 1 if more to parse
 */
-int lhq_pci_id_entry_parse(LKDDB_PCI_ID *entry, char ** file) {
+int lhq_pci_id_entry_parse(LKDDB_PCI_ID *entry, char **file) {
     /* vendor */
-    *file = strchr(*file, ' ') + 1;
-    entry->vendor           = *file;
+    *file         = strchr(*file, ' ') + 1;
+    entry->vendor = *file;
     /* device */
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->device          = *file;
+    *file         = strchr(*file, ' ') + 1;
+    (*file)[-1]   = '\0';
+    entry->device = *file;
     /* subvendor */
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->subVendor       = *file;
+    *file            = strchr(*file, ' ') + 1;
+    (*file)[-1]      = '\0';
+    entry->subVendor = *file;
     /* subdevice */
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->subDevice    = *file;
+    *file            = strchr(*file, ' ') + 1;
+    (*file)[-1]      = '\0';
+    entry->subDevice = *file;
     /* name */
-    *file = strchr(*file, ' ') + 1;
+    *file       = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
-    entry->name         = *file;
-    *file = strstr(*file, "\n");
+    entry->name = *file;
+    *file       = strstr(*file, "\n");
     /* check for more */
-    if( *file != NULL ){
+    if(*file != NULL) {
         (*file)++;
         (*file)[-1] = '\0';
-        if( strncmp(*file, "pci_ids", 7) != 0 ){
+        if(strncmp(*file, "pci_ids", 7) != 0) {
             return 0;
         }
     }
@@ -124,6 +123,6 @@ void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
 }
 
 /* define the lhq_pci_id_list functions */
-LHQ_LIST_DECLARE(pci_id,LKDDB_PCI_ID)
+LHQ_LIST_DECLARE(pci_id, LKDDB_PCI_ID)
 
 #endif

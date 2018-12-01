@@ -17,11 +17,11 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_USB_H__
 #define __LINUX_HARDWARE_QUALIFIER_USB_H__
 
-#include <stdio.h>
-#include <string.h>
 #include "lhq_types.h"
 #include "usb_class_ids.h"
 #include "usb_ids.h"
+#include <stdio.h>
+#include <string.h>
 
 /* Representation of a LKDDB USB Entry
 
@@ -38,19 +38,19 @@ typedef struct {
     LKDDB_USB_CLASS_ID class;
     LKDDB_USB_CLASS_ID interfaceClass;
 
-    char  *bcdDeviceLo;
-    char  *bcdDeviceHi;
+    char *bcdDeviceLo;
+    char *bcdDeviceHi;
 
-    char  *configOpts;
-    char  *filename;
+    char *configOpts;
+    char *filename;
 } LKDDB_USB_ENTRY;
 
 /* Create a new LKDDB_USB_ENTRY
 
    @returns pointer to ther new LKDDB_USB_ENTRY
 */
-LKDDB_USB_ENTRY* lhq_usb_entry_new() {
-    LKDDB_USB_ENTRY *result = (LKDDB_USB_ENTRY*)calloc(1,sizeof(LKDDB_USB_ENTRY));
+LKDDB_USB_ENTRY *lhq_usb_entry_new() {
+    LKDDB_USB_ENTRY *result = (LKDDB_USB_ENTRY *)calloc(1, sizeof(LKDDB_USB_ENTRY));
     return result;
 }
 
@@ -62,15 +62,15 @@ LKDDB_USB_ENTRY* lhq_usb_entry_new() {
 */
 int lhq_usb_compare_and_copy(LKDDB_USB_ENTRY *entry, LKDDB_USB_ENTRY *other) {
     /* don't try to compare if entry has already been filled */
-    if( (entry->configOpts != NULL) && (entry->filename != NULL) ) {
+    if((entry->configOpts != NULL) && (entry->filename != NULL)) {
         return 0;
     }
     int compare = lhq_usb_id_compare_and_copy(&entry->id, &other->id);
-    if( compare != 0 ) return compare;
+    if(compare != 0) return compare;
     compare = lhq_usb_class_id_compare_and_copy(&entry->class, &other->class);
-    if( compare != 0 ) return compare;
+    if(compare != 0) return compare;
     compare = lhq_usb_class_id_compare_and_copy(&entry->interfaceClass, &other->interfaceClass);
-    if( compare == 0 ){
+    if(compare == 0) {
         entry->configOpts = other->configOpts;
         entry->filename   = other->filename;
     }
@@ -83,54 +83,54 @@ int lhq_usb_compare_and_copy(LKDDB_USB_ENTRY *entry, LKDDB_USB_ENTRY *other) {
    @param file  - the file to read from
    @returns 0 if there are no more to parse, 1 if more to parse
 */
-int lhq_usb_entry_parse(LKDDB_USB_ENTRY *entry, char ** file) {
+int lhq_usb_entry_parse(LKDDB_USB_ENTRY *entry, char **file) {
     /* id */
-    *file = strchr(*file, ' ') + 1;
-    entry->id.vendor           = *file;
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->id.product          = *file;
+    *file             = strchr(*file, ' ') + 1;
+    entry->id.vendor  = *file;
+    *file             = strchr(*file, ' ') + 1;
+    (*file)[-1]       = '\0';
+    entry->id.product = *file;
     /* class */
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->class.bClass       = *file;
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->class.bSubClass    = *file;
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->class.bProtocol    = *file;
+    *file                  = strchr(*file, ' ') + 1;
+    (*file)[-1]            = '\0';
+    entry->class.bClass    = *file;
+    *file                  = strchr(*file, ' ') + 1;
+    (*file)[-1]            = '\0';
+    entry->class.bSubClass = *file;
+    *file                  = strchr(*file, ' ') + 1;
+    (*file)[-1]            = '\0';
+    entry->class.bProtocol = *file;
     /* interface class */
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
+    *file                           = strchr(*file, ' ') + 1;
+    (*file)[-1]                     = '\0';
     entry->interfaceClass.bClass    = *file;
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
+    *file                           = strchr(*file, ' ') + 1;
+    (*file)[-1]                     = '\0';
     entry->interfaceClass.bSubClass = *file;
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
+    *file                           = strchr(*file, ' ') + 1;
+    (*file)[-1]                     = '\0';
     entry->interfaceClass.bProtocol = *file;
     /* bcd */
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->bcdDeviceLo        = *file;
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->bcdDeviceHi        = *file;
+    *file              = strchr(*file, ' ') + 1;
+    (*file)[-1]        = '\0';
+    entry->bcdDeviceLo = *file;
+    *file              = strchr(*file, ' ') + 1;
+    (*file)[-1]        = '\0';
+    entry->bcdDeviceHi = *file;
     /* config options */
-    *file = strchr(*file, ':') + 2;
-    (*file)[-3] = '\0';
-    entry->configOpts         = *file;
+    *file             = strchr(*file, ':') + 2;
+    (*file)[-3]       = '\0';
+    entry->configOpts = *file;
     /* filename */
-    *file = strchr(*file, ':') + 2;
-    (*file)[-3] = '\0';
-    entry->filename           = *file;
-    *file = strstr(*file, "\n");
+    *file           = strchr(*file, ':') + 2;
+    (*file)[-3]     = '\0';
+    entry->filename = *file;
+    *file           = strstr(*file, "\n");
     /* check for more */
-    if( *file != NULL ){
+    if(*file != NULL) {
         (*file)++;
         (*file)[-1] = '\0';
-        if( strncmp(*file, "usb", 3) != 0 ){
+        if(strncmp(*file, "usb", 3) != 0) {
             return 0;
         }
     }
@@ -144,15 +144,15 @@ int lhq_usb_entry_parse(LKDDB_USB_ENTRY *entry, char ** file) {
 */
 void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
     fprintf(out, "USB Entry:\n");
-    lhq_usb_id_entry_print(&(entry->id),out);
-    lhq_usb_class_id_entry_print(&(entry->class),out);
-    lhq_usb_class_id_entry_print(&(entry->interfaceClass),out);
+    lhq_usb_id_entry_print(&(entry->id), out);
+    lhq_usb_class_id_entry_print(&(entry->class), out);
+    lhq_usb_class_id_entry_print(&(entry->interfaceClass), out);
     fprintf(out, "\tBCD: %s:%s\n", entry->bcdDeviceLo, entry->bcdDeviceHi);
     fprintf(out, "\tConfig Options: %s\n", entry->configOpts);
     fprintf(out, "\tSource: %s\n", entry->filename);
 }
 
 /* define the lhq_usb_list functions */
-LHQ_LIST_DECLARE(usb,LKDDB_USB_ENTRY)
+LHQ_LIST_DECLARE(usb, LKDDB_USB_ENTRY)
 
 #endif

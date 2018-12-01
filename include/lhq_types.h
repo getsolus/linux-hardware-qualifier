@@ -21,7 +21,7 @@ enum {
     LHQ_TYPE_ACPI,
     LHQ_TYPE_PCI,
     LHQ_TYPE_USB,
-    LHQ_TYPE_COUNT
+    LHQ_TYPE_COUNT,
 };
 
 enum {
@@ -29,7 +29,7 @@ enum {
     LHQ_ID_PCI,
     LHQ_ID_USB_CLASS,
     LHQ_ID_USB,
-    LHQ_ID_COUNT
+    LHQ_ID_COUNT,
 };
 
 #endif

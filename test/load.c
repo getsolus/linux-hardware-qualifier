@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <stdio.h>
+#include "config.h"
 #include "ids_index.h"
 #include "types_index.h"
-#include "config.h"
+#include <stdio.h>
 
-LHQ_TYPES_INDEX * lhq_build_types_index(FILE *lkddb) {
+LHQ_TYPES_INDEX *lhq_build_types_index(FILE *lkddb) {
     LHQ_TYPES_INDEX *index = lhq_types_index_new(lkddb);
     lhq_types_index_populate(index);
 #ifdef LHQ_DEBUG
@@ -29,7 +29,7 @@ LHQ_TYPES_INDEX * lhq_build_types_index(FILE *lkddb) {
     return index;
 }
 
-LHQ_IDS_INDEX * lhq_build_ids_index(FILE *ids) {
+LHQ_IDS_INDEX *lhq_build_ids_index(FILE *ids) {
     LHQ_IDS_INDEX *idsIndex = lhq_ids_index_new(ids);
 
     lhq_ids_index_populate(idsIndex);
@@ -49,10 +49,10 @@ int main(int argc, char **argv) {
             time = 1;
         }
     }
-    for( ; time > 0; time-- ){
-        FILE *lkddb = fopen(DATADIR"/"PACKAGE_NAME"/lkddb.list", "r");
+    for(; time > 0; time--) {
+        FILE *lkddb = fopen(DATADIR "/" PACKAGE_NAME "/lkddb.list", "r");
         if(lkddb == NULL) {
-            fprintf(stderr, "Failed to open '%s'. Exiting.\n", DATADIR"/"PACKAGE_NAME"/lkddb.list");
+            fprintf(stderr, "Failed to open '%s'. Exiting.\n", DATADIR "/" PACKAGE_NAME "/lkddb.list");
             return -1;
         }
         FILE *ids = fopen("data/ids.list", "r");
@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
             return -1;
         }
         LHQ_TYPES_INDEX *typesIndex = lhq_build_types_index(lkddb);
-        LHQ_IDS_INDEX *idsIndex = lhq_build_ids_index(ids);
+        LHQ_IDS_INDEX *idsIndex     = lhq_build_ids_index(ids);
         fclose(lkddb);
         fclose(ids);
 

@@ -17,10 +17,10 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_PCI_H__
 #define __LINUX_HARDWARE_QUALIFIER_PCI_H__
 
-#include <stdio.h>
-#include <string.h>
 #include "pci_class_ids.h"
 #include "pci_ids.h"
+#include <stdio.h>
+#include <string.h>
 
 /* Representation of a LKDDB PCI Entry
 
@@ -30,7 +30,7 @@
    @field filename   - the source file where this device is declared
 */
 typedef struct {
-    LKDDB_PCI_ID          id;
+    LKDDB_PCI_ID id;
     LKDDB_PCI_CLASS_ID class;
 
     char *configOpts;
@@ -41,8 +41,8 @@ typedef struct {
 
    @returns pointer to ther new LKDDB_PCI_ENTRY
 */
-LKDDB_PCI_ENTRY* lhq_pci_entry_new() {
-    LKDDB_PCI_ENTRY *result = (LKDDB_PCI_ENTRY*)calloc(1,sizeof(LKDDB_PCI_ENTRY));
+LKDDB_PCI_ENTRY *lhq_pci_entry_new() {
+    LKDDB_PCI_ENTRY *result = (LKDDB_PCI_ENTRY *)calloc(1, sizeof(LKDDB_PCI_ENTRY));
     return result;
 }
 
@@ -54,13 +54,13 @@ LKDDB_PCI_ENTRY* lhq_pci_entry_new() {
 */
 int lhq_pci_compare_and_copy(LKDDB_PCI_ENTRY *entry, LKDDB_PCI_ENTRY *other) {
     /* don't try to compare if entry has already been filled */
-    if( (entry->configOpts != NULL) && (entry->filename != NULL) ) {
+    if((entry->configOpts != NULL) && (entry->filename != NULL)) {
         return 0;
     }
-    int compare = lhq_pci_id_compare_and_copy(&(entry->id),&(other->id));
-    if( compare != 0) return compare;
-    compare = lhq_pci_class_id_compare_and_copy(&(entry->class),&(other->class));
-    if( compare == 0 ){
+    int compare = lhq_pci_id_compare_and_copy(&(entry->id), &(other->id));
+    if(compare != 0) return compare;
+    compare = lhq_pci_class_id_compare_and_copy(&(entry->class), &(other->class));
+    if(compare == 0) {
         entry->configOpts = other->configOpts;
         entry->filename   = other->filename;
     }
@@ -73,37 +73,37 @@ int lhq_pci_compare_and_copy(LKDDB_PCI_ENTRY *entry, LKDDB_PCI_ENTRY *other) {
    @param file  - the file to parse from
    @returns 0 if no more to read, 1 if more to read
 */
-int lhq_pci_entry_parse(LKDDB_PCI_ENTRY *entry, char ** file) {
+int lhq_pci_entry_parse(LKDDB_PCI_ENTRY *entry, char **file) {
     /* id */
-    *file = strchr(*file, ' ') + 1;
-    entry->id.vendor           = *file;
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->id.device          = *file;
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->id.subVendor       = *file;
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->id.subDevice    = *file;
+    *file               = strchr(*file, ' ') + 1;
+    entry->id.vendor    = *file;
+    *file               = strchr(*file, ' ') + 1;
+    (*file)[-1]         = '\0';
+    entry->id.device    = *file;
+    *file               = strchr(*file, ' ') + 1;
+    (*file)[-1]         = '\0';
+    entry->id.subVendor = *file;
+    *file               = strchr(*file, ' ') + 1;
+    (*file)[-1]         = '\0';
+    entry->id.subDevice = *file;
     /* class */
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
-    entry->class.classMask    = *file;
+    *file                  = strchr(*file, ' ') + 1;
+    (*file)[-1]            = '\0';
+    entry->class.classMask = *file;
     /* configOpts */
-    *file = strchr(*file, ':') + 2;
-    (*file)[-3] = '\0';
-    entry->configOpts         = *file;
+    *file             = strchr(*file, ':') + 2;
+    (*file)[-3]       = '\0';
+    entry->configOpts = *file;
     /* filename */
-    *file = strchr(*file, ':') + 2;
-    (*file)[-3] = '\0';
-    entry->filename           = *file;
-    *file = strstr(*file, "\n");
+    *file           = strchr(*file, ':') + 2;
+    (*file)[-3]     = '\0';
+    entry->filename = *file;
+    *file           = strstr(*file, "\n");
     /* check for more */
-    if( *file != NULL ){
+    if(*file != NULL) {
         (*file)++;
         (*file)[-1] = '\0';
-        if( strncmp(*file, "pci", 3) != 0 ){
+        if(strncmp(*file, "pci", 3) != 0) {
             return 0;
         }
     }
@@ -117,8 +117,8 @@ int lhq_pci_entry_parse(LKDDB_PCI_ENTRY *entry, char ** file) {
 */
 void lhq_pci_entry_print(LKDDB_PCI_ENTRY *entry, FILE *out) {
     fprintf(out, "PCI Entry:\n");
-    lhq_pci_id_entry_print(&(entry->id),out);
-    lhq_pci_class_id_entry_print(&(entry->class),out);
+    lhq_pci_id_entry_print(&(entry->id), out);
+    lhq_pci_class_id_entry_print(&(entry->class), out);
     fprintf(out, "\tConfig Options: %s\n", entry->configOpts);
     fprintf(out, "\tSource: %s\n", entry->filename);
 }
@@ -127,11 +127,9 @@ void lhq_pci_entry_print(LKDDB_PCI_ENTRY *entry, FILE *out) {
 
    @param entry - the entry to destroy
 */
-void lhq_pci_entry_free(LKDDB_PCI_ENTRY *entry) {
-    free(entry);
-}
+void lhq_pci_entry_free(LKDDB_PCI_ENTRY *entry) { free(entry); }
 
 /* define the lhq_pci_list functions */
-LHQ_LIST_DECLARE(pci,LKDDB_PCI_ENTRY)
+LHQ_LIST_DECLARE(pci, LKDDB_PCI_ENTRY)
 
 #endif

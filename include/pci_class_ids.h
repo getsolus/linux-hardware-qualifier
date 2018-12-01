@@ -17,9 +17,9 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_PCI_CLASS_IDS_H__
 #define __LINUX_HARDWARE_QUALIFIER_PCI_CLASS_IDS_H__
 
+#include "lhq_types.h"
 #include <stdio.h>
 #include <string.h>
-#include "lhq_types.h"
 
 /* Representation of a LKDDB PCI Class ID
 
@@ -35,8 +35,8 @@ typedef struct {
 
    @returns pointer to ther new LKDDB_PCI_CLASS_ID
 */
-LKDDB_PCI_CLASS_ID* lhq_pci_class_id_new() {
-    LKDDB_PCI_CLASS_ID *result = (LKDDB_PCI_CLASS_ID*)calloc(1,sizeof(LKDDB_PCI_CLASS_ID));
+LKDDB_PCI_CLASS_ID *lhq_pci_class_id_new() {
+    LKDDB_PCI_CLASS_ID *result = (LKDDB_PCI_CLASS_ID *)calloc(1, sizeof(LKDDB_PCI_CLASS_ID));
     return result;
 }
 
@@ -48,16 +48,15 @@ LKDDB_PCI_CLASS_ID* lhq_pci_class_id_new() {
 */
 int lhq_pci_class_id_compare_and_copy(LKDDB_PCI_CLASS_ID *entry, LKDDB_PCI_CLASS_ID *other) {
     /* don't try to compare if entry has already been filled */
-    if( entry->name != NULL ) {
+    if(entry->name != NULL) {
         return 0;
     }
     int compare = strcmp(entry->classMask, other->classMask);
-    if( compare == 0 ){
+    if(compare == 0) {
         entry->name = other->name;
     }
     return compare;
 }
-
 
 /* Parse a PCI Class ID from a file
 
@@ -66,10 +65,10 @@ int lhq_pci_class_id_compare_and_copy(LKDDB_PCI_CLASS_ID *entry, LKDDB_PCI_CLASS
 
    @returns 0 if done, 1 if more to parse
 */
-int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char ** file) {
+int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char **file) {
     /* classmask */
-    *file = strchr(*file, ' ') + 1;
-    entry->classMask = *file;
+    *file               = strchr(*file, ' ') + 1;
+    entry->classMask    = *file;
     entry->classMask[2] = entry->classMask[3];
     entry->classMask[3] = entry->classMask[4];
     entry->classMask[4] = entry->classMask[6];
@@ -77,14 +76,14 @@ int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char ** file) {
     entry->classMask[7] = '\0';
     *file += 8;
     /* name */
-    *file = strchr(*file, ' ') + 1;
-    entry->name         = *file;
-    *file = strstr(*file, "\n");
+    *file       = strchr(*file, ' ') + 1;
+    entry->name = *file;
+    *file       = strstr(*file, "\n");
     /* check for more */
-    if( *file != NULL ){
+    if(*file != NULL) {
         (*file)++;
         (*file)[-1] = '\0';
-        if( strncmp(*file, "pci_class_ids", 13) != 0 ){
+        if(strncmp(*file, "pci_class_ids", 13) != 0) {
             return 0;
         }
     }
@@ -103,6 +102,6 @@ void lhq_pci_class_id_entry_print(LKDDB_PCI_CLASS_ID *entry, FILE *out) {
 }
 
 /* define the lhq_class_id_list functions */
-LHQ_LIST_DECLARE(pci_class_id,LKDDB_PCI_CLASS_ID)
+LHQ_LIST_DECLARE(pci_class_id, LKDDB_PCI_CLASS_ID)
 
 #endif

@@ -17,10 +17,10 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_USB_IDS_H__
 #define __LINUX_HARDWARE_QUALIFIER_USB_IDS_H__
 
+#include "ids_index.h"
+#include "lhq_types.h"
 #include <stdio.h>
 #include <string.h>
-#include "lhq_types.h"
-#include "ids_index.h"
 
 /* Representation of a LKDDB USB ID
 
@@ -39,8 +39,8 @@ typedef struct {
 
    @returns pointer to ther new LKDDB_USB_ID
 */
-LKDDB_USB_ID* lhq_usb_id_new() {
-    LKDDB_USB_ID *result = (LKDDB_USB_ID*)calloc(1,sizeof(LKDDB_USB_ID));
+LKDDB_USB_ID *lhq_usb_id_new() {
+    LKDDB_USB_ID *result = (LKDDB_USB_ID *)calloc(1, sizeof(LKDDB_USB_ID));
     return result;
 }
 
@@ -49,8 +49,8 @@ LKDDB_USB_ID* lhq_usb_id_new() {
    @param entry  - the full USB ID
    @param vendor - the extracted USB Vendor
 */
-void lhq_usb_id_vendor(LKDDB_USB_ID *entry, LKDDB_USB_ID *vendor){
-    vendor->vendor = entry->vendor;
+void lhq_usb_id_vendor(LKDDB_USB_ID *entry, LKDDB_USB_ID *vendor) {
+    vendor->vendor  = entry->vendor;
     vendor->product = "....";
 }
 
@@ -62,13 +62,13 @@ void lhq_usb_id_vendor(LKDDB_USB_ID *entry, LKDDB_USB_ID *vendor){
 */
 int lhq_usb_id_compare_and_copy(LKDDB_USB_ID *entry, LKDDB_USB_ID *other) {
     /* don't try to compare if entry has already been filled */
-    if( entry->name != NULL ) {
+    if(entry->name != NULL) {
         return 0;
     }
     int compare = strcmp(entry->vendor, other->vendor);
-    if( compare != 0 ) return compare;
+    if(compare != 0) return compare;
     compare = strcmp(entry->product, other->product);
-    if( compare == 0 ){
+    if(compare == 0) {
         entry->name = other->name;
     }
     return compare;
@@ -80,24 +80,24 @@ int lhq_usb_id_compare_and_copy(LKDDB_USB_ID *entry, LKDDB_USB_ID *other) {
    @param file  - the file to parse
    @returns 0 if no more to parse, 1 if more
 */
-int lhq_usb_id_entry_parse(LKDDB_USB_ID *entry, char ** file) {
+int lhq_usb_id_entry_parse(LKDDB_USB_ID *entry, char **file) {
     /* vendor */
-    *file = strchr(*file, ' ') + 1;
+    *file         = strchr(*file, ' ') + 1;
     entry->vendor = *file;
     /* product */
-    *file = strchr(*file, ' ') + 1;
-    (*file)[-1] = '\0';
+    *file          = strchr(*file, ' ') + 1;
+    (*file)[-1]    = '\0';
     entry->product = *file;
     /* name */
-    *file = strchr(*file, ' ') + 1;
+    *file       = strchr(*file, ' ') + 1;
     (*file)[-1] = '\0';
     entry->name = *file;
-    *file = strstr(*file, "\n");
+    *file       = strstr(*file, "\n");
     /* check for more */
-    if( *file != NULL ){
+    if(*file != NULL) {
         (*file)++;
         (*file)[-1] = '\0';
-        if( strncmp(*file, "usb_ids", 7) != 0 ){
+        if(strncmp(*file, "usb_ids", 7) != 0) {
             return 0;
         }
     }
@@ -116,6 +116,6 @@ void lhq_usb_id_entry_print(LKDDB_USB_ID *entry, FILE *out) {
 }
 
 /* define the lhq_usb_id_list functions */
-LHQ_LIST_DECLARE(usb_id,LKDDB_USB_ID)
+LHQ_LIST_DECLARE(usb_id, LKDDB_USB_ID)
 
 #endif

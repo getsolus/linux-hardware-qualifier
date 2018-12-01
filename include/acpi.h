@@ -17,9 +17,9 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_ACPI_H__
 #define __LINUX_HARDWARE_QUALIFIER_ACPI_H__
 
+#include "lhq_types.h"
 #include <stdio.h>
 #include <string.h>
-#include "lhq_types.h"
 
 /* Representation of a LKDDB ACPI Entry
 
@@ -39,8 +39,8 @@ typedef struct {
 
    @returns pointer to ther new LKDDB_ACPI_ENTRY
 */
-LKDDB_ACPI_ENTRY* lhq_acpi_entry_new() {
-    LKDDB_ACPI_ENTRY *result = (LKDDB_ACPI_ENTRY*)calloc(1,sizeof(LKDDB_ACPI_ENTRY));
+LKDDB_ACPI_ENTRY *lhq_acpi_entry_new() {
+    LKDDB_ACPI_ENTRY *result = (LKDDB_ACPI_ENTRY *)calloc(1, sizeof(LKDDB_ACPI_ENTRY));
     return result;
 }
 
@@ -52,11 +52,11 @@ LKDDB_ACPI_ENTRY* lhq_acpi_entry_new() {
 */
 int lhq_acpi_compare_and_copy(LKDDB_ACPI_ENTRY *entry, LKDDB_ACPI_ENTRY *other) {
     /* don't try to compare if entry has already been filled */
-    if( (entry->configOpts != NULL) && (entry->filename != NULL) ) {
+    if((entry->configOpts != NULL) && (entry->filename != NULL)) {
         return 0;
     }
     int compare = strcmp(entry->id, other->id);
-    if( compare == 0 ){
+    if(compare == 0) {
         entry->configOpts = other->configOpts;
         entry->filename   = other->filename;
     }
@@ -70,26 +70,26 @@ int lhq_acpi_compare_and_copy(LKDDB_ACPI_ENTRY *entry, LKDDB_ACPI_ENTRY *other) 
 
    @returns 1 if there are more entries to read, 0 otherwise
 */
-int lhq_acpi_entry_parse(LKDDB_ACPI_ENTRY *entry, char ** file) {
+int lhq_acpi_entry_parse(LKDDB_ACPI_ENTRY *entry, char **file) {
     /* Format: acpi "id" : configs : filename\n */
     /* id */
-    *file = strchr(*file, '"') + 1;
-    entry->id = *file;
-    *file = strchr(*file, '"') + 1;
+    *file       = strchr(*file, '"') + 1;
+    entry->id   = *file;
+    *file       = strchr(*file, '"') + 1;
     (*file)[-1] = '\0';
     /* config opts */
-    *file = strchr(*file, ':') + 2;
-    entry->configOpts         = *file;
+    *file             = strchr(*file, ':') + 2;
+    entry->configOpts = *file;
     /* filename */
-    *file = strchr(*file, ':') + 2;
-    (*file)[-3] = '\0';
-    entry->filename           = *file;
-    *file = strstr(*file, "\n");
+    *file           = strchr(*file, ':') + 2;
+    (*file)[-3]     = '\0';
+    entry->filename = *file;
+    *file           = strstr(*file, "\n");
     /* check for next entry */
-    if( (*file) != NULL ){
+    if((*file) != NULL) {
         (*file)++;
         (*file)[-1] = '\0';
-        if( strncmp(*file, "acpi", 4) != 0 ){
+        if(strncmp(*file, "acpi", 4) != 0) {
             return 0;
         }
     }
@@ -111,11 +111,9 @@ void lhq_acpi_entry_print(LKDDB_ACPI_ENTRY *entry, FILE *out) {
 
    @param entry - the entry to destroy
 */
-void lhq_acpi_entry_free(LKDDB_ACPI_ENTRY *entry) {
-    free(entry);
-}
+void lhq_acpi_entry_free(LKDDB_ACPI_ENTRY *entry) { free(entry); }
 
 /* define the lhq_acpi_list functions */
-LHQ_LIST_DECLARE(acpi,LKDDB_ACPI_ENTRY)
+LHQ_LIST_DECLARE(acpi, LKDDB_ACPI_ENTRY)
 
 #endif

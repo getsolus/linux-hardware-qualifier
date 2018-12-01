@@ -17,9 +17,10 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_LIST_H__
 #define __LINUX_HARDWARE_QUALIFIER_LIST_H__
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <inttypes.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* starting capacity of a list */
 #define LHQ_LIST_START 128
@@ -43,12 +44,12 @@ typedef struct {
    @param elementSize - the size of each eleement in the list
    @returns a pointer to the new list
 */
-LHQ_LIST* lhq_list_new(size_t elementSize) {
-    LHQ_LIST *list = (LHQ_LIST*)calloc(1,sizeof(LHQ_LIST));
-    list->data     = calloc(LHQ_LIST_START,elementSize);
+LHQ_LIST *lhq_list_new(size_t elementSize) {
+    LHQ_LIST *list    = (LHQ_LIST *)calloc(1, sizeof(LHQ_LIST));
+    list->data        = calloc(LHQ_LIST_START, elementSize);
     list->elementSize = elementSize;
-    list->length   = 0;
-    list->capacity = LHQ_LIST_START;
+    list->length      = 0;
+    list->capacity    = LHQ_LIST_START;
     return list;
 }
 
@@ -57,12 +58,12 @@ LHQ_LIST* lhq_list_new(size_t elementSize) {
    @param list  - the list to append to
    @param entry - the item to add
 */
-void lhq_list_append(LHQ_LIST* list, void *entry) {
+void lhq_list_append(LHQ_LIST *list, void *entry) {
     if(list->length == list->capacity) {
         list->capacity <<= 1;
-        list->data = realloc(list->data, list->capacity*list->elementSize );
+        list->data = realloc(list->data, list->capacity * list->elementSize);
     }
-    memcpy(((uint8_t*)list->data) + (list->length * list->elementSize), entry, list->elementSize);
+    memcpy(((uint8_t *)list->data) + (list->length * list->elementSize), entry, list->elementSize);
     list->length++;
 }
 
@@ -70,8 +71,8 @@ void lhq_list_append(LHQ_LIST* list, void *entry) {
 
    @param list - the list to shrink
 */
-void lhq_list_compact(LHQ_LIST* list) {
-    list->data = realloc(list->data, list->length*list->elementSize );
+void lhq_list_compact(LHQ_LIST *list) {
+    list->data     = realloc(list->data, list->length * list->elementSize);
     list->capacity = list->length;
 }
 
@@ -79,22 +80,20 @@ void lhq_list_compact(LHQ_LIST* list) {
 
    @param list - the list to free
 */
-void lhq_list_free(LHQ_LIST* list) {
+void lhq_list_free(LHQ_LIST *list) {
     free(list->data);
     free(list);
 }
 
 /* Macro to declare convenience functions for lists of different types */
-#define LHQ_LIST_DECLARE(type,entryType)                                 \
-                                                                         \
-LHQ_LIST* lhq_ ## type ## _list_new() {                                  \
-    return lhq_list_new(sizeof(entryType));                              \
-}                                                                        \
-                                                                         \
-void lhq_ ## type ## _list_print(LHQ_LIST *list, FILE *out) {            \
-    for(unsigned int i = 0; i < list->length; i++ ){                     \
-        lhq_ ## type ## _entry_print(&((entryType*)list->data)[i], out); \
-    }                                                                    \
-}                                                                        \
+#define LHQ_LIST_DECLARE(type, entryType)                                         \
+                                                                                  \
+    LHQ_LIST *lhq_##type##_list_new() { return lhq_list_new(sizeof(entryType)); } \
+                                                                                  \
+    void lhq_##type##_list_print(LHQ_LIST *list, FILE *out) {                     \
+        for(unsigned int i = 0; i < list->length; i++) {                          \
+            lhq_##type##_entry_print(&((entryType *)list->data)[i], out);         \
+        }                                                                         \
+    }
 
 #endif

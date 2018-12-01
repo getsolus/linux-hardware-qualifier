@@ -19,6 +19,9 @@ install: download
 	install -Dm00644 data/lkddb.list $(DESTDIR)$(DATADIR)/lkddb.list
 	install -Dm00644 data/ids.list $(DESTDIR)$(DATADIR)/ids.list
 
+fmt:
+	./update_format.sh
+
 clean:
 	rm -rf BUILDDIR || exit 0
 	rm -rf data || exit 0
