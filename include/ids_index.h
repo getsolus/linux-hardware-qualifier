@@ -193,6 +193,9 @@ unsigned int lhq_usb_id_search_and_copy(LHQ_IDS_INDEX *index, LKDDB_USB_ID *entr
             break;
         }
     }
+    if(!entry->name) {
+        entry->name = "";
+    }
     return i;
 }
 
@@ -211,6 +214,9 @@ unsigned int lhq_usb_class_id_search_and_copy(LHQ_IDS_INDEX *index, LKDDB_USB_CL
         if(lhq_usb_class_id_compare_and_copy(entry, &ids[i]) == 0) {
             break;
         }
+    }
+    if(!entry->name) {
+        entry->name = "";
     }
     return i;
 }

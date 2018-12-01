@@ -54,29 +54,6 @@ LKDDB_USB_ENTRY *lhq_usb_entry_new() {
     return result;
 }
 
-/* Check if entry is the same as other, copy pointers from other if so
-
-   @param entry - the entry to copy to
-   @param other - the entry to compare against and copy from
-   @returns 0 if equal otherwise < 0 or > 0
-*/
-int lhq_usb_compare_and_copy(LKDDB_USB_ENTRY *entry, LKDDB_USB_ENTRY *other) {
-    /* don't try to compare if entry has already been filled */
-    if((entry->configOpts != NULL) && (entry->filename != NULL)) {
-        return 0;
-    }
-    int compare = lhq_usb_id_compare_and_copy(&entry->id, &other->id);
-    if(compare != 0) return compare;
-    compare = lhq_usb_class_id_compare_and_copy(&entry->class, &other->class);
-    if(compare != 0) return compare;
-    compare = lhq_usb_class_id_compare_and_copy(&entry->interfaceClass, &other->interfaceClass);
-    if(compare == 0) {
-        entry->configOpts = other->configOpts;
-        entry->filename   = other->filename;
-    }
-    return compare;
-}
-
 /* Parse a USB Entry from a file
 
    @param entry - the entry to parse into
@@ -150,6 +127,25 @@ void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
     fprintf(out, "\tBCD: %s:%s\n", entry->bcdDeviceLo, entry->bcdDeviceHi);
     fprintf(out, "\tConfig Options: %s\n", entry->configOpts);
     fprintf(out, "\tSource: %s\n", entry->filename);
+}
+
+/* Check if entry is the same as other, copy pointers from other if so
+
+   @param entry - the entry to copy to
+   @param other - the entry to compare against and copy from
+   @returns 0 if equal otherwise < 0 or > 0
+*/
+int lhq_usb_compare_and_copy(LKDDB_USB_ENTRY *entry, LKDDB_USB_ENTRY *other) {
+    /* don't try to compare if entry has already been filled */
+    if((entry->configOpts != NULL) && (entry->filename != NULL)) {
+        return 0;
+    }
+    int compare = lhq_usb_id_compare_and_copy(&entry->id, &other->id);
+    if(compare == 0) {
+        entry->configOpts = other->configOpts;
+        entry->filename   = other->filename;
+    }
+    return compare;
 }
 
 /* define the lhq_usb_list functions */

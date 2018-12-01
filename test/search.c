@@ -47,22 +47,23 @@ void lhq_search_usb(LHQ_IDS_INDEX *ids, LHQ_TYPES_INDEX *types) {
     LHQ_USB_RESULT result = {
         .entry = {
             .id = {
-                .vendor = "8087",
-                .product = "0a2a",
+                .vendor = "b58e",
+                .product = "9e84",
             },
             .class = {
-                .bClass = "e0",
-                .bSubClass = "01",
-                .bProtocol = "01",
+                .bClass = "00",
+                .bSubClass = "00",
+                .bProtocol = "00",
             },
             .interfaceClass = {
-                .bClass = "e0",
+                .bClass = "01",
                 .bSubClass = "01",
-                .bProtocol = "01",
+                .bProtocol = "00",
             },
         },
     };
     lhq_usb_result_search(&result, ids, types);
+    lhq_usb_result_entry_print(&result, stdout);
 }
 
 int main(int argc, char **argv) {

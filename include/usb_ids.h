@@ -61,14 +61,10 @@ void lhq_usb_id_vendor(LKDDB_USB_ID *entry, LKDDB_USB_ID *vendor) {
    @returns 0 if equal otherwise < 0 or > 0
 */
 int lhq_usb_id_compare_and_copy(LKDDB_USB_ID *entry, LKDDB_USB_ID *other) {
-    /* don't try to compare if entry has already been filled */
-    if(entry->name != NULL) {
-        return 0;
-    }
     int compare = strcmp(entry->vendor, other->vendor);
     if(compare != 0) return compare;
     compare = strcmp(entry->product, other->product);
-    if(compare == 0) {
+    if((!entry->name) && (compare == 0)) {
         entry->name = other->name;
     }
     return compare;

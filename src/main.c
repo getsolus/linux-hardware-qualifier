@@ -63,6 +63,7 @@ void lhq_search_usb(LHQ_IDS_INDEX *ids, LHQ_TYPES_INDEX *types) {
         },
     };
     lhq_usb_result_search(&result, ids, types);
+    lhq_usb_result_entry_print(&result, stdout);
 }
 
 int main() {

@@ -20,6 +20,7 @@
 #include "ids_index.h"
 #include "lhq_types.h"
 #include "types_index.h"
+#include "usb.h"
 #include "usb_class_ids.h"
 #include "usb_ids.h"
 #include <stdio.h>
@@ -52,53 +53,46 @@ LHQ_USB_RESULT *lhq_usb_result_new() {
     return result;
 }
 
+/* Search for a USB Class in the Index
+
+   @param ids      - the IDs Index
+   @param class    - the USB Class to find
+   @param subclass - the USB Subclass to find
+   @param protocol - the USB Protocol to find
+*/
 void lhq_usb_result_class_search(LHQ_IDS_INDEX *ids,
                                  LKDDB_USB_CLASS_ID *class,
                                  LKDDB_USB_CLASS_ID *subclass,
                                  LKDDB_USB_CLASS_ID *protocol) {
     unsigned int length = ids->lists[LHQ_ID_USB_CLASS]->length;
     unsigned int index  = lhq_usb_class_id_search_and_copy(ids, class, 0);
-    if(index == length) {
-        printf("Class Not Found.\n");
-    } else {
-        printf("Found Class:\n");
-        lhq_usb_class_id_entry_print(class, stdout);
+    if(index != length) {
         index = lhq_usb_class_id_search_and_copy(ids, subclass, index + 1);
-        if(index == length) {
-            printf("SubClass Not Found.\n");
-        } else {
-            printf("Found SubClass:\n");
-            lhq_usb_class_id_entry_print(subclass, stdout);
+        if(index != length) {
             index = lhq_usb_class_id_search_and_copy(ids, protocol, index + 1);
-            if(index == length) {
-                printf("Protocol Not Found.\n");
-            } else {
-                printf("Found Protocol:\n");
-                lhq_usb_class_id_entry_print(protocol, stdout);
-            }
         }
     }
 }
 
+/* Search for a USB Device in the Index
+
+   @param result - the result to fill
+   @param ids    - the IDs Index
+   @param types  - the Types Index
+*/
 void lhq_usb_result_search(LHQ_USB_RESULT *result, LHQ_IDS_INDEX *ids, LHQ_TYPES_INDEX *types) {
+
     lhq_usb_id_vendor(&result->entry.id, &result->vendor);
 
     unsigned int length = ids->lists[LHQ_ID_USB]->length;
     unsigned int index  = lhq_usb_id_search_and_copy(ids, &result->vendor, 0);
     if(index == length) {
-        printf("Vendor Not Found.\n");
         return;
     }
-    printf("Found Vendor:\n");
-    lhq_usb_id_entry_print(&result->vendor, stdout);
     index = lhq_usb_id_search_and_copy(ids, &result->entry.id, index + 1);
     if(index == length) {
-        printf("Device Not Found.\n");
         return;
     }
-    printf("Found Device:\n");
-    lhq_usb_id_entry_print(&result->entry.id, stdout);
-
     lhq_usb_class_id_class(&result->entry.class, &result->class);
     lhq_usb_class_id_subclass(&result->entry.class, &result->subclass);
     lhq_usb_result_class_search(ids, &result->class, &result->subclass, &result->entry.class);
@@ -107,6 +101,8 @@ void lhq_usb_result_search(LHQ_USB_RESULT *result, LHQ_IDS_INDEX *ids, LHQ_TYPES
     lhq_usb_class_id_subclass(&result->entry.interfaceClass, &result->interfaceSubclass);
     lhq_usb_result_class_search(ids, &result->interfaceClass, &result->interfaceSubclass,
                                 &result->entry.interfaceClass);
+
+    lhq_usb_search_and_copy(types, &result->entry, 0);
 }
 
 /* Print a summary of this USB Result
@@ -114,7 +110,14 @@ void lhq_usb_result_search(LHQ_USB_RESULT *result, LHQ_IDS_INDEX *ids, LHQ_TYPES
    @param result - the result to print
    @param out    - the file to write to
 */
-void lhq_usb_result_entry_print(LHQ_USB_RESULT *result, FILE *out) { fprintf(out, "USB Result:\n"); }
+void lhq_usb_result_entry_print(LHQ_USB_RESULT *result, FILE *out) {
+    fprintf(out, "USB Result:\n");
+    fprintf(out, "\tUSB ID: %s:%s\n", result->entry.id.vendor, result->entry.id.product);
+    fprintf(out, "\tUSB Vendor: %s\n", result->vendor.name);
+    fprintf(out, "\tUSB Product: %s\n", result->entry.id.name);
+    fprintf(out, "\tKernel Config Options: %s\n", result->entry.configOpts);
+    fprintf(out, "\tKernel Source File: %s\n", result->entry.filename);
+}
 
 /* define the lhq_usb_result_list functions */
 LHQ_LIST_DECLARE(usb_result, LHQ_USB_RESULT)
