@@ -24,10 +24,8 @@
 LHQ_TYPES_INDEX *lhq_build_types_index(FILE *lkddb) {
     LHQ_TYPES_INDEX *index = lhq_types_index_new(lkddb);
     lhq_types_index_populate(index);
-#ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
     lhq_types_index_summary(index);
-#endif
 #endif
     return index;
 }
@@ -36,10 +34,8 @@ LHQ_IDS_INDEX *lhq_build_ids_index(FILE *ids) {
     LHQ_IDS_INDEX *idsIndex = lhq_ids_index_new(ids);
 
     lhq_ids_index_populate(idsIndex);
-#ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
     lhq_ids_index_summary(idsIndex);
-#endif
 #endif
     return idsIndex;
 }
