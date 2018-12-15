@@ -33,7 +33,7 @@ typedef struct {
 
    @returns pointer to the new LHQ_ACPI_RESULT
 */
-LHQ_ACPI_RESULT *lhq_pci_result_new() {
+LHQ_ACPI_RESULT *lhq_acpi_result_new() {
     LHQ_ACPI_RESULT *result = (LHQ_ACPI_RESULT *)calloc(1, sizeof(LHQ_ACPI_RESULT));
     return result;
 }

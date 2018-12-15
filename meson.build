@@ -27,7 +27,8 @@ am_cflags = [
     '-Wconversion',
     '-Wunused-variable',
     '-Wunreachable-code',
-    '-W'
+    '-W',
+    '-D_DEFAULT_SOURCE'
 ]
 
 # Add our main flags
