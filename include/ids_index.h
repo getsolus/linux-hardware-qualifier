@@ -97,11 +97,9 @@ void lhq_pci_class_ids_parse(LHQ_IDS_INDEX *index) {
     }
     lhq_list_append(list, (void *)&entry);
     lhq_list_compact(list);
-#ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     lhq_pci_class_id_list_print(list, stderr);
-#endif
 #endif
 }
 
@@ -118,11 +116,9 @@ void lhq_pci_ids_parse(LHQ_IDS_INDEX *index) {
     }
     lhq_list_append(list, (void *)&entry);
     lhq_list_compact(list);
-#ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     lhq_pci_id_list_print(list, stderr);
-#endif
 #endif
 }
 
@@ -139,11 +135,9 @@ void lhq_usb_class_ids_parse(LHQ_IDS_INDEX *index) {
     }
     lhq_list_append(list, (void *)&entry);
     lhq_list_compact(list);
-#ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     lhq_usb_class_id_list_print(list, stderr);
-#endif
 #endif
 }
 
@@ -160,11 +154,9 @@ void lhq_usb_ids_parse(LHQ_IDS_INDEX *index) {
     }
     lhq_list_append(list, (void *)&entry);
     lhq_list_compact(list);
-#ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     lhq_usb_id_list_print(list, stderr);
-#endif
 #endif
 }
 

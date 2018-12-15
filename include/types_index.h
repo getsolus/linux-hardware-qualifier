@@ -100,11 +100,9 @@ void lhq_types_parse_acpi(LHQ_TYPES_INDEX *index) {
     /* shrink list to save RAM */
     lhq_list_compact(list);
 
-#ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
     fprintf(stderr, "List: acpi, Length: %d, Capacity: %d\n", list->length, list->capacity);
     lhq_acpi_list_print(list, stderr);
-#endif
 #endif
 }
 
@@ -121,11 +119,9 @@ void lhq_types_parse_pci(LHQ_TYPES_INDEX *index) {
     }
     lhq_list_append(list, (void *)&entry);
     lhq_list_compact(list);
-#ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     lhq_pci_list_print(list, stderr);
-#endif
 #endif
 }
 
@@ -142,11 +138,9 @@ void lhq_types_parse_usb(LHQ_TYPES_INDEX *index) {
     }
     lhq_list_append(list, (void *)&entry);
     lhq_list_compact(list);
-#ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
     lhq_usb_list_print(list, stderr);
-#endif
 #endif
 }
 
