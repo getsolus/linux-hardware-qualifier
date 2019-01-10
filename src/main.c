@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Solus Project <copyright@getsol.us>
+ * Copyright 2018-2019 Solus Project <copyright@getsol.us>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@
 
 #include "acpi_result.h"
 #include "acpi_sysfs.h"
+#include "pci_result.h"
+#include "pci_sysfs.h"
 #include "ids_index.h"
 
 #include <stdio.h>
@@ -57,6 +59,23 @@ CLEANUP:
     lhq_list_free(results);
 }
 
+void lhq_search_pci(LHQ_IDS_INDEX *ids, LHQ_TYPES_INDEX *types) {
+    LHQ_LIST *results = lhq_pci_result_list_new();
+    int status = lhq_pci_find_devices(results);
+    if( status != 0 ) {
+        goto CLEANUP;
+    }
+    LHQ_PCI_RESULT *result = (LHQ_PCI_RESULT*)results->data;
+    for( unsigned int i = 0; i < results->length; i++ ) {
+        lhq_pci_result_search(result, ids, types);
+        lhq_pci_result_entry_print(result, stdout);
+        lhq_pci_result_free(result);
+        result++;
+    }
+CLEANUP:
+    lhq_list_free(results);
+}
+
 int main(int argc, char **argv) {
     int time = 1;
     if(argc > 1) {
@@ -82,6 +101,7 @@ int main(int argc, char **argv) {
 
     for(; time > 0; time--) {
         lhq_search_acpi(typesIndex);
+        lhq_search_pci(idsIndex,typesIndex);
     }
 
     lhq_types_index_free(typesIndex);

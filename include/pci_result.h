@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Solus Project <copyright@getsol.us>
+ * Copyright 2018-2019 Solus Project <copyright@getsol.us>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,10 +104,21 @@ void lhq_pci_result_entry_print(LHQ_PCI_RESULT *result, FILE *out) {
     fprintf(out, "\tPCI ID: %s:%s\n", result->entry.id.vendor, result->entry.id.device);
     fprintf(out, "\tPCI Vendor: %s\n", result->vendor.name);
     fprintf(out, "\tPCI Product: %s\n", result->entry.id.name);
+    fprintf(out, "\tPCI Subsystem: %s:%s\n", result->entry.id.subVendor, result->entry.id.subDevice);
     fprintf(out, "\tKernel Config Options: %s\n", result->entry.configOpts);
     fprintf(out, "\tKernel Source File: %s\n", result->entry.filename);
 }
 
+/* Free memory allocated to this result
+
+   @param result - the result to free
+*/
+void lhq_pci_result_free(LHQ_PCI_RESULT *result) {
+    free(result->entry.id.device);
+    free(result->entry.id.vendor);
+    free(result->entry.id.subDevice);
+    free(result->entry.id.subVendor);
+}
 /* define the lhq_pci_result_list functions */
 LHQ_LIST_DECLARE(pci_result, LHQ_PCI_RESULT)
 

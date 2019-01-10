@@ -18,6 +18,8 @@
 
 #include "acpi_result.h"
 #include "acpi_sysfs.h"
+#include "pci_result.h"
+#include "pci_sysfs.h"
 #include "ids_index.h"
 
 #include <stdio.h>
@@ -25,10 +27,8 @@
 LHQ_TYPES_INDEX *lhq_build_types_index(FILE *lkddb) {
     LHQ_TYPES_INDEX *index = lhq_types_index_new(lkddb);
     lhq_types_index_populate(index);
-#ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
     lhq_types_index_summary(index);
-#endif
 #endif
     return index;
 }
@@ -37,24 +37,22 @@ LHQ_IDS_INDEX *lhq_build_ids_index(FILE *ids) {
     LHQ_IDS_INDEX *idsIndex = lhq_ids_index_new(ids);
 
     lhq_ids_index_populate(idsIndex);
-#ifdef LHQ_DEBUG
 #if LHQ_DEBUG > 0
     lhq_ids_index_summary(idsIndex);
-#endif
 #endif
     return idsIndex;
 }
 
-void lhq_search_acpi(LHQ_TYPES_INDEX *types) {
-    LHQ_LIST *results = lhq_acpi_result_list_new();
-    int status = lhq_acpi_find_devices(results);
+void lhq_search_pci(LHQ_IDS_INDEX *ids, LHQ_TYPES_INDEX *types) {
+    LHQ_LIST *results = lhq_pci_result_list_new();
+    int status = lhq_pci_find_devices(results);
     if( status != 0 ) {
         goto CLEANUP;
     }
-    LHQ_ACPI_RESULT *result = (LHQ_ACPI_RESULT*)results->data;
+    LHQ_PCI_RESULT *result = (LHQ_PCI_RESULT*)results->data;
     for( unsigned int i = 0; i < results->length; i++ ) {
-        lhq_acpi_result_search(result, types);
-        lhq_acpi_result_entry_print(result, stdout);
+        lhq_pci_result_search(result, ids, types);
+        lhq_pci_result_entry_print(result, stdout);
         result++;
     }
 CLEANUP:
@@ -85,7 +83,7 @@ int main(int argc, char **argv) {
     fclose(ids);
 
     for(; time > 0; time--) {
-        lhq_search_acpi(typesIndex);
+        lhq_search_pci(idsIndex,typesIndex);
     }
 
     lhq_types_index_free(typesIndex);

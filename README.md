@@ -8,7 +8,7 @@ their systems. Therefore, the majority of my focus is directed here.
 
 - [ ] acpi
   - [x] lkddb list
-  - [ ] sysfs
+  - [x] sysfs
 - [ ] ieee1394
   - [ ] lkddb list
   - [ ] sysfs
@@ -19,7 +19,7 @@ their systems. Therefore, the majority of my focus is directed here.
   - [x] lkddb ids
   - [x] lkddb class ids
   - [x] lkddb list
-  - [ ] sysfs
+  - [x] sysfs
 - [ ] usb
   - [x] lkddb ids
   - [x] lkddb class ids
@@ -65,7 +65,7 @@ make install
 ```
 
 ## License 
-Copyright 2018 Solus Project <copyright@getsol.us>
+Copyright 2018-2019 Solus Project <copyright@getsol.us>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

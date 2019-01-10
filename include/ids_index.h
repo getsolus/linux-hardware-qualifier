@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Solus Project <copyright@getsol.us>
+ * Copyright 2018-2019 Solus Project <copyright@getsol.us>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ void lhq_ids_index_summary(LHQ_IDS_INDEX *index) {
 
    @param index - the index to read from
 */
-void lhq_pci_class_ids_parse(LHQ_IDS_INDEX *index) {
+static void lhq_pci_class_ids_parse(LHQ_IDS_INDEX *index) {
     LKDDB_PCI_CLASS_ID entry;
     LHQ_LIST *list = index->lists[LHQ_ID_PCI_CLASS];
     index->cursor  = strstr(index->cursor, "pci_class_ids");
@@ -107,7 +107,7 @@ void lhq_pci_class_ids_parse(LHQ_IDS_INDEX *index) {
 
    @param index - the index to read from
 */
-void lhq_pci_ids_parse(LHQ_IDS_INDEX *index) {
+static void lhq_pci_ids_parse(LHQ_IDS_INDEX *index) {
     LKDDB_PCI_ID entry;
     LHQ_LIST *list = index->lists[LHQ_ID_PCI];
     index->cursor  = strstr(index->cursor, "\npci_ids");
@@ -126,7 +126,7 @@ void lhq_pci_ids_parse(LHQ_IDS_INDEX *index) {
 
    @param index - the index to populate
 */
-void lhq_usb_class_ids_parse(LHQ_IDS_INDEX *index) {
+static void lhq_usb_class_ids_parse(LHQ_IDS_INDEX *index) {
     LKDDB_USB_CLASS_ID entry;
     LHQ_LIST *list = index->lists[LHQ_ID_USB_CLASS];
     index->cursor  = strstr(index->cursor, "\nusb_class_ids");
@@ -145,7 +145,7 @@ void lhq_usb_class_ids_parse(LHQ_IDS_INDEX *index) {
 
    @param index - the index to parse
 */
-void lhq_usb_ids_parse(LHQ_IDS_INDEX *index) {
+static void lhq_usb_ids_parse(LHQ_IDS_INDEX *index) {
     LKDDB_USB_ID entry;
     LHQ_LIST *list = index->lists[LHQ_ID_USB];
     // index->cursor = strstr(index->cursor, "\nusb_ids");
