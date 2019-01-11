@@ -118,9 +118,9 @@ void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
    @returns 0 if equal otherwise < 0 or > 0
 */
 int lhq_pci_id_compare_and_copy(LKDDB_PCI_ID *entry, LKDDB_PCI_ID *other) {
-    int compare = strcmp(entry->vendor, other->vendor);
+    int compare = strncmp(entry->vendor, other->vendor, 4);
     if(compare != 0) return compare;
-    compare = strcmp(entry->device, other->device);
+    compare = strncmp(entry->device, other->device, 4);
     if((entry->name == NULL) && (compare == 0)) {
         entry->name = other->name;
     }

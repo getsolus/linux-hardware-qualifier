@@ -53,6 +53,7 @@ void lhq_search_acpi(LHQ_TYPES_INDEX *types) {
     for( unsigned int i = 0; i < results->length; i++ ) {
         lhq_acpi_result_search(result, types);
         lhq_acpi_result_entry_print(result, stdout);
+        lhq_acpi_result_free(result);
         result++;
     }
 CLEANUP:

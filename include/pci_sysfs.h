@@ -26,12 +26,12 @@
 #include <string.h>
 #include <unistd.h>
 
-static void lhq_file_to_string(FILE *f, char **dest, int offset, size_t size){
+static void lhq_file_to_string(FILE *f, char * name, char **dest, int offset, size_t size){
     fseek(f, offset, SEEK_SET);
-    *dest = (char*)calloc(1, size);
-    if(fread(*dest, 1, size, f) != size) {
+    *dest = (char*)calloc(1, size+1);
+    if((fread(*dest, 1, size, f) != size) || (strnlen(*dest,size) != size) ) {
         free(*dest);
-        fprintf(stderr, "Failed to read all of file. Exiting.\n");
+        printf("Failed to read all of file: %s\n", name);
     }
 }
 
@@ -50,35 +50,35 @@ void lhq_pci_find_device(LHQ_LIST *results, struct dirent *entry) {
     strcat(buff,"/device");
     FILE *f = fopen(buff,"rb");
     if( f != NULL ) {
-        lhq_file_to_string(f, &(result.entry.id.device),2,4);
+        lhq_file_to_string(f, buff, &(result.entry.id.device),2,4);
         fclose(f);
     }
     strcpy(buff,path);
     strcat(buff,"/vendor");
     f = fopen(buff,"r");
     if( f != NULL ) {
-        lhq_file_to_string(f, &(result.entry.id.vendor),2,4);
+        lhq_file_to_string(f, buff, &(result.entry.id.vendor),2,4);
         fclose(f);
     }
     strcpy(buff,path);
     strcat(buff,"/subsystem_device");
     f = fopen(buff,"r");
     if( f != NULL ) {
-        lhq_file_to_string(f, &(result.entry.id.subDevice),2,4);
+        lhq_file_to_string(f, buff, &(result.entry.id.subDevice),2,4);
         fclose(f);
     }
     strcpy(buff,path);
     strcat(buff,"/subsystem_vendor");
     f = fopen(buff,"r");
     if( f != NULL ) {
-        lhq_file_to_string(f, &(result.entry.id.subVendor),2,4);
+        lhq_file_to_string(f, buff, &(result.entry.id.subVendor),2,4);
         fclose(f);
     }
     strcpy(buff,path);
     strcat(buff,"/class");
     f = fopen(buff,"r");
     if( f != NULL ) {
-        lhq_file_to_string(f, &(result.entry.class.classMask),2,6);
+        lhq_file_to_string(f, buff, &(result.entry.class.classMask),2,6);
         fclose(f);
     }
     lhq_list_append(results, &result);

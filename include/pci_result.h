@@ -118,6 +118,9 @@ void lhq_pci_result_free(LHQ_PCI_RESULT *result) {
     free(result->entry.id.vendor);
     free(result->entry.id.subDevice);
     free(result->entry.id.subVendor);
+    free(result->entry.class.classMask);
+    free(result->class.classMask);
+    free(result->subclass.classMask);
 }
 /* define the lhq_pci_result_list functions */
 LHQ_LIST_DECLARE(pci_result, LHQ_PCI_RESULT)

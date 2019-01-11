@@ -60,6 +60,14 @@ void lhq_acpi_result_entry_print(LHQ_ACPI_RESULT *result, FILE *out) {
     fprintf(out, "\tKernel Source File: %s\n", result->entry.filename);
 }
 
+/* Free memory allocated to this result
+
+   @param result - the result to free
+*/
+void lhq_acpi_result_free(LHQ_ACPI_RESULT *result) {
+    free(result->entry.id);
+}
+
 /* define the lhq_apci_result_list functions */
 LHQ_LIST_DECLARE(acpi_result, LHQ_ACPI_RESULT)
 

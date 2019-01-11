@@ -80,7 +80,7 @@ void lhq_pci_class_id_subclass(LKDDB_PCI_CLASS_ID *entry, LKDDB_PCI_CLASS_ID *su
    @returns 0 if equal otherwise < 0 or > 0
 */
 int lhq_pci_class_id_compare_and_copy(LKDDB_PCI_CLASS_ID *entry, LKDDB_PCI_CLASS_ID *other) {
-    int compare = strcmp(entry->classMask, other->classMask);
+    int compare = strncmp(entry->classMask, other->classMask,6);
     if((entry->name == NULL) && (compare == 0)) {
         entry->name = other->name;
     }
@@ -126,7 +126,7 @@ int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char **file) {
 */
 void lhq_pci_class_id_entry_print(LKDDB_PCI_CLASS_ID *entry, FILE *out) {
     fprintf(out, "PCI Class ID:\n");
-    fprintf(out, "\tMask: %s\n", entry->classMask);
+    fprintf(out, "\tMask: %4s\n", entry->classMask);
     fprintf(out, "\tName: %s\n", entry->name);
 }
 
