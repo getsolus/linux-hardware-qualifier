@@ -17,38 +17,38 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_ACPI_SYSFS_H__
 #define __LINUX_HARDWARE_QUALIFIER_ACPI_SYSFS_H__
 
-#include "lhq_list.h"
 #include "acpi_result.h"
+#include "lhq_list.h"
 
-#include <sys/types.h>
 #include <dirent.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 
 int lhq_acpi_find_devices(LHQ_LIST *results) {
     DIR *devices = opendir("/sys/bus/acpi/devices");
-    if( devices == NULL ) {
+    if(devices == NULL) {
         return -1;
     }
-    struct dirent * entry = readdir(devices);
+    struct dirent *entry = readdir(devices);
     while(entry != NULL) {
-        if( (entry->d_type == DT_LNK) && ( strncmp(entry->d_name,"device",6) != 0 ) ) {
-            LHQ_ACPI_RESULT result = {.entry = {NULL,NULL,NULL}};
-            char * end = strchr(entry->d_name, ':');
-            result.entry.id = (char*)calloc((size_t)(end-entry->d_name+1), sizeof(char));
-            strncpy(result.entry.id, entry->d_name, (size_t)(end-entry->d_name));
-            LHQ_ACPI_RESULT *prev = (LHQ_ACPI_RESULT*)results->data;
-            int ok = 1;
-            for( unsigned int i = 0; (i < results->length) && (ok == 1); i++) {
-                if( strcmp(prev[i].entry.id, result.entry.id) == 0) {
+        if((entry->d_type == DT_LNK) && (strncmp(entry->d_name, "device", 6) != 0)) {
+            LHQ_ACPI_RESULT *result = lhq_list_next(results);
+            char *end               = strchr(entry->d_name, ':');
+            result->entry.id        = (char *)calloc((size_t)(end - entry->d_name + 1), sizeof(char));
+            strncpy(result->entry.id, entry->d_name, (size_t)(end - entry->d_name));
+            LHQ_ACPI_RESULT *prev = (LHQ_ACPI_RESULT *)results->data;
+            int ok                = 1;
+            for(unsigned int i = 0; (i < results->length) && (ok == 1); i++) {
+                if(strcmp(prev[i].entry.id, result->entry.id) == 0) {
                     ok = 0;
                 }
             }
             if(ok == 1) {
-                lhq_list_append(results, &result);
+                lhq_list_inc(results);
             } else {
-                free(result.entry.id);
-                result.entry.id = NULL;
+                free(result->entry.id);
+                result->entry.id = NULL;
             }
         }
         entry = readdir(devices);

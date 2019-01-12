@@ -47,14 +47,15 @@ LHQ_IDS_INDEX *lhq_build_ids_index(FILE *ids) {
 
 void lhq_search_acpi(LHQ_TYPES_INDEX *types) {
     LHQ_LIST *results = lhq_acpi_result_list_new();
-    int status = lhq_acpi_find_devices(results);
-    if( status != 0 ) {
+    int status        = lhq_acpi_find_devices(results);
+    if(status != 0) {
         goto CLEANUP;
     }
-    LHQ_ACPI_RESULT *result = (LHQ_ACPI_RESULT*)results->data;
-    for( unsigned int i = 0; i < results->length; i++ ) {
+    LHQ_ACPI_RESULT *result = (LHQ_ACPI_RESULT *)results->data;
+    for(unsigned int i = 0; i < results->length; i++) {
         lhq_acpi_result_search(result, types);
         lhq_acpi_result_entry_print(result, stdout);
+        lhq_acpi_result_free(result);
         result++;
     }
 CLEANUP:

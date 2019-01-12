@@ -89,13 +89,14 @@ void lhq_ids_index_summary(LHQ_IDS_INDEX *index) {
    @param index - the index to read from
 */
 static void lhq_pci_class_ids_parse(LHQ_IDS_INDEX *index) {
-    LKDDB_PCI_CLASS_ID entry;
-    LHQ_LIST *list = index->lists[LHQ_ID_PCI_CLASS];
-    index->cursor  = strstr(index->cursor, "pci_class_ids");
-    while(lhq_pci_class_id_entry_parse(&entry, &(index->cursor))) {
-        lhq_list_append(list, (void *)&entry);
+    LHQ_LIST *list            = index->lists[LHQ_ID_PCI_CLASS];
+    LKDDB_PCI_CLASS_ID *entry = (LKDDB_PCI_CLASS_ID *)lhq_list_next(list);
+    index->cursor             = strstr(index->cursor, "pci_class_ids");
+    while(lhq_pci_class_id_entry_parse(entry, &(index->cursor))) {
+        lhq_list_inc(list);
+        entry = (LKDDB_PCI_CLASS_ID *)lhq_list_next(list);
     }
-    lhq_list_append(list, (void *)&entry);
+    lhq_list_inc(list);
     lhq_list_compact(list);
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
@@ -108,13 +109,14 @@ static void lhq_pci_class_ids_parse(LHQ_IDS_INDEX *index) {
    @param index - the index to read from
 */
 static void lhq_pci_ids_parse(LHQ_IDS_INDEX *index) {
-    LKDDB_PCI_ID entry;
-    LHQ_LIST *list = index->lists[LHQ_ID_PCI];
-    index->cursor  = strstr(index->cursor, "\npci_ids");
-    while(lhq_pci_id_entry_parse(&entry, &(index->cursor))) {
-        lhq_list_append(list, (void *)&entry);
+    LHQ_LIST *list      = index->lists[LHQ_ID_PCI];
+    LKDDB_PCI_ID *entry = (LKDDB_PCI_ID *)lhq_list_next(list);
+    index->cursor       = strstr(index->cursor, "\npci_ids");
+    while(lhq_pci_id_entry_parse(entry, &(index->cursor))) {
+        lhq_list_inc(list);
+        entry = (LKDDB_PCI_ID *)lhq_list_next(list);
     }
-    lhq_list_append(list, (void *)&entry);
+    lhq_list_inc(list);
     lhq_list_compact(list);
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
@@ -127,13 +129,14 @@ static void lhq_pci_ids_parse(LHQ_IDS_INDEX *index) {
    @param index - the index to populate
 */
 static void lhq_usb_class_ids_parse(LHQ_IDS_INDEX *index) {
-    LKDDB_USB_CLASS_ID entry;
-    LHQ_LIST *list = index->lists[LHQ_ID_USB_CLASS];
-    index->cursor  = strstr(index->cursor, "\nusb_class_ids");
-    while(lhq_usb_class_id_entry_parse(&entry, &(index->cursor))) {
-        lhq_list_append(list, (void *)&entry);
+    LHQ_LIST *list            = index->lists[LHQ_ID_USB_CLASS];
+    LKDDB_USB_CLASS_ID *entry = (LKDDB_USB_CLASS_ID *)lhq_list_next(list);
+    index->cursor             = strstr(index->cursor, "\nusb_class_ids");
+    while(lhq_usb_class_id_entry_parse(entry, &(index->cursor))) {
+        lhq_list_inc(list);
+        entry = (LKDDB_USB_CLASS_ID *)lhq_list_next(list);
     }
-    lhq_list_append(list, (void *)&entry);
+    lhq_list_inc(list);
     lhq_list_compact(list);
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
@@ -146,13 +149,14 @@ static void lhq_usb_class_ids_parse(LHQ_IDS_INDEX *index) {
    @param index - the index to parse
 */
 static void lhq_usb_ids_parse(LHQ_IDS_INDEX *index) {
-    LKDDB_USB_ID entry;
-    LHQ_LIST *list = index->lists[LHQ_ID_USB];
+    LHQ_LIST *list      = index->lists[LHQ_ID_USB];
+    LKDDB_USB_ID *entry = (LKDDB_USB_ID *)lhq_list_next(list);
     // index->cursor = strstr(index->cursor, "\nusb_ids");
-    while(lhq_usb_id_entry_parse(&entry, &(index->cursor))) {
-        lhq_list_append(list, (void *)&entry);
+    while(lhq_usb_id_entry_parse(entry, &(index->cursor))) {
+        lhq_list_inc(list);
+        entry = (LKDDB_USB_ID *)lhq_list_next(list);
     }
-    lhq_list_append(list, (void *)&entry);
+    lhq_list_inc(list);
     lhq_list_compact(list);
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);

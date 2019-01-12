@@ -117,6 +117,15 @@ void lhq_usb_result_entry_print(LHQ_USB_RESULT *result, FILE *out) {
     fprintf(out, "\tKernel Source File: %s\n", result->entry.filename);
 }
 
+/* Free memory allocated to this result
+
+   @param result - the result to free
+*/
+void lhq_usb_result_free(LHQ_USB_RESULT *result) {
+    free(result->entry.id.vendor);
+    free(result->entry.id.product);
+}
+
 /* define the lhq_usb_result_list functions */
 LHQ_LIST_DECLARE(usb_result, LHQ_USB_RESULT)
 

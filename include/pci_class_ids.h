@@ -80,7 +80,7 @@ void lhq_pci_class_id_subclass(LKDDB_PCI_CLASS_ID *entry, LKDDB_PCI_CLASS_ID *su
    @returns 0 if equal otherwise < 0 or > 0
 */
 int lhq_pci_class_id_compare_and_copy(LKDDB_PCI_CLASS_ID *entry, LKDDB_PCI_CLASS_ID *other) {
-    int compare = strncmp(entry->classMask, other->classMask,6);
+    int compare = strncmp(entry->classMask, other->classMask, 6);
     if((entry->name == NULL) && (compare == 0)) {
         entry->name = other->name;
     }

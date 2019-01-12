@@ -53,18 +53,23 @@ LHQ_LIST *lhq_list_new(size_t elementSize) {
     return list;
 }
 
-/* Append a new item to the end of the list
+/* Get a pointer to the next free entry at the end of the list
 
-   @param list  - the list to append to
-   @param entry - the item to add
+   @param list  - the list to get the entry from
+   @returns pointer to the next entry
 */
-void lhq_list_append(LHQ_LIST *list, void *entry) {
+void *lhq_list_next(LHQ_LIST *list) { return (void *)(((uint8_t *)list->data) + (list->length * list->elementSize)); }
+
+/* Mark the next entry as added
+
+   @param list  - the list to modify
+*/
+void lhq_list_inc(LHQ_LIST *list) {
+    list->length++;
     if(list->length == list->capacity) {
         list->capacity <<= 1;
         list->data = realloc(list->data, list->capacity * list->elementSize);
     }
-    memcpy(((uint8_t *)list->data) + (list->length * list->elementSize), entry, list->elementSize);
-    list->length++;
 }
 
 /* Shrink the list to only use enough memory for current elements

@@ -87,16 +87,17 @@ void lhq_types_index_summary(LHQ_TYPES_INDEX *index) {
    @param index - the index to read from and parse into
 */
 void lhq_types_parse_acpi(LHQ_TYPES_INDEX *index) {
-    LKDDB_ACPI_ENTRY entry;
-    LHQ_LIST *list = index->lists[LHQ_TYPE_ACPI];
+    LHQ_LIST *list          = index->lists[LHQ_TYPE_ACPI];
+    LKDDB_ACPI_ENTRY *entry = (LKDDB_ACPI_ENTRY *)lhq_list_next(list);
     /* go to start of this section */
     index->cursor = strstr(index->cursor, "acpi");
     /* read entries */
-    while(lhq_acpi_entry_parse(&entry, &(index->cursor))) {
-        lhq_list_append(list, (void *)&entry);
+    while(lhq_acpi_entry_parse(entry, &(index->cursor))) {
+        lhq_list_inc(list);
+        entry = (LKDDB_ACPI_ENTRY *)lhq_list_next(list);
     }
     /* append last entry */
-    lhq_list_append(list, (void *)&entry);
+    lhq_list_inc(list);
     /* shrink list to save RAM */
     lhq_list_compact(list);
 
@@ -111,13 +112,14 @@ void lhq_types_parse_acpi(LHQ_TYPES_INDEX *index) {
    @param index - the index to read from and parse into
 */
 void lhq_types_parse_pci(LHQ_TYPES_INDEX *index) {
-    LKDDB_PCI_ENTRY entry;
-    LHQ_LIST *list = index->lists[LHQ_TYPE_PCI];
-    index->cursor  = strstr(index->cursor, "\npci");
-    while(lhq_pci_entry_parse(&entry, &(index->cursor))) {
-        lhq_list_append(list, (void *)&entry);
+    LHQ_LIST *list         = index->lists[LHQ_TYPE_PCI];
+    LKDDB_PCI_ENTRY *entry = (LKDDB_PCI_ENTRY *)lhq_list_next(list);
+    index->cursor          = strstr(index->cursor, "\npci");
+    while(lhq_pci_entry_parse(entry, &(index->cursor))) {
+        lhq_list_inc(list);
+        entry = (LKDDB_PCI_ENTRY *)lhq_list_next(list);
     }
-    lhq_list_append(list, (void *)&entry);
+    lhq_list_inc(list);
     lhq_list_compact(list);
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
@@ -130,13 +132,14 @@ void lhq_types_parse_pci(LHQ_TYPES_INDEX *index) {
    @param index - the index to read from and parse into
 */
 void lhq_types_parse_usb(LHQ_TYPES_INDEX *index) {
-    LKDDB_USB_ENTRY entry;
-    LHQ_LIST *list = index->lists[LHQ_TYPE_USB];
-    index->cursor  = strstr(index->cursor, "\nusb");
-    while(lhq_usb_entry_parse(&entry, &(index->cursor))) {
-        lhq_list_append(list, (void *)&entry);
+    LHQ_LIST *list         = index->lists[LHQ_TYPE_USB];
+    LKDDB_USB_ENTRY *entry = (LKDDB_USB_ENTRY *)lhq_list_next(list);
+    index->cursor          = strstr(index->cursor, "\nusb");
+    while(lhq_usb_entry_parse(entry, &(index->cursor))) {
+        lhq_list_inc(list);
+        entry = (LKDDB_USB_ENTRY *)lhq_list_next(list);
     }
-    lhq_list_append(list, (void *)&entry);
+    lhq_list_inc(list);
     lhq_list_compact(list);
 #if LHQ_DEBUG > 0
     fprintf(stderr, "Length: %d, Capacity: %d\n", list->length, list->capacity);
