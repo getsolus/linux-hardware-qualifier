@@ -19,6 +19,7 @@
 #include "acpi_result.h"
 #include "acpi_sysfs.h"
 #include "ids_index.h"
+#include "kernel_config.h"
 #include "pci_result.h"
 #include "pci_sysfs.h"
 #include "usb_result.h"
@@ -43,6 +44,16 @@ LHQ_IDS_INDEX *lhq_build_ids_index(FILE *ids) {
     lhq_ids_index_summary(idsIndex);
 #endif
     return idsIndex;
+}
+
+LHQ_KERNEL_CONFIG *lhq_build_kernel_config(FILE *configs) {
+    LHQ_KERNEL_CONFIG *config = lhq_kernel_config_new(configs);
+
+    lhq_kernel_config_populate(config);
+#if LHQ_DEBUG > 0
+    lhq_kernel_config_summary(config);
+#endif
+    return config;
 }
 
 void lhq_search_acpi(LHQ_TYPES_INDEX *types) {
@@ -114,18 +125,25 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Failed to open '%s'. Exiting.\n", "data/ids.list");
         return -1;
     }
-    LHQ_TYPES_INDEX *typesIndex = lhq_build_types_index(lkddb);
-    LHQ_IDS_INDEX *idsIndex     = lhq_build_ids_index(ids);
+    FILE *configs = fopen("/usr/lib/kernel/config-4.19.12-106.current", "r");
+    if(configs == NULL) {
+        fprintf(stderr, "Failed to open '%s'. Exiting.\n", "/usr/lib/kernel/config-4.19.12-106.current");
+        return -1;
+    }
+    LHQ_TYPES_INDEX   *typesIndex = lhq_build_types_index(lkddb);
+    LHQ_IDS_INDEX     *idsIndex   = lhq_build_ids_index(ids);
+    LHQ_KERNEL_CONFIG *config     = lhq_build_kernel_config(configs);
     fclose(lkddb);
     fclose(ids);
-
+    fclose(configs);
     for(; time > 0; time--) {
         lhq_search_acpi(typesIndex);
         lhq_search_pci(idsIndex, typesIndex);
         lhq_search_usb(idsIndex, typesIndex);
     }
-
+    lhq_kernel_flag_list_print(config->flags, stdout);
     lhq_types_index_free(typesIndex);
     lhq_ids_index_free(idsIndex);
+    lhq_kernel_config_free(config);
     return 0;
 }
