@@ -25,6 +25,10 @@
 #include <string.h>
 #include <sys/types.h>
 
+/* Search for all of the system ACPI devices and look them un in the LKDDB
+
+   @param results - the list of results to save to
+*/
 int lhq_acpi_find_devices(LHQ_LIST *results) {
     DIR *devices = opendir("/sys/bus/acpi/devices");
     if(devices == NULL) {

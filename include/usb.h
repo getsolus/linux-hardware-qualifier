@@ -47,15 +47,6 @@ typedef struct {
     char *filename;
 } LKDDB_USB_ENTRY;
 
-/* Create a new LKDDB_USB_ENTRY
-
-   @returns pointer to the new LKDDB_USB_ENTRY
-*/
-LKDDB_USB_ENTRY *lhq_usb_entry_new() {
-    LKDDB_USB_ENTRY *result = (LKDDB_USB_ENTRY *)calloc(1, sizeof(LKDDB_USB_ENTRY));
-    return result;
-}
-
 /* Parse a USB Entry from a file
 
    @param entry - the entry to parse into
@@ -122,7 +113,7 @@ int lhq_usb_entry_parse(LKDDB_USB_ENTRY *entry, char **file) {
    @param out   - the file to write to
 */
 void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
-    fprintf(out, "USB Entry:\n");
+    fprintf(out, "USB Entry:");
     lhq_usb_id_entry_print(&(entry->id), out);
     lhq_usb_class_id_entry_print(&(entry->class), out);
     lhq_usb_class_id_entry_print(&(entry->interfaceClass), out);

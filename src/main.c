@@ -130,9 +130,9 @@ int main(int argc, char **argv) {
         fprintf(stderr, "Failed to open '%s'. Exiting.\n", "/usr/lib/kernel/config-4.19.12-106.current");
         return -1;
     }
-    LHQ_TYPES_INDEX   *typesIndex = lhq_build_types_index(lkddb);
-    LHQ_IDS_INDEX     *idsIndex   = lhq_build_ids_index(ids);
-    LHQ_KERNEL_CONFIG *config     = lhq_build_kernel_config(configs);
+    LHQ_TYPES_INDEX *typesIndex = lhq_build_types_index(lkddb);
+    LHQ_IDS_INDEX *idsIndex     = lhq_build_ids_index(ids);
+    LHQ_KERNEL_CONFIG *config   = lhq_build_kernel_config(configs);
     fclose(lkddb);
     fclose(ids);
     fclose(configs);

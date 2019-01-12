@@ -29,15 +29,6 @@ typedef struct {
     LKDDB_ACPI_ENTRY entry;
 } LHQ_ACPI_RESULT;
 
-/* Create a new LHQ_ACPI_RESULT
-
-   @returns pointer to the new LHQ_ACPI_RESULT
-*/
-LHQ_ACPI_RESULT *lhq_acpi_result_new() {
-    LHQ_ACPI_RESULT *result = (LHQ_ACPI_RESULT *)calloc(1, sizeof(LHQ_ACPI_RESULT));
-    return result;
-}
-
 /* Search for a ACPI Device in the Index
 
    @param result - the result to fill
@@ -48,16 +39,20 @@ void lhq_acpi_result_search(LHQ_ACPI_RESULT *result, LHQ_TYPES_INDEX *types) {
     lhq_acpi_search_and_copy(types, &result->entry, 0);
 }
 
+const char *lhq_acpi_result_format = "\
+ACPI Result:\n\
+\tACPI ID: %s\n\
+\tKernel Config Options: %s\n\
+\tKernel Source File: %s\n\
+";
+
 /* Print a summary of this ACPI Result
 
    @param result - the result to print
    @param out    - the file to write to
 */
 void lhq_acpi_result_entry_print(LHQ_ACPI_RESULT *result, FILE *out) {
-    fprintf(out, "ACPI Result:\n");
-    fprintf(out, "\tACPI ID: %s\n", result->entry.id);
-    fprintf(out, "\tKernel Config Options: %s\n", result->entry.configOpts);
-    fprintf(out, "\tKernel Source File: %s\n", result->entry.filename);
+    fprintf(out, lhq_acpi_result_format, result->entry.id, result->entry.configOpts, result->entry.filename);
 }
 
 /* Free memory allocated to this result

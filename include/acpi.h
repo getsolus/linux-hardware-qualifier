@@ -36,15 +36,6 @@ typedef struct {
     char *filename;
 } LKDDB_ACPI_ENTRY;
 
-/* Create a new LKDDB_ACPI_ENTRY
-
-   @returns pointer to the new LKDDB_ACPI_ENTRY
-*/
-LKDDB_ACPI_ENTRY *lhq_acpi_entry_new() {
-    LKDDB_ACPI_ENTRY *result = (LKDDB_ACPI_ENTRY *)calloc(1, sizeof(LKDDB_ACPI_ENTRY));
-    return result;
-}
-
 /* Check if entry is the same as other, copy pointers from other if so
 
    @param entry - the entry to copy to
@@ -92,23 +83,22 @@ int lhq_acpi_entry_parse(LKDDB_ACPI_ENTRY *entry, char **file) {
     }
     return 1;
 }
+
+const char *lhq_acpi_entry_format = "\
+ACPI Entry:\n\
+\tID: %s\n\
+\tConfig Options: %s\n\
+\tSource: %s\n\
+";
+
 /* Print a summary of the entry to a file
 
    @param entry - the entry to print
    @param out   - the file to write to
 */
 void lhq_acpi_entry_print(LKDDB_ACPI_ENTRY *entry, FILE *out) {
-    fprintf(out, "ACPI Entry:\n");
-    fprintf(out, "\tID: %s\n", entry->id);
-    fprintf(out, "\tConfig Options: %s\n", entry->configOpts);
-    fprintf(out, "\tSource: %s\n", entry->filename);
+    fprintf(out, lhq_acpi_entry_format, entry->id, entry->configOpts, entry->filename);
 }
-
-/* Destroy an LKDDB_ACPI_ENTRY
-
-   @param entry - the entry to destroy
-*/
-void lhq_acpi_entry_free(LKDDB_ACPI_ENTRY *entry) { free(entry); }
 
 /* define the lhq_acpi_list functions */
 LHQ_LIST_DECLARE(acpi, LKDDB_ACPI_ENTRY)

@@ -35,15 +35,6 @@ typedef struct {
     char *name;
 } LKDDB_USB_ID;
 
-/* Create a new LKDDB_USB_ID
-
-   @returns pointer to the new LKDDB_USB_ID
-*/
-LKDDB_USB_ID *lhq_usb_id_new() {
-    LKDDB_USB_ID *result = (LKDDB_USB_ID *)calloc(1, sizeof(LKDDB_USB_ID));
-    return result;
-}
-
 /* Convert a full USB ID to one suitable for finding just the USB Vendor
 
    @param entry  - the full USB ID
@@ -100,15 +91,19 @@ int lhq_usb_id_entry_parse(LKDDB_USB_ID *entry, char **file) {
     return 1;
 }
 
+const char *lhq_usb_id_entry_format = "\
+USB ID:\n\
+\tIDs: %s:%s\n\
+\tName: %s\n\
+";
+
 /* Print a summary of a USB_ID to a file
 
    @param entry - the entry to print
    @param file  - the file to write to
 */
 void lhq_usb_id_entry_print(LKDDB_USB_ID *entry, FILE *out) {
-    fprintf(out, "USB ID:\n");
-    fprintf(out, "\tIDs: %s:%s\n", entry->vendor, entry->product);
-    fprintf(out, "\tName: %s\n", entry->name);
+    fprintf(out, lhq_usb_id_entry_format, entry->vendor, entry->product, entry->name);
 }
 
 /* define the lhq_usb_id_list functions */

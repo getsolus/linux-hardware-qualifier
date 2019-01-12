@@ -33,15 +33,6 @@ typedef struct {
     char *value;
 } LHQ_KERNEL_FLAG;
 
-/* Create a new LHQ_KERNEL_FLAG
-
-   @returns pointer to the new LHQ_KERNEL_FLAG
-*/
-LHQ_KERNEL_FLAG *lhq_kernel_flag_entry_new() {
-    LHQ_KERNEL_FLAG *result = (LHQ_KERNEL_FLAG *)calloc(1, sizeof(LHQ_KERNEL_FLAG));
-    return result;
-}
-
 /* Check if entry is the same as other, copy pointers from other if so
 
    @param entry - the entry to copy to
@@ -65,11 +56,11 @@ int lhq_kernel_flag_compare_and_copy(LHQ_KERNEL_FLAG *entry, LHQ_KERNEL_FLAG *ot
 */
 int lhq_kernel_flag_parse(LHQ_KERNEL_FLAG *entry, char **file) {
     /* skip comments */
-    while ((**file == '#') || (**file == '\n')) {
+    while((**file == '#') || (**file == '\n')) {
         (*file)++;
         *file = strchr(*file, '\n') + 1;
     }
-    if (**file == '\0') {
+    if(**file == '\0') {
         return -1;
     }
     /* Format: flag=value\n */
@@ -87,22 +78,21 @@ int lhq_kernel_flag_parse(LHQ_KERNEL_FLAG *entry, char **file) {
     }
     return 0;
 }
+
+const char *lhq_kernel_flag_format = "\
+Kernel Flag:\n\
+\tName: %s\n\
+\tValue: %s\n\
+";
+
 /* Print a summary of the entry to a file
 
    @param entry - the entry to print
    @param out   - the file to write to
 */
 void lhq_kernel_flag_entry_print(LHQ_KERNEL_FLAG *entry, FILE *out) {
-    fprintf(out, "Kernel Flag:\n");
-    fprintf(out, "\tName: %s\n", entry->name);
-    fprintf(out, "\tValue: %s\n", entry->value);
+    fprintf(out, lhq_kernel_flag_format, entry->name, entry->value);
 }
-
-/* Destroy an LHQ_KERNEL_FLAG
-
-   @param entry - the entry to destroy
-*/
-void lhq_kernel_flag_entry_free(LHQ_KERNEL_FLAG *entry) { free(entry); }
 
 /* define the lhq_kernel_flag_list functions */
 LHQ_LIST_DECLARE(kernel_flag, LHQ_KERNEL_FLAG)

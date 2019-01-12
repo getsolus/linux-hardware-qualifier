@@ -18,6 +18,7 @@
 #define __LINUX_HARDWARE_QUALIFIER_USB_SYSFS_H__
 
 #include "lhq_list.h"
+#include "util.h"
 
 #include "usb_class_ids.h"
 #include "usb_ids.h"
@@ -27,10 +28,37 @@
 #include <string.h>
 #include <sys/types.h>
 
+/* Find common parts of a USB result
+
+   @param results - list of results to save to
+   @param device  - directory entry for the the current USB device
+*/
+int lhq_usb_find_common(LHQ_LIST *results, struct dirent *device) {
+    LHQ_USB_RESULT *result = (LHQ_USB_RESULT *)lhq_list_next(results);
+    static char buff[128];
+    static char path[128];
+    // device stuff
+    sprintf(buff, "/sys/bus/usb/devices/%s", device->d_name);
+    realpath(buff, path);
+
+    int status = lhq_file_to_string(path, "/idProduct", &(result->entry.id.product), 0, 4);
+    if(status <= 0) return status;
+    status = lhq_file_to_string(path, "/idVendor", &(result->entry.id.vendor), 0, 4);
+    if(status <= 0) return status;
+    status = lhq_file_to_string(path, "/bDeviceClass", &(result->entry.class.bClass), 0, 2);
+    if(status <= 0) return status;
+    status = lhq_file_to_string(path, "/bDeviceSubClass", &(result->entry.class.bSubClass), 0, 2);
+    if(status <= 0) return status;
+    return lhq_file_to_string(path, "/bDeviceProtocol", &(result->entry.class.bProtocol), 0, 2);
+}
+
+/* Find a USB device with an empty interface
+
+   @param results - list of results to save to
+   @param device  - directory entry for the the current USB device
+*/
 void lhq_usb_find_nointerface(LHQ_LIST *results, struct dirent *device) {
     LHQ_USB_RESULT *result = (LHQ_USB_RESULT *)lhq_list_next(results);
-    char path[128];
-    char buff[128];
     // interface stuff
     result->entry.interfaceClass.bClass = (char *)calloc(1, 3);
     strcpy(result->entry.interfaceClass.bClass, "..");
@@ -38,152 +66,42 @@ void lhq_usb_find_nointerface(LHQ_LIST *results, struct dirent *device) {
     strcpy(result->entry.interfaceClass.bSubClass, "..");
     result->entry.interfaceClass.bProtocol = (char *)calloc(1, 3);
     strcpy(result->entry.interfaceClass.bProtocol, "..");
-    // device stuff
-    sprintf(buff, "/sys/bus/usb/devices/%s", device->d_name);
-    realpath(buff, path);
-    strcpy(buff, path);
-    strcat(buff, "/idProduct");
-    FILE *f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.id.product), 0, 4);
-        fclose(f);
-    } else {
-        lhq_usb_result_free(result);
+    int status = lhq_usb_find_common(results, device);
+    if(status > 0) {
+        lhq_list_inc(results);
         return;
     }
-    strcpy(buff, path);
-    strcat(buff, "/idVendor");
-    f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.id.vendor), 0, 4);
-        fclose(f);
-    } else {
+    if(status < 0) {
         lhq_usb_result_free(result);
-        return;
     }
-    strcpy(buff, path);
-    strcat(buff, "/bDeviceClass");
-    f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.class.bClass), 0, 2);
-        fclose(f);
-    } else {
-        lhq_usb_result_free(result);
-        return;
-    }
-    strcpy(buff, path);
-    strcat(buff, "/bDeviceSubClass");
-    f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.class.bSubClass), 0, 2);
-        fclose(f);
-    } else {
-        lhq_usb_result_free(result);
-        return;
-    }
-    strcpy(buff, path);
-    strcat(buff, "/bDeviceProtocol");
-    f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.class.bProtocol), 0, 2);
-        fclose(f);
-    } else {
-        lhq_usb_result_free(result);
-        return;
-    }
-    lhq_list_inc(results);
 }
 
+/* Find a USB device with an interface
+
+   @param results    - list of results to save to
+   @param device     - directory entry for the the current USB device
+   @param interface  - directory entry for the the current USB interface
+*/
 void lhq_usb_find_interface(LHQ_LIST *results, struct dirent *device, struct dirent *interface) {
     LHQ_USB_RESULT *result = (LHQ_USB_RESULT *)lhq_list_next(results);
-    char path[128];
-    char buff[128];
+    static char path[128];
     // interface stuff
     sprintf(path, "/sys/bus/usb/devices/%s/%s", device->d_name, interface->d_name);
-    strcpy(buff, path);
-    strcat(buff, "/bInterfaceClass");
-    FILE *f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.interfaceClass.bClass), 0, 2);
-        fclose(f);
-    } else {
+    int status = lhq_file_to_string(path, "/bInterfaceClass", &(result->entry.interfaceClass.bClass), 0, 2);
+    if(status <= 0) goto CLEANUP;
+    status = lhq_file_to_string(path, "/bInterfaceSubClass", &(result->entry.interfaceClass.bSubClass), 0, 2);
+    if(status <= 0) goto CLEANUP;
+    status = lhq_file_to_string(path, "/bInterfaceProtocol", &(result->entry.interfaceClass.bProtocol), 0, 2);
+    if(status <= 0) goto CLEANUP;
+    status = lhq_usb_find_common(results, device);
+    if(status > 0) {
+        lhq_list_inc(results);
         return;
     }
-    strcpy(buff, path);
-    strcat(buff, "/bInterfaceSubClass");
-    f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.interfaceClass.bSubClass), 0, 2);
-        fclose(f);
-    } else {
+CLEANUP:
+    if(status < 0) {
         lhq_usb_result_free(result);
-        return;
     }
-
-    strcpy(buff, path);
-    strcat(buff, "/bInterfaceProtocol");
-    f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.interfaceClass.bProtocol), 0, 2);
-        fclose(f);
-    } else {
-        lhq_usb_result_free(result);
-        return;
-    }
-    // device stuff
-    sprintf(buff, "/sys/bus/usb/devices/%s", device->d_name);
-    realpath(buff, path);
-    strcpy(buff, path);
-    strcat(buff, "/idProduct");
-    f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.id.product), 0, 4);
-        fclose(f);
-    } else {
-        lhq_usb_result_free(result);
-        return;
-    }
-    strcpy(buff, path);
-    strcat(buff, "/idVendor");
-    f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.id.vendor), 0, 4);
-        fclose(f);
-    } else {
-        lhq_usb_result_free(result);
-        return;
-    }
-    strcpy(buff, path);
-    strcat(buff, "/bDeviceClass");
-    f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.class.bClass), 0, 2);
-        fclose(f);
-    } else {
-        lhq_usb_result_free(result);
-        return;
-    }
-    strcpy(buff, path);
-    strcat(buff, "/bDeviceSubClass");
-    f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.class.bSubClass), 0, 2);
-        fclose(f);
-    } else {
-        lhq_usb_result_free(result);
-        return;
-    }
-    strcpy(buff, path);
-    strcat(buff, "/bDeviceProtocol");
-    f = fopen(buff, "r");
-    if(f != NULL) {
-        lhq_file_to_string(f, &(result->entry.class.bProtocol), 0, 2);
-        fclose(f);
-    } else {
-        lhq_usb_result_free(result);
-        return;
-    }
-    lhq_list_inc(results);
 }
 
 int lhq_usb_find_device(LHQ_LIST *results, struct dirent *device) {

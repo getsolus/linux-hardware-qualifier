@@ -47,9 +47,9 @@ LHQ_KERNEL_CONFIG *lhq_kernel_config_new(FILE *f) {
     size_t length = (size_t)ftell(f);
     rewind(f);
     LHQ_KERNEL_CONFIG *config = (LHQ_KERNEL_CONFIG *)calloc(1, sizeof(LHQ_KERNEL_CONFIG));
-    config->raw           = (uint8_t *)calloc(length + 1, sizeof(uint8_t));
-    config->cursor        = (char *)config->raw;
-    config->raw[length]   = '\0';
+    config->raw               = (uint8_t *)calloc(length + 1, sizeof(uint8_t));
+    config->cursor            = (char *)config->raw;
+    config->raw[length]       = '\0';
     if(config->raw == NULL) {
         fprintf(stderr, "Failed to alloc space to read file. Exiting.\n");
         return NULL;
@@ -78,13 +78,13 @@ void lhq_kernel_config_summary(LHQ_KERNEL_CONFIG *config) {
    @param config - the config to parse
 */
 static void lhq_kernel_flags_parse(LHQ_KERNEL_CONFIG *config) {
-    LHQ_LIST *list      = config->flags;
+    LHQ_LIST *list         = config->flags;
     LHQ_KERNEL_FLAG *entry = (LHQ_KERNEL_FLAG *)lhq_list_next(list);
     while(lhq_kernel_flag_parse(entry, &(config->cursor)) == 1) {
         lhq_list_inc(list);
         entry = (LHQ_KERNEL_FLAG *)lhq_list_next(list);
     }
-    if (*config->cursor != '\0') {
+    if(*config->cursor != '\0') {
         lhq_list_inc(list);
     }
     lhq_list_compact(list);
@@ -98,9 +98,7 @@ static void lhq_kernel_flags_parse(LHQ_KERNEL_CONFIG *config) {
 
    @param config - the config to fill
 */
-void lhq_kernel_config_populate(LHQ_KERNEL_CONFIG *config) {
-    lhq_kernel_flags_parse(config);
-}
+void lhq_kernel_config_populate(LHQ_KERNEL_CONFIG *config) { lhq_kernel_flags_parse(config); }
 
 /* Search for a matching entry, copy pointers from it if found
 
@@ -110,9 +108,9 @@ void lhq_kernel_config_populate(LHQ_KERNEL_CONFIG *config) {
    @returns index of the match or the length of the list if not found
 */
 unsigned int lhq_kernel_flag_search_and_copy(LHQ_KERNEL_CONFIG *config, LHQ_KERNEL_FLAG *entry, unsigned int start) {
-    LHQ_LIST *list    = config->flags;
+    LHQ_LIST *list       = config->flags;
     LHQ_KERNEL_FLAG *ids = (LHQ_KERNEL_FLAG *)list->data;
-    unsigned int i    = start;
+    unsigned int i       = start;
     for(; i < list->length; i++) {
         if(lhq_kernel_flag_compare_and_copy(entry, &ids[i]) == 0) {
             break;

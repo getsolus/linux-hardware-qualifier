@@ -40,15 +40,6 @@ typedef struct {
     char *filename;
 } LKDDB_PCI_ENTRY;
 
-/* Create a new LKDDB_PCI_ENTRY
-
-   @returns pointer to the new LKDDB_PCI_ENTRY
-*/
-LKDDB_PCI_ENTRY *lhq_pci_entry_new() {
-    LKDDB_PCI_ENTRY *result = (LKDDB_PCI_ENTRY *)calloc(1, sizeof(LKDDB_PCI_ENTRY));
-    return result;
-}
-
 /* Parse the next available PCI Entry
 
    @param entry - the entry to parse into
@@ -103,8 +94,7 @@ void lhq_pci_entry_print(LKDDB_PCI_ENTRY *entry, FILE *out) {
     fprintf(out, "PCI Entry:\n");
     lhq_pci_id_entry_print(&(entry->id), out);
     lhq_pci_class_id_entry_print(&(entry->class), out);
-    fprintf(out, "\tConfig Options: %s\n", entry->configOpts);
-    fprintf(out, "\tSource: %s\n", entry->filename);
+    fprintf(out, "\tConfig Options: %s\n\tSource: %s\n", entry->configOpts, entry->filename);
 }
 
 /* Check if entry is the same as other, copy pointers from other if so
@@ -121,12 +111,6 @@ int lhq_pci_compare_and_copy(LKDDB_PCI_ENTRY *entry, LKDDB_PCI_ENTRY *other) {
     }
     return compare;
 }
-
-/* Destroy a PCI Entry
-
-   @param entry - the entry to destroy
-*/
-void lhq_pci_entry_free(LKDDB_PCI_ENTRY *entry) { free(entry); }
 
 /* define the lhq_pci_list functions */
 LHQ_LIST_DECLARE(pci, LKDDB_PCI_ENTRY)

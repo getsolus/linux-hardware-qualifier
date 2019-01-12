@@ -18,6 +18,7 @@
 #define __LINUX_HARDWARE_QUALIFIER_PCI_RESULT_H__
 
 #include "lhq_types.h"
+#include "util.h"
 
 #include "ids_index.h"
 #include "types_index.h"
@@ -37,15 +38,6 @@ typedef struct {
     LKDDB_PCI_CLASS_ID class;
     LKDDB_PCI_CLASS_ID subclass;
 } LHQ_PCI_RESULT;
-
-/* Create a new LHQ_PCI_RESULT
-
-   @returns pointer to the new LHQ_PCI_RESULT
-*/
-LHQ_PCI_RESULT *lhq_pci_result_new() {
-    LHQ_PCI_RESULT *result = (LHQ_PCI_RESULT *)calloc(1, sizeof(LHQ_PCI_RESULT));
-    return result;
-}
 
 /* Search for a PCI Class in the Index
 
@@ -94,19 +86,25 @@ void lhq_pci_result_search(LHQ_PCI_RESULT *result, LHQ_IDS_INDEX *ids, LHQ_TYPES
     lhq_pci_search_and_copy(types, &result->entry, 0);
 }
 
+const char *lhq_pci_result_format = "\
+PCI Result:\n\
+\tPCI ID: %s:%s\n\
+\tPCI Vendor: %s\n\
+\tPCI Product: %s\n\
+\tPCI Subsystem: %s:%s\n\
+\tKernel Config Options: %s\n\
+\tKernel Source File: %s\n\
+";
+
 /* Print a summary of this PCI Result
 
    @param result - the result to print
    @param out    - the file to write to
 */
 void lhq_pci_result_entry_print(LHQ_PCI_RESULT *result, FILE *out) {
-    fprintf(out, "PCI Result:\n");
-    fprintf(out, "\tPCI ID: %s:%s\n", result->entry.id.vendor, result->entry.id.device);
-    fprintf(out, "\tPCI Vendor: %s\n", result->vendor.name);
-    fprintf(out, "\tPCI Product: %s\n", result->entry.id.name);
-    fprintf(out, "\tPCI Subsystem: %s:%s\n", result->entry.id.subVendor, result->entry.id.subDevice);
-    fprintf(out, "\tKernel Config Options: %s\n", result->entry.configOpts);
-    fprintf(out, "\tKernel Source File: %s\n", result->entry.filename);
+    fprintf(out, lhq_pci_result_format, result->entry.id.vendor, result->entry.id.device, result->vendor.name,
+            result->entry.id.name, result->entry.id.subVendor, result->entry.id.subDevice, result->entry.configOpts,
+            result->entry.filename);
 }
 
 /* Free memory allocated to this result
@@ -114,14 +112,15 @@ void lhq_pci_result_entry_print(LHQ_PCI_RESULT *result, FILE *out) {
    @param result - the result to free
 */
 void lhq_pci_result_free(LHQ_PCI_RESULT *result) {
-    free(result->entry.id.device);
-    free(result->entry.id.vendor);
-    free(result->entry.id.subDevice);
-    free(result->entry.id.subVendor);
-    free(result->entry.class.classMask);
-    free(result->class.classMask);
-    free(result->subclass.classMask);
+    AUTO_FREE(result->entry.id.device);
+    AUTO_FREE(result->entry.id.vendor);
+    AUTO_FREE(result->entry.id.subDevice);
+    AUTO_FREE(result->entry.id.subVendor);
+    AUTO_FREE(result->entry.class.classMask);
+    AUTO_FREE(result->class.classMask);
+    AUTO_FREE(result->subclass.classMask);
 }
+
 /* define the lhq_pci_result_list functions */
 LHQ_LIST_DECLARE(pci_result, LHQ_PCI_RESULT)
 

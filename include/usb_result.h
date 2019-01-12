@@ -18,6 +18,7 @@
 #define __LINUX_HARDWARE_QUALIFIER_USB_RESULT_H__
 
 #include "lhq_types.h"
+#include "util.h"
 
 #include "ids_index.h"
 #include "types_index.h"
@@ -41,15 +42,6 @@ typedef struct {
     LKDDB_USB_CLASS_ID interfaceClass;
     LKDDB_USB_CLASS_ID interfaceSubclass;
 } LHQ_USB_RESULT;
-
-/* Create a new LHQ_USB_RESULT
-
-   @returns pointer to the new LHQ_USB_RESULT
-*/
-LHQ_USB_RESULT *lhq_usb_result_new() {
-    LHQ_USB_RESULT *result = (LHQ_USB_RESULT *)calloc(1, sizeof(LHQ_USB_RESULT));
-    return result;
-}
 
 /* Search for a USB Class in the Index
 
@@ -102,18 +94,22 @@ void lhq_usb_result_search(LHQ_USB_RESULT *result, LHQ_IDS_INDEX *ids, LHQ_TYPES
     lhq_usb_search_and_copy(types, &result->entry, 0);
 }
 
+const char *lhq_usb_result_format = "USB Result:\n\
+\tUSB ID: %s:%s\n\
+\tUSB Vendor: %s\n\
+\tUSB Product: %s\n\
+\tKernel Config Options: %s\n\
+\tKernel Source File: %s\n\
+";
+
 /* Print a summary of this USB Result
 
    @param result - the result to print
    @param out    - the file to write to
 */
 void lhq_usb_result_entry_print(LHQ_USB_RESULT *result, FILE *out) {
-    fprintf(out, "USB Result:\n");
-    fprintf(out, "\tUSB ID: %s:%s\n", result->entry.id.vendor, result->entry.id.product);
-    fprintf(out, "\tUSB Vendor: %s\n", result->vendor.name);
-    fprintf(out, "\tUSB Product: %s\n", result->entry.id.name);
-    fprintf(out, "\tKernel Config Options: %s\n", result->entry.configOpts);
-    fprintf(out, "\tKernel Source File: %s\n", result->entry.filename);
+    fprintf(out, lhq_usb_result_format, result->entry.id.vendor, result->entry.id.product, result->vendor.name,
+            result->entry.id.name, result->entry.configOpts, result->entry.filename);
 }
 
 /* Free memory allocated to this result
@@ -121,14 +117,14 @@ void lhq_usb_result_entry_print(LHQ_USB_RESULT *result, FILE *out) {
    @param result - the result to free
 */
 void lhq_usb_result_free(LHQ_USB_RESULT *result) {
-    free(result->entry.id.vendor);
-    free(result->entry.id.product);
-    free(result->entry.class.bClass);
-    free(result->entry.class.bSubClass);
-    free(result->entry.class.bProtocol);
-    free(result->entry.interfaceClass.bClass);
-    free(result->entry.interfaceClass.bSubClass);
-    free(result->entry.interfaceClass.bProtocol);
+    AUTO_FREE(result->entry.id.vendor);
+    AUTO_FREE(result->entry.id.product);
+    AUTO_FREE(result->entry.class.bClass);
+    AUTO_FREE(result->entry.class.bSubClass);
+    AUTO_FREE(result->entry.class.bProtocol);
+    AUTO_FREE(result->entry.interfaceClass.bClass);
+    AUTO_FREE(result->entry.interfaceClass.bSubClass);
+    AUTO_FREE(result->entry.interfaceClass.bProtocol);
 }
 
 /* define the lhq_usb_result_list functions */

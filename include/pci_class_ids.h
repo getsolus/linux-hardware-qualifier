@@ -32,15 +32,6 @@ typedef struct {
     char *name;
 } LKDDB_PCI_CLASS_ID;
 
-/* Create a new LKDDB_PCI_CLASS_ID
-
-   @returns pointer to the new LKDDB_PCI_CLASS_ID
-*/
-LKDDB_PCI_CLASS_ID *lhq_pci_class_id_new() {
-    LKDDB_PCI_CLASS_ID *result = (LKDDB_PCI_CLASS_ID *)calloc(1, sizeof(LKDDB_PCI_CLASS_ID));
-    return result;
-}
-
 /* Convert a full PCI Class ID to one suitable for finding just the PCI Class
 
    @param entry - the full PCI Class ID
@@ -119,15 +110,19 @@ int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char **file) {
     return 1;
 }
 
+const char *lhq_pci_entry_format = "\
+PCI Class ID:\n\
+\tMask: %4s\n\
+\tName: %s\n\
+";
+
 /* Print out a summary of a PCI Class ID
 
     @param entry - the entry to print
     @param out   - the file to print to
 */
 void lhq_pci_class_id_entry_print(LKDDB_PCI_CLASS_ID *entry, FILE *out) {
-    fprintf(out, "PCI Class ID:\n");
-    fprintf(out, "\tMask: %4s\n", entry->classMask);
-    fprintf(out, "\tName: %s\n", entry->name);
+    fprintf(out, lhq_pci_entry_format, entry->classMask, entry->name);
 }
 
 /* define the lhq_class_id_list functions */

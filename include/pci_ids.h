@@ -40,15 +40,6 @@ typedef struct {
     char *name;
 } LKDDB_PCI_ID;
 
-/* Create a new LKDDB_PCI_ID
-
-   @returns pointer to the new LKDDB_PCI_ID
-*/
-LKDDB_PCI_ID *lhq_pci_id_new() {
-    LKDDB_PCI_ID *result = (LKDDB_PCI_ID *)calloc(1, sizeof(LKDDB_PCI_ID));
-    return result;
-}
-
 /* Convert a full PCI ID to one suitable for finding just the PCI Vendor
 
    @param entry  - the full PCI ID
@@ -99,16 +90,20 @@ int lhq_pci_id_entry_parse(LKDDB_PCI_ID *entry, char **file) {
     return 1;
 }
 
+const char *lhq_pci_id_entry_format = "\
+PCI ID:\n\
+\tVendor: %s\n\
+\tDevice: %s\n\
+\tName: %s\n\
+";
+
 /* Print a summary of this PCI ID
 
    @param entry - the entry to print
    @param out   - the file to write to
 */
 void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
-    fprintf(out, "PCI ID:\n");
-    fprintf(out, "\tVendor: %s\n", entry->vendor);
-    fprintf(out, "\tDevice: %s\n", entry->device);
-    fprintf(out, "\tName: %s\n", entry->name);
+    fprintf(out, lhq_pci_entry_format, entry->vendor, entry->device, entry->name);
 }
 
 /* Check if entry is the same as other, copy pointers from other if so
