@@ -79,11 +79,11 @@ int lhq_usb_class_id_compare_and_copy(LKDDB_USB_CLASS_ID *entry, LKDDB_USB_CLASS
     if(entry->name != NULL) {
         return 0;
     }
-    int compare = strcmp(entry->bClass, other->bClass);
+    int compare = strncmp(entry->bClass, other->bClass, 2);
     if(compare != 0) return compare;
-    compare = strcmp(entry->bSubClass, other->bSubClass);
+    compare = strncmp(entry->bSubClass, other->bSubClass, 2);
     if(compare != 0) return compare;
-    compare = strcmp(entry->bProtocol, other->bProtocol);
+    compare = strncmp(entry->bProtocol, other->bProtocol, 2);
     if((entry->name == NULL) && (compare == 0)) {
         entry->name = other->name;
     }

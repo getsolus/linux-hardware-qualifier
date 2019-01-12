@@ -99,7 +99,6 @@ void lhq_usb_result_search(LHQ_USB_RESULT *result, LHQ_IDS_INDEX *ids, LHQ_TYPES
     lhq_usb_class_id_subclass(&result->entry.interfaceClass, &result->interfaceSubclass);
     lhq_usb_result_class_search(ids, &result->interfaceClass, &result->interfaceSubclass,
                                 &result->entry.interfaceClass);
-
     lhq_usb_search_and_copy(types, &result->entry, 0);
 }
 
@@ -124,6 +123,12 @@ void lhq_usb_result_entry_print(LHQ_USB_RESULT *result, FILE *out) {
 void lhq_usb_result_free(LHQ_USB_RESULT *result) {
     free(result->entry.id.vendor);
     free(result->entry.id.product);
+    free(result->entry.class.bClass);
+    free(result->entry.class.bSubClass);
+    free(result->entry.class.bProtocol);
+    free(result->entry.interfaceClass.bClass);
+    free(result->entry.interfaceClass.bSubClass);
+    free(result->entry.interfaceClass.bProtocol);
 }
 
 /* define the lhq_usb_result_list functions */

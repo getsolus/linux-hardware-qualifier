@@ -21,6 +21,8 @@
 #include "ids_index.h"
 #include "pci_result.h"
 #include "pci_sysfs.h"
+#include "usb_result.h"
+#include "usb_sysfs.h"
 
 #include <stdio.h>
 
@@ -77,6 +79,23 @@ CLEANUP:
     lhq_list_free(results);
 }
 
+void lhq_search_usb(LHQ_IDS_INDEX *ids, LHQ_TYPES_INDEX *types) {
+    LHQ_LIST *results = lhq_usb_result_list_new();
+    int status        = lhq_usb_find_devices(results);
+    if(status != 0) {
+        goto CLEANUP;
+    }
+    LHQ_USB_RESULT *result = (LHQ_USB_RESULT *)results->data;
+    for(unsigned int i = 0; i < results->length; i++) {
+        lhq_usb_result_search(result, ids, types);
+        lhq_usb_result_entry_print(result, stdout);
+        lhq_usb_result_free(result);
+        result++;
+    }
+CLEANUP:
+    lhq_list_free(results);
+}
+
 int main(int argc, char **argv) {
     int time = 1;
     if(argc > 1) {
@@ -103,6 +122,7 @@ int main(int argc, char **argv) {
     for(; time > 0; time--) {
         lhq_search_acpi(typesIndex);
         lhq_search_pci(idsIndex, typesIndex);
+        lhq_search_usb(idsIndex, typesIndex);
     }
 
     lhq_types_index_free(typesIndex);

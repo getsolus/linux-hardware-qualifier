@@ -9,22 +9,27 @@ their systems. Therefore, the majority of my focus is directed here.
 - [x] acpi
   - [x] lkddb list
   - [x] sysfs
+  - [x] search
 - [ ] ieee1394
   - [ ] lkddb list
   - [ ] sysfs
+  - [ ] search
 - [ ] hid
   - [ ] lkddb list
   - [ ] sysfs
+  - [ ] search
 - [x] pci
   - [x] lkddb ids
   - [x] lkddb class ids
   - [x] lkddb list
   - [x] sysfs
-- [ ] usb
+  - [x] search
+- [x] usb
   - [x] lkddb ids
   - [x] lkddb class ids
   - [x] lkddb list
-  - [ ] sysfs
+  - [x] sysfs
+  - [ ] search
 
 ## LKDDB Types Unsupported
 
