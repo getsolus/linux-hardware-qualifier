@@ -6,7 +6,7 @@ Checks that your hardware is supported by the kernel and enabled in its config
 These represent the bulk of the devices that most people will have attached to
 their systems. Therefore, the majority of my focus is directed here.
 
-- [ ] acpi
+- [x] acpi
   - [x] lkddb list
   - [x] sysfs
 - [ ] ieee1394
@@ -15,7 +15,7 @@ their systems. Therefore, the majority of my focus is directed here.
 - [ ] hid
   - [ ] lkddb list
   - [ ] sysfs
-- [ ] pci
+- [x] pci
   - [x] lkddb ids
   - [x] lkddb class ids
   - [x] lkddb list
