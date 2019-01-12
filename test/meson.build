@@ -40,3 +40,11 @@ benchmark('Bench Search LKDDB ACPI ALL', e5, args: '1000', workdir : meson.sourc
 e6 = executable('test-search-pci-all', 'search-pci-all.c', include_directories: incdir)
 test('Search LKDDB for All PCI Devices', e6, workdir : meson.source_root())
 benchmark('Bench Search LKDDB PCI ALL', e6, args: '100', workdir : meson.source_root())
+
+e7 = executable('test-search-usb-all', 'search-usb-all.c', include_directories: incdir)
+test('Search LKDDB for All USB Devices', e7, workdir : meson.source_root())
+benchmark('Bench Search LKDDB USB ALL', e7, args: '100', workdir : meson.source_root())
+
+e8 = executable('test-search-all', 'search-all.c', include_directories: incdir)
+test('Search LKDDB for All Devices', e8, workdir : meson.source_root())
+benchmark('Bench Search LKDDB ALL', e8, args: '100', workdir : meson.source_root())

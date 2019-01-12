@@ -32,11 +32,11 @@ void lhq_usb_find_nointerface(LHQ_LIST *results, struct dirent *device) {
     char path[128];
     char buff[128];
     // interface stuff
-    result->entry.interfaceClass.bClass = (char*)calloc(1,3);
+    result->entry.interfaceClass.bClass = (char *)calloc(1, 3);
     strcpy(result->entry.interfaceClass.bClass, "..");
-    result->entry.interfaceClass.bSubClass = (char*)calloc(1,3);
+    result->entry.interfaceClass.bSubClass = (char *)calloc(1, 3);
     strcpy(result->entry.interfaceClass.bSubClass, "..");
-    result->entry.interfaceClass.bProtocol = (char*)calloc(1,3);
+    result->entry.interfaceClass.bProtocol = (char *)calloc(1, 3);
     strcpy(result->entry.interfaceClass.bProtocol, "..");
     // device stuff
     sprintf(buff, "/sys/bus/usb/devices/%s", device->d_name);
