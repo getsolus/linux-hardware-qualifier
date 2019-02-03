@@ -19,7 +19,6 @@
 
 #include "lhq_list.h"
 
-#include <stdio.h>
 #include <string.h>
 
 /* Representation of a LKDDB PCI ID
@@ -88,22 +87,6 @@ int lhq_pci_id_entry_parse(LKDDB_PCI_ID *entry, char **file) {
         }
     }
     return 1;
-}
-
-const char *lhq_pci_id_entry_format = "\
-PCI ID:\n\
-\tVendor: %s\n\
-\tDevice: %s\n\
-\tName: %s\n\
-";
-
-/* Print a summary of this PCI ID
-
-   @param entry - the entry to print
-   @param out   - the file to write to
-*/
-void lhq_pci_id_entry_print(LKDDB_PCI_ID *entry, FILE *out) {
-    fprintf(out, lhq_pci_entry_format, entry->vendor, entry->device, entry->name);
 }
 
 /* Check if entry is the same as other, copy pointers from other if so

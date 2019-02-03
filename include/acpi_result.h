@@ -40,10 +40,11 @@ void lhq_acpi_result_search(LHQ_ACPI_RESULT *result, LHQ_TYPES_INDEX *types) {
 }
 
 const char *lhq_acpi_result_format = "\
-ACPI Result:\n\
-\tACPI ID: %s\n\
-\tKernel Config Options: %s\n\
-\tKernel Source File: %s\n\
+\t{\n\
+\t\t\"id\" : \"%s\",\n\
+\t\t\"options\" : \"%s\",\n\
+\t\t\"source\" : \"%s\",\n\
+\t},\n\
 ";
 
 /* Print a summary of this ACPI Result

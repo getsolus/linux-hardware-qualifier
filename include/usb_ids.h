@@ -19,7 +19,6 @@
 
 #include "lhq_list.h"
 
-#include <stdio.h>
 #include <string.h>
 
 /* Representation of a LKDDB USB ID
@@ -89,21 +88,6 @@ int lhq_usb_id_entry_parse(LKDDB_USB_ID *entry, char **file) {
         }
     }
     return 1;
-}
-
-const char *lhq_usb_id_entry_format = "\
-USB ID:\n\
-\tIDs: %s:%s\n\
-\tName: %s\n\
-";
-
-/* Print a summary of a USB_ID to a file
-
-   @param entry - the entry to print
-   @param file  - the file to write to
-*/
-void lhq_usb_id_entry_print(LKDDB_USB_ID *entry, FILE *out) {
-    fprintf(out, lhq_usb_id_entry_format, entry->vendor, entry->product, entry->name);
 }
 
 /* define the lhq_usb_id_list functions */

@@ -94,11 +94,5 @@ void lhq_list_free(LHQ_LIST *list) {
 #define LHQ_LIST_DECLARE(type, entryType)                                         \
                                                                                   \
     LHQ_LIST *lhq_##type##_list_new() { return lhq_list_new(sizeof(entryType)); } \
-                                                                                  \
-    void lhq_##type##_list_print(LHQ_LIST *list, FILE *out) {                     \
-        for(unsigned int i = 0; i < list->length; i++) {                          \
-            lhq_##type##_entry_print(&((entryType *)list->data)[i], out);         \
-        }                                                                         \
-    }
 
 #endif

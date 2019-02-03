@@ -94,6 +94,12 @@ void lhq_kernel_flag_entry_print(LHQ_KERNEL_FLAG *entry, FILE *out) {
     fprintf(out, lhq_kernel_flag_format, entry->name, entry->value);
 }
 
+void lhq_kernel_flag_list_print(LHQ_LIST *list, FILE *out) {
+    for(unsigned int i = 0; i < list->length; i++) {
+        lhq_kernel_flag_entry_print(&((LHQ_KERNEL_FLAG *)list->data)[i], out);
+    }
+}
+
 /* define the lhq_kernel_flag_list functions */
 LHQ_LIST_DECLARE(kernel_flag, LHQ_KERNEL_FLAG)
 

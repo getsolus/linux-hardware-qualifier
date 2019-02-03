@@ -84,22 +84,6 @@ int lhq_acpi_entry_parse(LKDDB_ACPI_ENTRY *entry, char **file) {
     return 1;
 }
 
-const char *lhq_acpi_entry_format = "\
-ACPI Entry:\n\
-\tID: %s\n\
-\tConfig Options: %s\n\
-\tSource: %s\n\
-";
-
-/* Print a summary of the entry to a file
-
-   @param entry - the entry to print
-   @param out   - the file to write to
-*/
-void lhq_acpi_entry_print(LKDDB_ACPI_ENTRY *entry, FILE *out) {
-    fprintf(out, lhq_acpi_entry_format, entry->id, entry->configOpts, entry->filename);
-}
-
 /* define the lhq_acpi_list functions */
 LHQ_LIST_DECLARE(acpi, LKDDB_ACPI_ENTRY)
 

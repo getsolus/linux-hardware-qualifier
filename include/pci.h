@@ -22,7 +22,6 @@
 #include "pci_class_ids.h"
 #include "pci_ids.h"
 
-#include <stdio.h>
 #include <string.h>
 
 /* Representation of a LKDDB PCI Entry
@@ -83,18 +82,6 @@ int lhq_pci_entry_parse(LKDDB_PCI_ENTRY *entry, char **file) {
         }
     }
     return 1;
-}
-
-/* Print a summary of a PCI Entry
-
-   @param entry - the entry to print
-   @param out   - the file to write to
-*/
-void lhq_pci_entry_print(LKDDB_PCI_ENTRY *entry, FILE *out) {
-    fprintf(out, "PCI Entry:\n");
-    lhq_pci_id_entry_print(&(entry->id), out);
-    lhq_pci_class_id_entry_print(&(entry->class), out);
-    fprintf(out, "\tConfig Options: %s\n\tSource: %s\n", entry->configOpts, entry->filename);
 }
 
 /* Check if entry is the same as other, copy pointers from other if so

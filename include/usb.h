@@ -22,7 +22,6 @@
 #include "usb_class_ids.h"
 #include "usb_ids.h"
 
-#include <stdio.h>
 #include <string.h>
 
 /* Representation of a LKDDB USB Entry
@@ -105,21 +104,6 @@ int lhq_usb_entry_parse(LKDDB_USB_ENTRY *entry, char **file) {
         }
     }
     return 1;
-}
-
-/* Print a summary of this USB Entry
-
-   @param entry - the entry to print
-   @param out   - the file to write to
-*/
-void lhq_usb_entry_print(LKDDB_USB_ENTRY *entry, FILE *out) {
-    fprintf(out, "USB Entry:");
-    lhq_usb_id_entry_print(&(entry->id), out);
-    lhq_usb_class_id_entry_print(&(entry->class), out);
-    lhq_usb_class_id_entry_print(&(entry->interfaceClass), out);
-    fprintf(out, "\tBCD: %s:%s\n", entry->bcdDeviceLo, entry->bcdDeviceHi);
-    fprintf(out, "\tConfig Options: %s\n", entry->configOpts);
-    fprintf(out, "\tSource: %s\n", entry->filename);
 }
 
 /* Check if entry is the same as other, copy pointers from other if so

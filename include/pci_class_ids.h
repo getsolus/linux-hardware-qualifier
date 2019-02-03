@@ -19,7 +19,6 @@
 
 #include "lhq_list.h"
 
-#include <stdio.h>
 #include <string.h>
 
 /* Representation of a LKDDB PCI Class ID
@@ -108,21 +107,6 @@ int lhq_pci_class_id_entry_parse(LKDDB_PCI_CLASS_ID *entry, char **file) {
         }
     }
     return 1;
-}
-
-const char *lhq_pci_entry_format = "\
-PCI Class ID:\n\
-\tMask: %4s\n\
-\tName: %s\n\
-";
-
-/* Print out a summary of a PCI Class ID
-
-    @param entry - the entry to print
-    @param out   - the file to print to
-*/
-void lhq_pci_class_id_entry_print(LKDDB_PCI_CLASS_ID *entry, FILE *out) {
-    fprintf(out, lhq_pci_entry_format, entry->classMask, entry->name);
 }
 
 /* define the lhq_class_id_list functions */

@@ -19,7 +19,6 @@
 
 #include "lhq_list.h"
 
-#include <stdio.h>
 #include <string.h>
 
 /* Representation of a LKDDB USB Class ID
@@ -113,21 +112,6 @@ int lhq_usb_class_id_entry_parse(LKDDB_USB_CLASS_ID *entry, char **file) {
         }
     }
     return 1;
-}
-
-const char *lhq_usb_class_id_format = "\
-USB Class ID:\n\
-\tIDs: %s:%s:%s\n\
-\tName: %s\n\
-";
-
-/* Print a summary of this USB Class ID
-
-   @param entry - the entry to print
-   @param out   - the file to write to
-*/
-void lhq_usb_class_id_entry_print(LKDDB_USB_CLASS_ID *entry, FILE *out) {
-    fprintf(out, lhq_usb_class_id_format, entry->bClass, entry->bSubClass, entry->bProtocol, entry->name);
 }
 
 /* define the lhq_class_id_list functions */
