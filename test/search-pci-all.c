@@ -16,8 +16,7 @@
 
 #include "config.h"
 
-#include "acpi_result.h"
-#include "acpi_sysfs.h"
+#include "acpi.h"
 #include "ids_index.h"
 #include "pci_result.h"
 #include "pci_sysfs.h"

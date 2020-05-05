@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-#ifndef __LINUX_HARDWARE_QUALIFIER_ACPI_SYSFS_H__
-#define __LINUX_HARDWARE_QUALIFIER_ACPI_SYSFS_H__
-
-#include "acpi_result.h"
-#include "lhq_list.h"
+#include "acpi.h"
 
 #include <dirent.h>
 #include <stdlib.h>
@@ -59,5 +55,3 @@ int lhq_acpi_find_devices(LHQ_LIST *results) {
     }
     return closedir(devices);
 }
-
-#endif

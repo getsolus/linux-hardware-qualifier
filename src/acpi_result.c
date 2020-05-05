@@ -14,30 +14,11 @@
  * limitations under the License.
  */
 
-#ifndef __LINUX_HARDWARE_QUALIFIER_ACPI_RESULT_H__
-#define __LINUX_HARDWARE_QUALIFIER_ACPI_RESULT_H__
-
-#include "types_index.h"
-
 #include <stdio.h>
 
-/* Representation of a LHQ ACPI Search Result
-
-   @field entry - the original ACPI Entry
-*/
-typedef struct {
-    LKDDB_ACPI_ENTRY entry;
-} LHQ_ACPI_RESULT;
-
-/* Search for a ACPI Device in the Index
-
-   @param result - the result to fill
-   @param ids    - the IDs Index
-   @param types  - the Types Index
-*/
-void lhq_acpi_result_search(LHQ_ACPI_RESULT *result, LHQ_TYPES_INDEX *types) {
-    lhq_acpi_search_and_copy(types, &result->entry, 0);
-}
+#include "acpi.h"
+#include "lhq_list.h"
+#include "types_index.h"
 
 const char *lhq_acpi_result_format = "\
 \t{\n\
@@ -63,6 +44,4 @@ void lhq_acpi_result_entry_print(LHQ_ACPI_RESULT *result, FILE *out) {
 void lhq_acpi_result_free(LHQ_ACPI_RESULT *result) { free(result->entry.id); }
 
 /* define the lhq_apci_result_list functions */
-LHQ_LIST_DECLARE(acpi_result, LHQ_ACPI_RESULT)
-
-#endif
+LHQ_LIST_DEFINE(acpi_result, LHQ_ACPI_RESULT)

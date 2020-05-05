@@ -20,7 +20,6 @@
 #include "lhq_list.h"
 
 #include <stdio.h>
-#include <string.h>
 
 /* Representation of a LHQ Kernel Flags
 
@@ -39,13 +38,7 @@ typedef struct {
    @param other - the entry to compare against and copy from
    @returns 0 if equal otherwise < 0 or > 0
 */
-int lhq_kernel_flag_compare_and_copy(LHQ_KERNEL_FLAG *entry, LHQ_KERNEL_FLAG *other) {
-    int compare = strcmp(entry->name, other->name);
-    if(compare == 0) {
-        entry->value = other->value;
-    }
-    return compare;
-}
+int lhq_kernel_flag_compare_and_copy(LHQ_KERNEL_FLAG *entry, LHQ_KERNEL_FLAG *other);
 
 /* Try to read an Kernel Flag
 
@@ -54,51 +47,16 @@ int lhq_kernel_flag_compare_and_copy(LHQ_KERNEL_FLAG *entry, LHQ_KERNEL_FLAG *ot
 
    @returns 1 if there are more entries to read, 0 otherwise
 */
-int lhq_kernel_flag_parse(LHQ_KERNEL_FLAG *entry, char **file) {
-    /* skip comments */
-    while((**file == '#') || (**file == '\n')) {
-        (*file)++;
-        *file = strchr(*file, '\n') + 1;
-    }
-    if(**file == '\0') {
-        return -1;
-    }
-    /* Format: flag=value\n */
-    /* name */
-    entry->name = *file;
-    *file       = strchr(*file, '=') + 1;
-    (*file)[-1] = '\0';
-    /* value */
-    entry->value = *file;
-    *file        = strchr(*file, '\n') + 1;
-    /* check for next entry */
-    if((**file) != '\0') {
-        (*file)[-1] = '\0';
-        return 1;
-    }
-    return 0;
-}
-
-const char *lhq_kernel_flag_format = "\
-Kernel Flag:\n\
-\tName: %s\n\
-\tValue: %s\n\
-";
+int lhq_kernel_flag_parse(LHQ_KERNEL_FLAG *entry, char **file);
 
 /* Print a summary of the entry to a file
 
    @param entry - the entry to print
    @param out   - the file to write to
 */
-void lhq_kernel_flag_entry_print(LHQ_KERNEL_FLAG *entry, FILE *out) {
-    fprintf(out, lhq_kernel_flag_format, entry->name, entry->value);
-}
+void lhq_kernel_flag_entry_print(LHQ_KERNEL_FLAG *entry, FILE *out);
 
-void lhq_kernel_flag_list_print(LHQ_LIST *list, FILE *out) {
-    for(unsigned int i = 0; i < list->length; i++) {
-        lhq_kernel_flag_entry_print(&((LHQ_KERNEL_FLAG *)list->data)[i], out);
-    }
-}
+void lhq_kernel_flag_list_print(LHQ_LIST *list, FILE *out);
 
 /* define the lhq_kernel_flag_list functions */
 LHQ_LIST_DECLARE(kernel_flag, LHQ_KERNEL_FLAG)

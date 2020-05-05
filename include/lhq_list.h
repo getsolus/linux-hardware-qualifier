@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-#ifndef __LINUX_HARDWARE_QUALIFIER_LIST_H__
-#define __LINUX_HARDWARE_QUALIFIER_LIST_H__
+#ifndef __LINUX_HARDWARE_QUALIFER_LIST_H__
+#define __LINUX_HARDWARE_QUALIFER_LIST_H__
 
-#include <inttypes.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 /* starting capacity of a list */
 #define LHQ_LIST_START 128
@@ -44,54 +41,40 @@ typedef struct {
    @param elementSize - the size of each eleement in the list
    @returns a pointer to the new list
 */
-LHQ_LIST *lhq_list_new(size_t elementSize) {
-    LHQ_LIST *list    = (LHQ_LIST *)calloc(1, sizeof(LHQ_LIST));
-    list->data        = calloc(LHQ_LIST_START, elementSize);
-    list->elementSize = elementSize;
-    list->length      = 0;
-    list->capacity    = LHQ_LIST_START;
-    return list;
-}
+LHQ_LIST *lhq_list_new(size_t elementSize);
 
 /* Get a pointer to the next free entry at the end of the list
 
    @param list  - the list to get the entry from
    @returns pointer to the next entry
 */
-void *lhq_list_next(LHQ_LIST *list) { return (void *)(((uint8_t *)list->data) + (list->length * list->elementSize)); }
+void *lhq_list_next(LHQ_LIST *list);
 
 /* Mark the next entry as added
 
    @param list  - the list to modify
 */
-void lhq_list_inc(LHQ_LIST *list) {
-    list->length++;
-    if(list->length == list->capacity) {
-        list->capacity <<= 1;
-        list->data = realloc(list->data, list->capacity * list->elementSize);
-    }
-}
+void lhq_list_inc(LHQ_LIST *list);
 
 /* Shrink the list to only use enough memory for current elements
 
    @param list - the list to shrink
 */
-void lhq_list_compact(LHQ_LIST *list) {
-    list->data     = realloc(list->data, list->length * list->elementSize);
-    list->capacity = list->length;
-}
+void lhq_list_compact(LHQ_LIST *list);
 
 /* Destroy the list
 
    @param list - the list to free
 */
-void lhq_list_free(LHQ_LIST *list) {
-    free(list->data);
-    free(list);
-}
+void lhq_list_free(LHQ_LIST *list);
 
 /* Macro to declare convenience functions for lists of different types */
 #define LHQ_LIST_DECLARE(type, entryType)                                         \
+                                                                                  \
+    LHQ_LIST *lhq_##type##_list_new(void);                                        \
+
+/* Macro to define convenience functions for lists of different types */
+#define LHQ_LIST_DEFINE(type, entryType)                                          \
                                                                                   \
     LHQ_LIST *lhq_##type##_list_new() { return lhq_list_new(sizeof(entryType)); } \
 

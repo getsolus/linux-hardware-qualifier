@@ -17,8 +17,7 @@
 #ifndef __LINUX_HARDWARE_QUALIFIER_UTIL_H__
 #define __LINUX_HARDWARE_QUALIFIER_UTIL_H__
 
-#include <string.h>
-#include <unistd.h>
+#include <stddef.h>
 
 #define AUTO_FREE(ptr) \
     if(ptr != NULL) {  \
@@ -26,22 +25,6 @@
         ptr = NULL;    \
     }
 
-int lhq_file_to_string(char *path, char *prefix, char **dest, int offset, size_t size) {
-    static char buff[128];
-    strcpy(buff, path);
-    strcat(buff, prefix);
-    FILE *f = fopen(buff, "r");
-    if(f == NULL) return -1;
-    if(offset != 0) {
-        fseek(f, offset, SEEK_SET);
-    }
-    *dest = (char *)calloc(1, size + 1);
-    if((fread(*dest, 1, size, f) != size) || (strnlen(*dest, size) != size)) {
-        fclose(f);
-        return 0;
-    }
-    fclose(f);
-    return 1;
-}
+int lhq_file_to_string(char *path, char *prefix, char **dest, int offset, size_t size);
 
 #endif

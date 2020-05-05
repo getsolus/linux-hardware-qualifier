@@ -16,8 +16,9 @@
 
 #include "config.h"
 
-#include "acpi_result.h"
+#include "acpi.h"
 #include "ids_index.h"
+#include "types_index.h"
 
 #include <stdio.h>
 
@@ -46,7 +47,7 @@ void lhq_search_acpi(LHQ_TYPES_INDEX *types) {
             .id = "80860F28",
         },
     };
-    lhq_acpi_result_search(&result, types);
+    lhq_acpi_search(types, &result);
     lhq_acpi_result_entry_print(&result, stdout);
 }
 

@@ -20,7 +20,6 @@
 #include "lhq_list.h"
 
 #include <stdio.h>
-#include <string.h>
 
 /* Representation of a LKDDB ACPI Entry
 
@@ -36,20 +35,16 @@ typedef struct {
     char *filename;
 } LKDDB_ACPI_ENTRY;
 
+/* define the lhq_apci_list functions */
+LHQ_LIST_DECLARE(acpi, LHQ_ACPI_ENTRY)
+
 /* Check if entry is the same as other, copy pointers from other if so
 
    @param entry - the entry to copy to
    @param other - the entry to compare against and copy from
    @returns 0 if equal otherwise < 0 or > 0
 */
-int lhq_acpi_compare_and_copy(LKDDB_ACPI_ENTRY *entry, LKDDB_ACPI_ENTRY *other) {
-    int compare = strcmp(entry->id, other->id);
-    if(compare == 0) {
-        entry->configOpts = other->configOpts;
-        entry->filename   = other->filename;
-    }
-    return compare;
-}
+int lhq_acpi_compare_and_copy(LKDDB_ACPI_ENTRY *entry, LKDDB_ACPI_ENTRY *other);
 
 /* Try to read an ACPI entry from the lkddb file
 
@@ -58,33 +53,37 @@ int lhq_acpi_compare_and_copy(LKDDB_ACPI_ENTRY *entry, LKDDB_ACPI_ENTRY *other) 
 
    @returns 1 if there are more entries to read, 0 otherwise
 */
-int lhq_acpi_entry_parse(LKDDB_ACPI_ENTRY *entry, char **file) {
-    /* Format: acpi "id" : configs : filename\n */
-    /* id */
-    *file       = strchr(*file, '"') + 1;
-    entry->id   = *file;
-    *file       = strchr(*file, '"') + 1;
-    (*file)[-1] = '\0';
-    /* config opts */
-    *file             = strchr(*file, ':') + 2;
-    entry->configOpts = *file;
-    /* filename */
-    *file           = strchr(*file, ':') + 2;
-    (*file)[-3]     = '\0';
-    entry->filename = *file;
-    *file           = strstr(*file, "\n");
-    /* check for next entry */
-    if((*file) != NULL) {
-        (*file)++;
-        (*file)[-1] = '\0';
-        if(strncmp(*file, "acpi", 4) != 0) {
-            return 0;
-        }
-    }
-    return 1;
-}
+int lhq_acpi_entry_parse(LKDDB_ACPI_ENTRY *entry, char **file);
 
-/* define the lhq_acpi_list functions */
-LHQ_LIST_DECLARE(acpi, LKDDB_ACPI_ENTRY)
+
+/* Representation of a LHQ ACPI Search Result
+
+   @field entry - the original ACPI Entry
+*/
+typedef struct {
+    LKDDB_ACPI_ENTRY entry;
+} LHQ_ACPI_RESULT;
+
+/* define the lhq_apci_result_list functions */
+LHQ_LIST_DECLARE(acpi_result, LHQ_ACPI_RESULT)
+
+/* Print a summary of this ACPI Result
+
+   @param result - the result to print
+   @param out    - the file to write to
+*/
+void lhq_acpi_result_entry_print(LHQ_ACPI_RESULT *result, FILE *out);
+
+/* Free memory allocated to this result
+
+   @param result - the result to free
+*/
+void lhq_acpi_result_free(LHQ_ACPI_RESULT *result);
+
+/* Search for all of the system ACPI devices and look them un in the LKDDB
+
+   @param results - the list of results to save to
+*/
+int lhq_acpi_find_devices(LHQ_LIST *results);
 
 #endif

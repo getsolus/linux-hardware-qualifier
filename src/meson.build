@@ -19,9 +19,37 @@ config_h = configure_file(
 
 depends = []
 
+lib_lhq_static = static_library(
+    'lhq',
+    sources: [
+        'acpi.c',
+        'acpi_result.c',
+        'acpi_sysfs.c',
+        'ids_index.c',
+        'kernel_config.c',
+        'kernel_flag.c',
+        'lhq_list.c',
+        'pci.c',
+        'pci_class_ids.c',
+        'pci_ids.c',
+        'pci_result.c',
+        'pci_sysfs.c',
+        'types_index.c',
+        'usb.c',
+        'usb_class_ids.c',
+        'usb_ids.c',
+        'usb_result.c',
+        'usb_sysfs.c',
+        'util.c',
+    ],
+    include_directories: incdir
+)
+
 executable(
     'linux-hardware-qualifier',
     'main.c',
+    link_with: lib_lhq_static,
+    link_flags: '-Wl,--gc-sections,--print-gc-sections',
     include_directories: incdir,
     dependencies: depends,
     install: true

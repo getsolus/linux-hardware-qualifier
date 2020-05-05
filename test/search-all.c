@@ -16,8 +16,7 @@
 
 #include "config.h"
 
-#include "acpi_result.h"
-#include "acpi_sysfs.h"
+#include "acpi.h"
 #include "ids_index.h"
 #include "pci_result.h"
 #include "pci_sysfs.h"
@@ -53,7 +52,7 @@ void lhq_search_acpi(LHQ_TYPES_INDEX *types) {
     }
     LHQ_ACPI_RESULT *result = (LHQ_ACPI_RESULT *)results->data;
     for(unsigned int i = 0; i < results->length; i++) {
-        lhq_acpi_result_search(result, types);
+        lhq_acpi_search(types,result);
         lhq_acpi_result_entry_print(result, stdout);
         lhq_acpi_result_free(result);
         result++;
